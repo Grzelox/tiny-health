@@ -37,20 +37,40 @@ export default function Dashboard() {
 
   }, [ownerId]);
 
+  const handleDeletePet = async (petId: string) => {
+    try {
+      const response = await fetch(`/api/deletePet`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ petId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete pet');
+      }
+
+      // Remove the pet from the state
+      setPets((prevPets) => prevPets.filter((pet) => pet.id !== petId));
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <h1 className="text-3xl font-bold text-primary-800 mb-8">Moje stadko</h1>
       {pets.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pets.map((pet) => (
-            <PetCard key={pet.id} pet={pet} />
+            <PetCard key={pet.id} pet={pet} onDelete={handleDeletePet} />
           ))}
           <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            <AddPetButton onClick={() => setIsModalOpen(true)} />
+          <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       )}
       <AddPetModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

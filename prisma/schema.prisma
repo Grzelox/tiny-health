@@ -30,5 +30,5 @@ model VetVisit {
   description String
   medication  String
 
-  pet Pet @relation(fields: [petId], references: [id])
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 }
