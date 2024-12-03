@@ -1,49 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VetVisit } from '@/types/pet';
+import { format } from 'date-fns';
 
-interface AddVetVisitModalProps {
+interface EditVetVisitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  petId: string;
+  visits: VetVisit[];
+  visitId: number;
 }
 
-const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({ isOpen, onClose, petId }) => {
+const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({ isOpen, onClose, visits, visitId }) => {
+  const visit = visits.find(v => v.id === visitId);
+
   const [description, setDescription] = useState('');
   const [medication, setMedication] = useState('');
   const [date, setDate] = useState('');
 
+  useEffect(() => {
+    if (visit) {
+      setDescription(visit.description || '');
+      setMedication(visit.medication || '');
+      setDate(format(visit.date, 'yyyy-MM-dd'));
+    }
+  }, [visit]);
+
   const handleSubmit = async () => {
     try {
-        const response = await fetch('/api/addVetVisit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                description,
-                medication,
-                date,
-                petId
-            }),
-        });
+      const response = await fetch('/api/editVetVisit', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description,
+          medication,
+          date,
+          id: visitId
+        }),
+      });
 
-        if (!response.ok) {
-            throw new Error('Failed to add new pet');
-        }
-
-        const newVisit = await response.json();
+      if (!response.ok) {
+        throw new Error('Failed to update visit');
+      }
     } catch (error) {
-        console.error('Error adding new visit:', error);
+      console.error('Error updating visit:', error);
     }
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !visit) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">Dodaj wizytę weterynaryjną</h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Edytuj wizytę</h2>
         <div className="space-y-4">
           <textarea 
             placeholder="Opis" 
@@ -77,7 +87,7 @@ const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({ isOpen, onClose, pe
             onClick={handleSubmit}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
           >
-            Dodaj wizytę
+            Edytuj wizytę
           </button>
         </div>
       </div>
@@ -85,4 +95,4 @@ const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({ isOpen, onClose, pe
   );
 };
 
-export default AddVetVisitModal; 
+export default EditVetVisitModal; 

@@ -2,12 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { RatIcon, Calendar, Stethoscope, EditIcon, PaintRoller } from 'lucide-react';
-import AddPetModal from '@/components/AddPetModal';
+import { RatIcon, Calendar, Stethoscope, EditIcon, PaintRoller, TrashIcon } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
 import { Pet, VetVisit } from '@/types/pet';
 import AddVetVisitModal from '@/components/AddVetVisitModal';
+import EditVetVisitModal from '@/components/EditVetVisitModal';
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const { user } = useUser();
@@ -15,8 +14,10 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const [petData, setPetData] = useState<Pet | null>(null);
   const petId = params.id;
   const [vetVisits, setVetVisits] = useState<VetVisit[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddVisitModalOpen, setIsAddVisitModalOpen] = useState(false);
+  const [updateVists, setUpdateVists] = useState(false);
+  const [isEditVisitModalOpen, setIsEditVisitModalOpen] = useState(false);
+  const [currVisit, setCurrVisit] = useState<VetVisit | null>(null);
 
   useEffect(() => {
     if (!user?.id) {
@@ -58,28 +59,49 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
     };
 
     fetchPetData();
-  }, [user, router]);
+  }, [user, router, updateVists ]);
 
   const handleEditClick = () => {
-    setIsModalOpen(true);
+  // TODO1: Implement editing pet object
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleCloseAddVisitModal = () => {
     setIsAddVisitModalOpen(false);
+    setUpdateVists(prev => !prev);
   };
 
   const handleAddVisitClick = () => {
     setIsAddVisitModalOpen(true);
   };
 
-  const handleAddVisit = (newVisit: VetVisit) => {
-    setVetVisits([...vetVisits, newVisit]);
+  const handleCloseEditVisitModal = () => {
+    setIsEditVisitModalOpen(false);
+    setUpdateVists(prev => !prev);
   };
 
+  const handleEditVisit = (index: number) => {
+    setCurrVisit(vetVisits[index]);
+    console.log("currVisit", currVisit);
+    setIsEditVisitModalOpen(true);
+    setUpdateVists(prev => !prev);
+
+  };
+
+  const handleRemoveVisit = async (index: number) => {
+    try {
+      const response = await fetch("/api/deleteVetVisit", {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: vetVisits[index].id }),
+      });
+    } catch (error) {
+      console.error('Error deleting vet visit:', error);
+    }
+    setUpdateVists(true);
+  };
   return (
     <div className="min-h-screen max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
@@ -121,29 +143,49 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
                 {vetVisits
                   .sort((a, b) => b.date.getTime() - a.date.getTime())
                   .map((visit, index) => (
-                    <div key={index} className="border-l-4 border-primary-400 pl-4 py-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium text-primary-700">{visit.description}</p>
-                          <p className="text-sm text-secondary-600">
-                            {new Date(visit.date).toLocaleDateString()}
-                          </p>
-                        </div>
+                    <div key={index} className="border-l-4 border-primary-400 pl-4 py-2 flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-primary-700">{visit.description}</p>
+                        <p className="text-sm text-secondary-600">
+                          {new Date(visit.date).toLocaleDateString()}
+                        </p>
+                        <p className="text-secondary-700 mt-2">{visit.medication}</p>
                       </div>
-                      <p className="text-secondary-700 mt-2">{visit.medication}</p>
+
+                      <div>                
+                      <button 
+                      onClick={() => handleEditVisit(index)}
+                      className="text-blue-600 hover:text-blue-800"
+                      >
+                        <EditIcon className="w-6 h-6" />
+                      </button>
+             
+                      <button
+                        onClick={() => handleRemoveVisit(index)}
+                        className="ml-4 text-red-600 hover:text-red-800"
+                      >
+                        <TrashIcon className="w-6 h-6" />
+                      </button>
+                      </div>
                     </div>
+
+                    
                   ))}
               </div>
             </div>
           </>
         )}
       </div>
-      <AddPetModal isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddVetVisitModal
         petId={petId}
         isOpen={isAddVisitModalOpen}
         onClose={handleCloseAddVisitModal}
-        onAddVisit={handleAddVisit}
+      />
+      <EditVetVisitModal
+        isOpen={isEditVisitModalOpen}
+        onClose={handleCloseEditVisitModal}
+        visits={vetVisits}
+        visitId={currVisit?.id}
       />
     </div>
   );

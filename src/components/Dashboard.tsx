@@ -12,6 +12,7 @@ export default function Dashboard() {
   const ownerId = user?.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pets, setPets] = useState([]);
+  const [updatedPets, setUpdatedPets] = useState(false);
 
   useEffect(() => {
     if (!ownerId) return;
@@ -35,7 +36,7 @@ export default function Dashboard() {
 
   fetchPets();
 
-  }, [ownerId]);
+  }, [ownerId, updatedPets]);
 
   const handleDeletePet = async (petId: string) => {
     try {
@@ -73,7 +74,7 @@ export default function Dashboard() {
           <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       )}
-      <AddPetModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddPetModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} setUpdatedPets={setUpdatedPets}/>
     </div>
   );
 }

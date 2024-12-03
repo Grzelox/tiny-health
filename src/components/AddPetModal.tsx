@@ -4,17 +4,18 @@ import React, { useState } from 'react';
 interface AddPetModalProps {
     isOpen: boolean;
     onClose: () => void;
+    setUpdatedPets: (updated: boolean) => void;
 }
 
-const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose }) => {
+const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, setUpdatedPets }) => {
+    const { user } = useUser();
+    const ownerId = user?.id;
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
     const [birthDate, setBirthday] = useState('');
     const [weight, setWeight] = useState(0);
     const [color, setColor] = useState('');
-    const [currentState, setCurrentState] = useState('');
-    const { user } = useUser();
-    const ownerId = user?.id;
+
 
     const handleSubmit = async () => {
         try {
@@ -42,6 +43,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose }) => {
         } catch (error) {
             console.error('Error adding new pet:', error);
         }
+        setUpdatedPets(true);
         onClose();
     };
 
