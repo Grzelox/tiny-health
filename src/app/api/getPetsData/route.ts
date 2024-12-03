@@ -15,10 +15,8 @@ export async function GET(request: Request) {
                 VetVisit: true
             }
         });
-        console.log("pets", pets);
         return NextResponse.json(pets, { status: 200 });
     } catch (error) {
-        console.log("error", error);
         return NextResponse.json({ error: 'Error fetching pets data' }, { status: 500 });
     }
 } 

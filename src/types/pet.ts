@@ -3,6 +3,7 @@ export interface Pet {
   name: string;
   breed: string;
   lastCheckup: string;
+  weight: number;
 }
 
 export interface VetVisit {

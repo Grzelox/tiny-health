@@ -7,13 +7,16 @@ import { RatIcon, Calendar, Stethoscope, Pill, EditIcon } from 'lucide-react';
 import AddPetModal from '@/components/AddPetModal';
 import { useUser } from '@clerk/nextjs';
 import { Pet, VetVisit } from '@/types/pet';
+import AddVetVisitModal from '@/components/AddVetVisitModal';
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const { user } = useUser();
   const router = useRouter();
   const [petData, setPetData] = useState<Pet | null>(null);
+  const petId = params.id;
   const [vetVisits, setVetVisits] = useState<VetVisit[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddVisitModalOpen, setIsAddVisitModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user?.id) {
@@ -34,6 +37,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
             id: pet.id,
             name: pet.name,
             breed: pet.breed,
+            weight: pet.weight,
             lastCheckup: pet.VetVisit.length > 0 ? pet.VetVisit[0].date : 'No visits'
           });
 
@@ -63,6 +67,18 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
     setIsModalOpen(false);
   };
 
+  const handleCloseAddVisitModal = () => {
+    setIsAddVisitModalOpen(false);
+  };
+
+  const handleAddVisitClick = () => {
+    setIsAddVisitModalOpen(true);
+  };
+
+  const handleAddVisit = (newVisit: VetVisit) => {
+    setVetVisits([...vetVisits, newVisit]);
+  };
+
   return (
     <div className="min-h-screen max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
@@ -86,7 +102,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
               </div>
               <div className="bg-primary-50 p-4 rounded-lg">
                 <Stethoscope className="w-6 h-6 text-primary-600 mb-2" />
-                <p className="text-sm text-secondary-600">Waga</p>
+                <p className="text-sm text-secondary-600">Waga [g]</p>
                 <p className="font-medium">{petData.weight}</p>
               </div>
               <div className="bg-primary-50 p-4 rounded-lg">
@@ -97,26 +113,37 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-primary-800 mb-4">Historia medyczna</h2>
+              <button onClick={handleAddVisitClick} className="mb-4 bg-primary-600 text-white py-2 px-4 rounded">
+                Dodaj nową wizytę
+              </button>
               <div className="space-y-4">
-                {vetVisits.map((visit, index) => (
-                  <div key={index} className="border-l-4 border-primary-400 pl-4 py-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-primary-700">{visit.description}</p>
-                        <p className="text-sm text-secondary-600">
-                          {new Date(visit.date).toLocaleDateString()}
-                        </p>
+                {vetVisits
+                  .sort((a, b) => b.date.getTime() - a.date.getTime())
+                  .map((visit, index) => (
+                    <div key={index} className="border-l-4 border-primary-400 pl-4 py-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-primary-700">{visit.description}</p>
+                          <p className="text-sm text-secondary-600">
+                            {new Date(visit.date).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
+                      <p className="text-secondary-700 mt-2">{visit.medication}</p>
                     </div>
-                    <p className="text-secondary-700 mt-2">{visit.medication}</p>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           </>
         )}
       </div>
       <AddPetModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <AddVetVisitModal
+        petId={petId}
+        isOpen={isAddVisitModalOpen}
+        onClose={handleCloseAddVisitModal}
+        onAddVisit={handleAddVisit}
+      />
     </div>
   );
 }

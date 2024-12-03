@@ -12,7 +12,6 @@ export async function GET(request: Request) {
                 petId: id
             }
         });
-        console.log("pets", pets);
         return NextResponse.json(pets, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: 'Error fetching pets data' }, { status: 500 });

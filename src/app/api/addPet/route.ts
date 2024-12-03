@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
     const { name, breed, birthDate, weight, color, ownerId} = await request.json();
-    console.log(name, breed, birthDate, weight, color, ownerId);
     try {
         const newPet = await prisma.pet.create({
             data: {

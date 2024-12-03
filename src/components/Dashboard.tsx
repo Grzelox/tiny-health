@@ -48,9 +48,9 @@ export default function Dashboard() {
           <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       ) : (
-        <div className="flex flex-col items-center ">
-          <p className="text-lg text-gray-600 mb-4">Dodaj swoją myszkę!</p>
-          <AddPetButton onClick={() => setIsModalOpen(true)} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       )}
       <AddPetModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
