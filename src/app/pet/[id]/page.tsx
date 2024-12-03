@@ -3,19 +3,28 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { MouseIcon, Calendar, Stethoscope, Pill, EditIcon } from 'lucide-react';
+import { RatIcon, Calendar, Stethoscope, Pill, EditIcon } from 'lucide-react';
 import { mockPetDetails } from '@/lib/mockData';
 import AddPetModal from '@/components/AddPetModal';
 import { useUser } from '@clerk/nextjs';
+import { Pet } from '@/types/pet';
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const { user } = useUser();
   const router = useRouter();
+  const [pet, setPet] = useState<Pet | null>(null);
 
   useEffect(() => {
     if (!user?.id) {
       router.push('/sign-in');
     }
+
+    const fetchPet = async () => {
+      const response = await fetch(`/api/getPet?id=${params.id}`);
+      const pet = await response.json();
+      setPet(pet);
+    };
+    fetchPet();
   }, [user, router]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +44,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
           <EditIcon className="w-6 h-6" />
         </button>
         <div className="flex items-center space-x-4 mb-6">
-          <MouseIcon className="w-12 h-12 text-primary-600" />
+          <RatIcon className="w-12 h-12 text-primary-600" />
           <div>
             <h1 className="text-3xl font-bold text-primary-800">{mockPetDetails.name}</h1>
             <p className="text-secondary-600">{mockPetDetails.breed}</p>

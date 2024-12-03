@@ -1,3 +1,4 @@
+import { useUser } from '@clerk/nextjs';
 import React, { useState } from 'react';
 
 interface AddPetModalProps {
@@ -8,10 +9,12 @@ interface AddPetModalProps {
 const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose }) => {
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
-    const [birthday, setBirthday] = useState('');
-    const [weight, setWeight] = useState('');
+    const [birthDate, setBirthday] = useState('');
+    const [weight, setWeight] = useState(0);
     const [color, setColor] = useState('');
     const [currentState, setCurrentState] = useState('');
+    const { user } = useUser();
+    const ownerId = user?.id;
 
     const handleSubmit = async () => {
         try {
@@ -23,10 +26,10 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose }) => {
                 body: JSON.stringify({
                     name,
                     breed,
-                    birthday,
+                    birthDate,
                     weight,
                     color,
-                    currentState,
+                    ownerId,
                 }),
             });
 
@@ -79,7 +82,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose }) => {
                     <input 
                         type="date" 
                         placeholder="Data Urodzenia" 
-                        value={birthday} 
+                        value={birthDate} 
                         onChange={(e) => setBirthday(e.target.value)}
                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" 
                     />
@@ -88,7 +91,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose }) => {
                         type="text" 
                         placeholder="Waga" 
                         value={weight} 
-                        onChange={(e) => setWeight(e.target.value)}
+                        onChange={(e) => setWeight(Number(e.target.value))}
                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" 
                     />
                 </div>

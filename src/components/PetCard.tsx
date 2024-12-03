@@ -1,19 +1,13 @@
 import { format } from 'date-fns';
-import { MouseIcon } from 'lucide-react';
+import { RatIcon } from 'lucide-react';
 import Link from 'next/link';
-
-interface Pet {
-  id: number;
-  name: string;
-  breed: string;
-  lastCheckup: string;
-}
+import { Pet } from '@/types/pet';
 
 interface PetCardProps {
   pet: Pet;
 }
 
-const PetCard: React.FC<PetCardProps> = ({ pet }) => {
+export default function PetCard({ pet }: PetCardProps) {
   return (
     <Link
       href={`/pet/${pet.id}`}
@@ -21,9 +15,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     >
       <div className="p-6 h-full flex flex-col">
         <div className="flex items-center justify-between mb-4">
-          <MouseIcon className="w-8 h-8 text-primary-600" />
+          <RatIcon className="w-8 h-8 text-primary-600" />
           <span className="text-sm text-secondary-600">
-            Ostatnia wizyta: {format(new Date(pet.lastCheckup), 'MMM d, yyyy')}
+            Ostatnia wizyta: TODO
           </span>
         </div>
         <div className="flex-grow">
@@ -38,6 +32,4 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
       </div>
     </Link>
   );
-};
-
-export default PetCard;
+}

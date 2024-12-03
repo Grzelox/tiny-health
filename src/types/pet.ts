@@ -5,15 +5,10 @@ export interface Pet {
   lastCheckup: string;
 }
 
-export interface Visit {
-  date: string;
-  type: string;
-  notes: string;
-  medications: string[];
-}
-
-export interface PetDetails extends Pet {
-  birthDate: string;
-  weight: string;
-  visits: Visit[];
+export interface VetVisit {
+  id: number;
+  petId: number;
+  date: Date;
+  description: string;
+  medication: string;
 }

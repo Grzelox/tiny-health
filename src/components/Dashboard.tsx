@@ -1,28 +1,31 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { PrismaClient } from '@prisma/client';
-import PetCard from '@/components/ui/PetCard';
-import AddPetButton from '@/components/ui/AddPetButton';
+import PetCard from '@/components/PetCard';
+import AddPetButton from '@/components/AddPetButton';
 import AddPetModal from './AddPetModal';
 import { useUser } from '@clerk/nextjs';
 
-const prisma = new PrismaClient();
 
 export default function Dashboard() {
   const { user } = useUser();
+  const ownerId = user?.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pets, setPets] = useState([]);
 
   useEffect(() => {
+    if (!ownerId) return;
+
     const fetchPets = async () => {
       try {
-          const response = await fetch('/api/getPets');
+          const searchParams = new URLSearchParams();
+          searchParams.set('ownerId', ownerId || '');
+          const response = await fetch(`/api/getPets?${searchParams.toString()}`);
           if (!response.ok) {
               throw new Error('Failed to fetch pets');
           }
           const pets = await response.json();
-          console.log('Fetched pets:', pets);
+          setPets(pets);
           return pets;
       } catch (error) {
           console.error('Error fetching pets:', error);
@@ -30,8 +33,9 @@ export default function Dashboard() {
       }
   };
 
-    fetchPets();
-  }, []);
+  fetchPets();
+
+  }, [ownerId]);
 
   return (
     <div>

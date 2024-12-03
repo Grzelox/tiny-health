@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { MouseIcon, Calendar, Stethoscope, Pill } from 'lucide-react';
+import { RatIcon, Calendar, Stethoscope, Pill } from 'lucide-react';
 
 const mockPetDetails = {
   id: 1,
@@ -28,7 +28,7 @@ const PetDetails = ({ id }: { id: string }) => {
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
         <div className="flex items-center space-x-4 mb-6">
-          <MouseIcon className="w-12 h-12 text-primary-600" />
+          <RatIcon className="w-12 h-12 text-primary-600" />
           <div>
             <h1 className="text-3xl font-bold text-primary-800">{mockPetDetails.name}</h1>
             <p className="text-secondary-600">{mockPetDetails.breed}</p>
