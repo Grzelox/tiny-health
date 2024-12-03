@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { RatIcon, Calendar, Stethoscope, Pill, EditIcon } from 'lucide-react';
+import { RatIcon, Calendar, Stethoscope, EditIcon, PaintRoller } from 'lucide-react';
 import AddPetModal from '@/components/AddPetModal';
 import { useUser } from '@clerk/nextjs';
 import { Pet, VetVisit } from '@/types/pet';
@@ -38,7 +38,8 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
             name: pet.name,
             breed: pet.breed,
             weight: pet.weight,
-            lastCheckup: pet.VetVisit.length > 0 ? pet.VetVisit[0].date : 'No visits'
+            birthDate: pet.birthDate,
+            color: pet.color
           });
 
           setVetVisits(pet.VetVisit.map((visit: any) => ({
@@ -98,7 +99,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
               <div className="bg-primary-50 p-4 rounded-lg">
                 <Calendar className="w-6 h-6 text-primary-600 mb-2" />
                 <p className="text-sm text-secondary-600">Data urodzenia</p>
-                <p className="font-medium">{new Date(petData.lastCheckup).toLocaleDateString()}</p>
+                <p className="font-medium">{new Date(petData.birthDate).toLocaleDateString()}</p>
               </div>
               <div className="bg-primary-50 p-4 rounded-lg">
                 <Stethoscope className="w-6 h-6 text-primary-600 mb-2" />
@@ -106,9 +107,9 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
                 <p className="font-medium">{petData.weight}</p>
               </div>
               <div className="bg-primary-50 p-4 rounded-lg">
-                <Pill className="w-6 h-6 text-primary-600 mb-2" />
-                <p className="text-sm text-secondary-600">Leki na stałe</p>
-                <p className="font-medium">{vetVisits.length} medication(s)</p>
+                <PaintRoller className="w-6 h-6 text-primary-600 mb-2" />
+                <p className="text-sm text-secondary-600">Umaszczenie</p>
+                <p className="font-medium">{petData.color}</p>
               </div>
             </div>
             <div>
