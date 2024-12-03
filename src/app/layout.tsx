@@ -4,12 +4,13 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { plPL } from '@clerk/localizations';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TinyHealth - Mouse Health Tracking',
-  description: 'Track your mouse\'s health and medical history',
+  title: 'tiny health - mouse health tracking',
+  description: 'track your mouse\'s health and medical history',
 };
 
 export default function RootLayout({
@@ -18,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
+    <ClerkProvider localization={plPL}>
+      <html lang="pl">
         <body className={inter.className}>
           <div className="min-h-screen flex flex-col bg-primary-50">
             <Header />

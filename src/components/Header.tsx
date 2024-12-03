@@ -9,7 +9,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
             <MouseIcon className="h-6 w-6 text-primary-600" />
-            <span className="text-xl font-semibold text-primary-800">TinyHealth</span>
+            <span className="text-xl font-semibold text-primary-800">tiny health</span>
           </Link>
           
           <div className="flex items-center space-x-4">

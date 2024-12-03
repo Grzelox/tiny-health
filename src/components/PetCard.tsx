@@ -23,7 +23,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         <div className="flex items-center justify-between mb-4">
           <MouseIcon className="w-8 h-8 text-primary-600" />
           <span className="text-sm text-secondary-600">
-            Last checkup: {format(new Date(pet.lastCheckup), 'MMM d, yyyy')}
+            Ostatnia wizyta: {format(new Date(pet.lastCheckup), 'MMM d, yyyy')}
           </span>
         </div>
         <div className="flex-grow">
@@ -32,7 +32,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         </div>
         <div className="mt-4">
           <span className="text-sm text-primary-600 hover:text-primary-700">
-            View Details →
+            Szczegóły →
           </span>
         </div>
       </div>
