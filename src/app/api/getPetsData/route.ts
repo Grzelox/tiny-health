@@ -5,16 +5,20 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     const searchParams = new URL(request.url).searchParams;
-    const ownerId = searchParams.get('ownerId');
+    const id = searchParams.get('id');
     try {
         const pets = await prisma.pet.findMany({
             where: {
-                ownerId: ownerId
+                id: Number(id)
+            },
+            include: {
+                VetVisit: true
             }
         });
         console.log("pets", pets);
         return NextResponse.json(pets, { status: 200 });
     } catch (error) {
+        console.log("error", error);
         return NextResponse.json({ error: 'Error fetching pets data' }, { status: 500 });
     }
 } 
