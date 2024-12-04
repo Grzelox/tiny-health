@@ -1,20 +1,28 @@
-import { VetVisit } from '@/types/pet';
-import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { auth } from "@clerk/nextjs/server";
+import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function DELETE(request: Request) {
-  const { petId }: VetVisit = await request.json();
+  const { userId } = auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { petId } = await request.json();
   try {
     const deletedPet = await prisma.pet.delete({
-        where: {
-            id: Number(petId)
-        }
+      where: {
+        id: Number(petId),
+      },
     });
     return NextResponse.json("OK", { status: 201 });
-} catch (error) {
-    console.error('Error creating new pet record:', error);
-    return NextResponse.json({ error: 'Error creating new pet record' }, { status: 500 });
-    }
+  } catch (error) {
+    console.error("Error creating new pet record:", error);
+    return NextResponse.json(
+      { error: "Error creating new pet record" },
+      { status: 500 },
+    );
+  }
 }

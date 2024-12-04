@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs';
-import Welcome from '@/components/Welcome';
-import Dashboard from '@/components/Dashboard';
+import Dashboard from "@/components/Dashboard";
+import Welcome from "@/components/Welcome";
+import { auth } from "@clerk/nextjs";
 
 export default async function Home() {
   const { userId } = auth();

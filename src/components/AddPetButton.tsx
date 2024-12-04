@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus } from "lucide-react";
 
 interface AddPetButtonProps {
   onClick: () => void;
@@ -6,7 +6,10 @@ interface AddPetButtonProps {
 
 const AddPetButton = ({ onClick }: AddPetButtonProps) => {
   return (
-    <button className="h-64 flex items-center justify-center bg-white rounded-lg border-2 border-dashed border-primary-300 hover:border-primary-400 transition-colors" onClick={onClick}>
+    <button
+      className="h-64 flex items-center justify-center bg-white rounded-lg border-2 border-dashed border-primary-300 hover:border-primary-400 transition-colors"
+      onClick={onClick}
+    >
       <div className="flex flex-col items-center text-primary-600">
         <Plus className="w-12 h-12 mb-2" />
         <span className="text-lg font-medium">Dodaj myszkę</span>

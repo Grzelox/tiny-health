@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { RatIcon } from 'lucide-react';
+import { RatIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function Welcome() {
   return (
@@ -7,11 +7,10 @@ export default function Welcome() {
       <div className="flex justify-center mb-8">
         <RatIcon className="w-16 h-16 text-primary-600" />
       </div>
-      <h1 className="text-4xl font-bold text-primary-800 mb-4">
-        tiny health
-      </h1>
+      <h1 className="text-4xl font-bold text-primary-800 mb-4">tiny health</h1>
       <p className="text-xl text-secondary-600 mb-8">
-        Aplikacja do śledzenia zdrowia i historii medycznej twojego małego przyjaciela
+        Aplikacja do śledzenia zdrowia i historii medycznej twojego małego
+        przyjaciela
       </p>
       <div className="space-x-4">
         <Link

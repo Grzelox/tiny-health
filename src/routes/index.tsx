@@ -1,14 +1,13 @@
-import { Routes, Route, Navigate } from 'react-router';
+import Dashboard from "@/components/Dashboard";
+import PetDetails from "@/components/PetDetails";
 import {
+  RedirectToSignIn,
   SignIn,
   SignUp,
   SignedIn,
   SignedOut,
-  RedirectToSignIn,
-} from '@clerk/clerk-react';
-import Dashboard from '@/components/Dashboard';
-import PetDetails from '@/components/PetDetails';
-
+} from "@clerk/clerk-react";
+import { Navigate, Route, Routes } from "react-router";
 
 const AppRoutes = () => {
   return (

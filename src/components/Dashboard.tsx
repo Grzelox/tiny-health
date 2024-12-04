@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import PetCard from '@/components/PetCard';
-import AddPetButton from '@/components/AddPetButton';
-import AddPetModal from './AddPetModal';
-import { useUser } from '@clerk/nextjs';
+import AddPetButton from "@/components/AddPetButton";
+import PetCard from "@/components/PetCard";
+import { useUser } from "@clerk/nextjs";
+import React, { useEffect, useState } from "react";
 
+import AddPetModal from "./AddPetModal";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -19,43 +19,42 @@ export default function Dashboard() {
 
     const fetchPets = async () => {
       try {
-          const searchParams = new URLSearchParams();
-          searchParams.set('ownerId', ownerId || '');
-          const response = await fetch(`/api/getPets?${searchParams.toString()}`);
-          if (!response.ok) {
-              throw new Error('Failed to fetch pets');
-          }
-          const pets = await response.json();
-          setPets(pets);
-          return pets;
+        const searchParams = new URLSearchParams();
+        searchParams.set("ownerId", ownerId || "");
+        const response = await fetch(`/api/getPets?${searchParams.toString()}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch pets");
+        }
+        const pets = await response.json();
+        setPets(pets);
+        return pets;
       } catch (error) {
-          console.error('Error fetching pets:', error);
-          return [];
+        console.error("Error fetching pets:", error);
+        return [];
       }
-  };
+    };
 
-  fetchPets();
-
+    fetchPets();
   }, [ownerId, updatedPets]);
 
   const handleDeletePet = async (petId: string) => {
     try {
       const response = await fetch(`/api/deletePet`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ petId }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete pet');
+        throw new Error("Failed to delete pet");
       }
 
       // Remove the pet from the state
       setPets((prevPets) => prevPets.filter((pet) => pet.id !== petId));
     } catch (error) {
-      console.error('Error deleting pet:', error);
+      console.error("Error deleting pet:", error);
     }
   };
 
@@ -67,7 +66,10 @@ export default function Dashboard() {
           {pets
             .sort((a, b) => {
               if (a.isDead === b.isDead) {
-                return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); // Sort by updatedAt if isDead status is the same
+                return (
+                  new Date(b.updatedAt).getTime() -
+                  new Date(a.updatedAt).getTime()
+                ); // Sort by updatedAt if isDead status is the same
               }
               return a.isDead ? 1 : -1; // Place dead pets at the end
             })
@@ -81,7 +83,11 @@ export default function Dashboard() {
           <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       )}
-      <AddPetModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} setUpdatedPets={setUpdatedPets}/>
+      <AddPetModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        setUpdatedPets={setUpdatedPets}
+      />
     </div>
   );
 }

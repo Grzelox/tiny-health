@@ -1,9 +1,10 @@
 export interface Pet {
-  id: number;
+  id: string;
   name: string;
   breed: string;
   color: string;
   birthDate: string;
+  updatedAt: string;
   weight: number;
   isDead: boolean;
 }
