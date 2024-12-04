@@ -188,7 +188,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
                         </p>
                       </div>
 
-                      <div>
+                      <div className="flex flex-col md:flex-row">
                         <button
                           onClick={() => handleEditVisit(index)}
                           className="text-blue-600 hover:text-blue-800"
@@ -198,7 +198,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
 
                         <button
                           onClick={() => handleRemoveVisit(index)}
-                          className="ml-4 text-red-600 hover:text-red-800"
+                          className="ml-0 md:ml-4 mt-2 md:mt-0 text-red-600 hover:text-red-800"
                         >
                           <TrashIcon className="w-6 h-6" />
                         </button>
