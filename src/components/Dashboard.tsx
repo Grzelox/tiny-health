@@ -64,9 +64,16 @@ export default function Dashboard() {
       <h1 className="text-3xl font-bold text-primary-800 mb-8">Moje stadko</h1>
       {pets.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pets.map((pet) => (
-            <PetCard key={pet.id} pet={pet} onDelete={handleDeletePet} />
-          ))}
+          {pets
+            .sort((a, b) => {
+              if (a.isDead === b.isDead) {
+                return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); // Sort by updatedAt if isDead status is the same
+              }
+              return a.isDead ? 1 : -1; // Place dead pets at the end
+            })
+            .map((pet) => (
+              <PetCard key={pet.id} pet={pet} onDelete={handleDeletePet} />
+            ))}
           <AddPetButton onClick={() => setIsModalOpen(true)} />
         </div>
       ) : (

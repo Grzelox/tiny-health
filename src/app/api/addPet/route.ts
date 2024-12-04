@@ -13,7 +13,8 @@ export async function POST(request: Request) {
                 birthDate: new Date(birthDate),
                 weight: weight,
                 color,
-                ownerId
+                ownerId,
+                updatedAt: new Date()
             }
         });
         return NextResponse.json(newPet, { status: 201 });

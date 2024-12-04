@@ -7,6 +7,7 @@ import { useUser } from '@clerk/nextjs';
 import { Pet, VetVisit } from '@/types/pet';
 import AddVetVisitModal from '@/components/AddVetVisitModal';
 import EditVetVisitModal from '@/components/EditVetVisitModal';
+import EditPetModal from '@/components/EditPetModal';
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const { user } = useUser();
@@ -18,7 +19,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const [updateVists, setUpdateVists] = useState(false);
   const [isEditVisitModalOpen, setIsEditVisitModalOpen] = useState(false);
   const [currVisit, setCurrVisit] = useState<VetVisit | null>(null);
-
+  const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   useEffect(() => {
     if (!user?.id) {
       router.push('/sign-in');
@@ -40,7 +41,8 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
             breed: pet.breed,
             weight: pet.weight,
             birthDate: pet.birthDate,
-            color: pet.color
+            color: pet.color,
+            isDead: pet.isDead
           });
 
           setVetVisits(pet.VetVisit.map((visit: any) => ({
@@ -62,7 +64,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
   }, [user, router, updateVists ]);
 
   const handleEditClick = () => {
-  // TODO1: Implement editing pet object
+    setIsEditPetModalOpen(true);
   };
 
 
@@ -77,6 +79,11 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
 
   const handleCloseEditVisitModal = () => {
     setIsEditVisitModalOpen(false);
+    setUpdateVists(prev => !prev);
+  };
+
+  const handleCloseEditPetModal = () => {
+    setIsEditPetModalOpen(false);
     setUpdateVists(prev => !prev);
   };
 
@@ -186,6 +193,12 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
         onClose={handleCloseEditVisitModal}
         visits={vetVisits}
         visitId={currVisit?.id}
+      />
+
+      <EditPetModal
+        isOpen={isEditPetModalOpen}
+        onClose={handleCloseEditPetModal}
+        pet={petData}
       />
     </div>
   );
