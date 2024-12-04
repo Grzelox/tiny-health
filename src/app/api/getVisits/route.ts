@@ -11,10 +11,13 @@ export async function GET(request: Request) {
   }
   const searchParams = new URL(request.url).searchParams;
   const id = searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ error: "Pet ID is required" }, { status: 400 });
+  }
   try {
     const pets = await prisma.pet.findMany({
       where: {
-        petId: Number(id),
+        id: Number(id),
       },
     });
     return NextResponse.json(pets, { status: 200 });

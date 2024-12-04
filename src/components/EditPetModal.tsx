@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 interface EditPetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  pet: Pet;
+  pet: Pet | null;
 }
 
 const EditPetModal: React.FC<EditPetModalProps> = ({
@@ -35,6 +35,9 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
 
   const handleSubmit = async () => {
     try {
+      if (!pet) {
+        throw new Error("Pet not found");
+      }
       const response = await fetch("/api/editPet", {
         method: "PATCH",
         headers: {

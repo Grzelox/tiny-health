@@ -6,12 +6,13 @@ import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 
 import AddPetModal from "./AddPetModal";
+import { Pet } from "@/types/pet";
 
 export default function Dashboard() {
   const { user } = useUser();
   const ownerId = user?.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [pets, setPets] = useState([]);
+  const [pets, setPets] = useState<Pet[]>([]);
   const [updatedPets, setUpdatedPets] = useState(false);
 
   useEffect(() => {

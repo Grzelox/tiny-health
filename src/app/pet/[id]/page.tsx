@@ -52,6 +52,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
             birthDate: pet.birthDate,
             color: pet.color,
             isDead: pet.isDead,
+            updatedAt: pet.updatedAt,
           });
 
           setVetVisits(
@@ -218,7 +219,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
         isOpen={isEditVisitModalOpen}
         onClose={handleCloseEditVisitModal}
         visits={vetVisits}
-        visitId={currVisit?.id}
+        visitId={currVisit?.id ?? 0}
       />
 
       <EditPetModal

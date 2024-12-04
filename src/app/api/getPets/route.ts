@@ -11,6 +11,9 @@ export async function GET(request: Request) {
   }
   const searchParams = new URL(request.url).searchParams;
   const ownerId = searchParams.get("ownerId");
+  if (!ownerId) {
+    return NextResponse.json({ error: "Owner ID is required" }, { status: 400 });
+  }
   try {
     const pets = await prisma.pet.findMany({
       where: {
