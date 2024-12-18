@@ -18,6 +18,7 @@ export async function GET(request: Request) {
       },
       include: {
         VetVisit: true,
+        files: true,
       },
     });
     return NextResponse.json(pets, { status: 200 });

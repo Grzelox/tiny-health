@@ -22,6 +22,7 @@ model Pet {
   updatedAt DateTime   @updatedAt
   isDead    Boolean    @default(false)
   VetVisit  VetVisit[]
+  files     File[]
 }
 
 model VetVisit {
@@ -30,6 +31,15 @@ model VetVisit {
   date        DateTime
   description String
   medication  String
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model File {
+  id        String   @id @default(uuid())
+  petId     Int
+  url       String
+  createdAt DateTime @default(now())
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 }

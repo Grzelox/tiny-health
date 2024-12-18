@@ -4,7 +4,7 @@ import React, { useState } from "react";
 interface AddVetVisitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  petId: string;
+  petId: number;
 }
 
 const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({
