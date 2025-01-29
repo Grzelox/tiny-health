@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { PrismaClient } from "@prisma/client";
 import type { FileRouter } from "uploadthing/next";
 import { createUploadthing } from "uploadthing/next";

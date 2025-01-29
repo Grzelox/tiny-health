@@ -1,5 +1,4 @@
 import { Pet } from "@/types/pet";
-import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {

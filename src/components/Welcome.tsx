@@ -12,20 +12,6 @@ export default function Welcome() {
         Aplikacja do śledzenia zdrowia i historii medycznej twojego małego
         przyjaciela
       </p>
-      <div className="space-x-4">
-        <Link
-          href="/sign-in"
-          className="inline-block px-6 py-3 text-primary-600 border-2 border-primary-600 rounded-lg hover:bg-primary-50"
-        >
-          Zaloguj się
-        </Link>
-        <Link
-          href="/sign-up"
-          className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-        >
-          Zarejestruj się
-        </Link>
       </div>
-    </div>
   );
 }

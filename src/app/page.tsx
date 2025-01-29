@@ -1,13 +1,28 @@
+"use client";
+
 import Dashboard from "@/components/Dashboard";
 import Welcome from "@/components/Welcome";
-import { auth } from "@clerk/nextjs";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
+import { useState, useEffect } from "react";
 
-export default async function Home() {
-  const { userId } = auth();
+export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!userId) {
-    return <Welcome />;
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setIsLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
-  return <Dashboard />;
+  return user ? <Dashboard /> : <Welcome />;
 }

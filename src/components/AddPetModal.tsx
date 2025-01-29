@@ -1,4 +1,5 @@
-import { useUser } from "@clerk/nextjs";
+import { useAuthUser } from "@/hooks/useAuthUSer";
+import { createClient } from "@/utils/supabase/client";
 import React, { useState } from "react";
 
 interface AddPetModalProps {
@@ -12,8 +13,8 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
   onClose,
   setUpdatedPets,
 }) => {
-  const { user } = useUser();
-  const ownerId = user?.id;
+  const supabase = createClient();
+  const user = useAuthUser();
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [birthDate, setBirthday] = useState("");
@@ -21,33 +22,37 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
   const [color, setColor] = useState("");
 
   const handleSubmit = async () => {
-    try {
-      const response = await fetch("/api/addPet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          breed,
-          birthDate,
-          weight,
-          color,
-          ownerId,
-        }),
-      });
+    if (!user) {
+      console.error("No authenticated user found");
+      return;
+    }
 
-      if (!response.ok) {
-        throw new Error("Failed to add new pet");
+    try {
+      const { data: newPet, error } = await supabase
+        .from("pets")
+        .insert([
+          {
+            name,
+            breed,
+            birth_date: birthDate,
+            weight,
+            color,
+            owner_id: user.id,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
       }
 
-      const newPet = await response.json();
       console.log("New pet added successfully:", newPet);
+      setUpdatedPets(true);
+      onClose();
     } catch (error) {
       console.error("Error adding new pet:", error);
     }
-    setUpdatedPets(true);
-    onClose();
   };
 
   if (!isOpen) return null;

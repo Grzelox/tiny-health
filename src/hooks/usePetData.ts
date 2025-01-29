@@ -1,7 +1,6 @@
 // src/hooks/usePetData.ts
 import { useState, useEffect } from 'react';
 import { Pet, VetVisit } from '@/types/pet';
-import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 interface UsePetDataResult {

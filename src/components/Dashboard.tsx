@@ -2,26 +2,26 @@
 
 import AddPetButton from "@/components/AddPetButton";
 import PetCard from "@/components/PetCard";
-import { useUser } from "@clerk/nextjs";
+import { Pet } from "@/types/pet";
 import React, { useEffect, useState } from "react";
 
 import AddPetModal from "./AddPetModal";
-import { Pet } from "@/types/pet";
+import { useAuthUser } from "@/hooks/useAuthUSer";
 
 export default function Dashboard() {
-  const { user } = useUser();
-  const ownerId = user?.id;
+  const user = useAuthUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pets, setPets] = useState<Pet[]>([]);
   const [updatedPets, setUpdatedPets] = useState(false);
 
   useEffect(() => {
-    if (!ownerId) return;
+    if (!user?.id) return;
 
     const fetchPets = async () => {
       try {
         const searchParams = new URLSearchParams();
-        searchParams.set("ownerId", ownerId || "");
+        searchParams.set("ownerId", user.id);
+        console.log(searchParams.toString());
         const response = await fetch(`/api/getPets?${searchParams.toString()}`);
         if (!response.ok) {
           throw new Error("Failed to fetch pets");
@@ -36,7 +36,7 @@ export default function Dashboard() {
     };
 
     fetchPets();
-  }, [ownerId, updatedPets]);
+  }, [user?.id, updatedPets]);
 
   const handleDeletePet = async (petId: string) => {
     try {
@@ -52,7 +52,6 @@ export default function Dashboard() {
         throw new Error("Failed to delete pet");
       }
 
-      // Remove the pet from the state
       setPets((prevPets) => prevPets.filter((pet) => pet.id !== petId));
     } catch (error) {
       console.error("Error deleting pet:", error);
@@ -70,9 +69,9 @@ export default function Dashboard() {
                 return (
                   new Date(b.updatedAt).getTime() -
                   new Date(a.updatedAt).getTime()
-                ); // Sort by updatedAt if isDead status is the same
+                );
               }
-              return a.isDead ? 1 : -1; // Place dead pets at the end
+              return a.isDead ? 1 : -1;
             })
             .map((pet) => (
               <PetCard key={pet.id} pet={pet} onDelete={handleDeletePet} />

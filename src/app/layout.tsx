@@ -1,7 +1,5 @@
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { plPL } from "@clerk/localizations";
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
@@ -20,7 +18,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={plPL}>
       <html lang="pl">
         <body className={inter.className}>
           <div className="min-h-screen flex flex-col bg-primary-50">
@@ -32,6 +29,5 @@ export default function RootLayout({
           </div>
         </body>
       </html>
-    </ClerkProvider>
   );
 }

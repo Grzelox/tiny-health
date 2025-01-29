@@ -11,6 +11,7 @@ interface PetModalsProps {
   isEditVisitModalOpen: boolean;
   isEditPetModalOpen: boolean;
   currVisit: VetVisit | null;
+  vetVisits: VetVisit[];
   petData: Pet | null;
   onCloseAddVisitModal: () => void;
   onCloseEditVisitModal: () => void;
@@ -23,6 +24,7 @@ const PetModals: React.FC<PetModalsProps> = ({
   isEditVisitModalOpen,
   isEditPetModalOpen,
   currVisit,
+  vetVisits,
   petData,
   onCloseAddVisitModal,
   onCloseEditVisitModal,

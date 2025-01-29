@@ -1,4 +1,3 @@
-// src/app/pet/[id]/page.tsx
 "use client";
 
 import React, { useState } from 'react';
@@ -7,6 +6,7 @@ import PetInfo from '@/components/PetInfo';
 import VetVisitList from '@/components/VetVisitList';
 import PetModals from '@/components/PetModals';
 import Gallery from '@/components/Gallery';
+import { VetVisit } from '@/types/pet';
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const { petData, vetVisits, images, updateVisits } = usePetData(params.id);
@@ -65,6 +65,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
         isAddVisitModalOpen={isAddVisitModalOpen}
         isEditVisitModalOpen={isEditVisitModalOpen}
         isEditPetModalOpen={isEditPetModalOpen}
+        vetVisits={vetVisits}
         currVisit={currVisit}
         petData={petData}
         onCloseAddVisitModal={handleCloseAddVisitModal}
