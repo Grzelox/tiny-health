@@ -28,6 +28,5 @@ export function useAuthUser(): User | null {
 
     return () => subscription.unsubscribe();
   }, []);
-
   return user;
 }

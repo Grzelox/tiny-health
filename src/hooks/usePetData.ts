@@ -1,7 +1,6 @@
-// src/hooks/usePetData.ts
-import { useState, useEffect } from 'react';
-import { Pet, VetVisit } from '@/types/pet';
-import { useRouter } from 'next/navigation';
+import { Pet, VetVisit } from "@/types/pet";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface UsePetDataResult {
   petData: Pet | null;
@@ -11,7 +10,6 @@ interface UsePetDataResult {
 }
 
 export const usePetData = (petId: string): UsePetDataResult => {
-  const { user } = useUser();
   const router = useRouter();
   const [petData, setPetData] = useState<Pet | null>(null);
   const [vetVisits, setVetVisits] = useState<VetVisit[]>([]);
@@ -19,16 +17,13 @@ export const usePetData = (petId: string): UsePetDataResult => {
   const [updateVists, setUpdateVists] = useState(false);
 
   useEffect(() => {
-    if (!user?.id) {
-      router.push('/sign-in');
-      return;
-    }
-
     const fetchPetData = async () => {
       try {
         const searchParams = new URLSearchParams();
-        searchParams.set('id', petId);
-        const response = await fetch(`/api/getPetsData?${searchParams.toString()}`);
+        searchParams.set("id", petId);
+        const response = await fetch(
+          `/api/getPetsData?${searchParams.toString()}`,
+        );
         const data = await response.json();
 
         if (data.length > 0) {
@@ -57,12 +52,12 @@ export const usePetData = (petId: string): UsePetDataResult => {
           setImages(pet.files.map((file: any) => file.url));
         }
       } catch (error) {
-        console.error('Error fetching pet data:', error);
+        console.error("Error fetching pet data:", error);
       }
     };
 
     fetchPetData();
-  }, [user, router, petId, updateVists]);
+  }, [router, petId, updateVists]);
 
   const updateVisits = () => setUpdateVists((prev) => !prev);
 

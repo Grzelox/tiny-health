@@ -1,10 +1,11 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { createClient } from "./utils/supabase/server";
+
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
+  const supabase = await createClient();
 
   // Set security headers
   res.headers.set("Referrer-Policy", "no-referrer-when-downgrade");
@@ -13,7 +14,7 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
+  console.log("middleware session", session);
   // Get the current path
   const path = req.nextUrl.pathname;
 
@@ -38,7 +39,6 @@ export async function middleware(req: NextRequest) {
   return res;
 }
 
-// Configure which paths the middleware should run on
 export const config = {
   matcher: [
     /*
@@ -47,8 +47,7 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
-     * - api routes
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|api|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

@@ -1,4 +1,4 @@
-import { useAuthUser } from "@/hooks/useAuthUSer";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import { createClient } from "@/utils/supabase/client";
 import React, { useState } from "react";
 
@@ -47,11 +47,9 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
         throw error;
       }
 
-      console.log("New pet added successfully:", newPet);
       setUpdatedPets(true);
       onClose();
     } catch (error) {
-      console.error("Error adding new pet:", error);
     }
   };
 

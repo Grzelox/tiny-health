@@ -1,4 +1,5 @@
 import { Pet } from "@/types/pet";
+import { createClient } from "@/utils/supabase/client";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
@@ -12,14 +13,24 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
   onClose,
   pet,
 }) => {
-  const { user } = useUser();
-  const ownerId = user?.id;
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [birthDate, setBirthday] = useState("");
   const [weight, setWeight] = useState(0);
   const [color, setColor] = useState("");
   const [isDead, setIsDead] = useState(false);
+  const [ownerId, setOwnerId] = useState<string | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setOwnerId(user?.id ?? null);
+    };
+    getUser();
+  }, [supabase]);
 
   useEffect(() => {
     if (pet) {
@@ -59,10 +70,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
       }
 
       const newPet = await response.json();
-      console.log("New pet added successfully:", newPet);
-    } catch (error) {
-      console.error("Error adding new pet:", error);
-    }
+    } catch (error) {}
     onClose();
   };
 

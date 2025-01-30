@@ -1,12 +1,18 @@
+import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-  const { userId } = auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const searchParams = new URL(request.url).searchParams;
   const id = searchParams.get("id");
@@ -16,8 +22,8 @@ export async function GET(request: Request) {
         id: Number(id),
       },
       include: {
-        VetVisit: true,
-        files: true,
+        vetVisits: true,
+        uploadedFiles: true,
       },
     });
     return NextResponse.json(pets, { status: 200 });

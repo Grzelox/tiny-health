@@ -6,7 +6,7 @@ import { Pet } from "@/types/pet";
 import React, { useEffect, useState } from "react";
 
 import AddPetModal from "./AddPetModal";
-import { useAuthUser } from "@/hooks/useAuthUSer";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 export default function Dashboard() {
   const user = useAuthUser();
@@ -21,7 +21,6 @@ export default function Dashboard() {
       try {
         const searchParams = new URLSearchParams();
         searchParams.set("ownerId", user.id);
-        console.log(searchParams.toString());
         const response = await fetch(`/api/getPets?${searchParams.toString()}`);
         if (!response.ok) {
           throw new Error("Failed to fetch pets");

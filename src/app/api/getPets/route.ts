@@ -10,9 +10,11 @@ export async function GET(request: Request) {
     data: { session },
   } = await supabase.auth.getSession();
   const user = session?.user;
+
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+
   const searchParams = new URL(request.url).searchParams;
   const ownerId = searchParams.get("ownerId");
   if (!ownerId) {
