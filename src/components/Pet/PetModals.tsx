@@ -1,8 +1,8 @@
 // src/components/PetModals.tsx
 import React from 'react';
-import AddVetVisitModal from '@/components/AddVetVisitModal';
-import EditVetVisitModal from '@/components/EditVetVisitModal';
-import EditPetModal from '@/components/EditPetModal';
+import AddVetVisitModal from '@/components/VetVisit/AddVetVisitModal';
+import EditVetVisitModal from '@/components/Pet/EditVetVisitModal';
+import EditPetModal from '@/components/Pet/EditPetModal';
 import { Pet, VetVisit } from '@/types/pet';
 
 interface PetModalsProps {
@@ -12,7 +12,7 @@ interface PetModalsProps {
   isEditPetModalOpen: boolean;
   currVisit: VetVisit | null;
   vetVisits: VetVisit[];
-  petData: Pet | null;
+  petData: PetData | null;
   onCloseAddVisitModal: () => void;
   onCloseEditVisitModal: () => void;
   onCloseEditPetModal: () => void;

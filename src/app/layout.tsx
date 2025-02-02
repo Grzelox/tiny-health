@@ -1,11 +1,15 @@
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 
 import "./globals.css";
+import Providers from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "tiny health - mouse health tracking",
@@ -18,8 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-      <html lang="pl">
-        <body className={inter.className}>
+    <html lang="pl">
+      <body className={roboto.className}>
+        <Providers>
           <div className="min-h-screen flex flex-col bg-primary-50">
             <Header />
             <main className="flex-grow container mx-auto px-4 py-8">
@@ -27,7 +32,8 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-        </body>
-      </html>
+        </Providers>
+      </body>
+    </html>
   );
 }

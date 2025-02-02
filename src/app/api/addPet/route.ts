@@ -14,18 +14,17 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const { name, breed, birthDate, weight, color, ownerId } =
-    await request.json();
+  const { name, breed, bornAt, weight, color, ownerId } = await request.json();
   try {
     const newPet = await prisma.pet.create({
       data: {
         name,
         breed,
-        bornAt: new Date(birthDate),
-        weight: weight,
+        bornAt,
+        weight,
         color,
         ownerId,
-        updatedAt: new Date(),
+        updatedAt: new Date().toISOString(),
       },
     });
     return NextResponse.json(newPet, { status: 201 });

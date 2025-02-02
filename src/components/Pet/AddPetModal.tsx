@@ -1,25 +1,37 @@
-import { useAuthUser } from "@/hooks/useAuthUser";
-import { createClient } from "@/utils/supabase/client";
+import { useAddPet } from "@/hooks/useQueries";
+import { NewPet } from "@/types/pet";
+import { User } from "@supabase/supabase-js";
 import React, { useState } from "react";
 
 interface AddPetModalProps {
+  user: User | null;
   isOpen: boolean;
   onClose: () => void;
-  setUpdatedPets: (updated: boolean) => void;
 }
 
-const AddPetModal: React.FC<AddPetModalProps> = ({
-  isOpen,
-  onClose,
-  setUpdatedPets,
-}) => {
-  const supabase = createClient();
-  const user = useAuthUser();
-  const [name, setName] = useState("");
-  const [breed, setBreed] = useState("");
-  const [birthDate, setBirthday] = useState("");
-  const [weight, setWeight] = useState(0);
-  const [color, setColor] = useState("");
+const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
+  const addPetMutation = useAddPet();
+  const [pet, setPet] = useState<NewPet>({
+    name: "",
+    breed: "",
+    bornAt: "",
+    weight: 0,
+    color: "",
+    isDead: false,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPet((prev) => ({
+      ...prev,
+      [name]:
+        name === "weight"
+          ? Number(value)
+          : name === "bornAt"
+            ? new Date(value).toISOString()
+            : value,
+    }));
+  };
 
   const handleSubmit = async () => {
     if (!user) {
@@ -28,28 +40,13 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
     }
 
     try {
-      const { data: newPet, error } = await supabase
-        .from("pets")
-        .insert([
-          {
-            name,
-            breed,
-            birth_date: birthDate,
-            weight,
-            color,
-            owner_id: user.id,
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      setUpdatedPets(true);
+      await addPetMutation.mutateAsync({
+        ...pet,
+        ownerId: user.id,
+      });
       onClose();
     } catch (error) {
+      console.error("Error adding pet:", error);
     }
   };
 
@@ -65,41 +62,46 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
           <p>Imię myszy</p>
           <input
             type="text"
+            name="name"
             placeholder="Imię myszy"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={pet.name}
+            onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <p>Rasa</p>
           <input
             type="text"
+            name="breed"
             placeholder="Rasa"
-            value={breed}
-            onChange={(e) => setBreed(e.target.value)}
+            value={pet.breed}
+            onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <p>Umaszczenie</p>
           <input
             type="text"
+            name="color"
             placeholder="Umaszczenie"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
+            value={pet.color}
+            onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
-          <p> Data urodzenia</p>
+          <p>Data urodzenia</p>
           <input
             type="date"
+            name="bornAt"
             placeholder="Data Urodzenia"
-            value={birthDate}
-            onChange={(e) => setBirthday(e.target.value)}
+            value={pet.bornAt}
+            onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <p>Waga</p>
           <input
             type="text"
+            name="weight"
             placeholder="Waga"
-            value={weight}
-            onChange={(e) => setWeight(Number(e.target.value))}
+            value={pet.weight}
+            onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
         </div>

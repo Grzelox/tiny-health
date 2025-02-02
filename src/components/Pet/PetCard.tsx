@@ -1,14 +1,15 @@
-import { Pet } from "@/types/pet";
+import { deletePet } from "@/hooks/useQueries";
+import { OwnedPets } from "@/types/pet";
 import { format } from "date-fns";
 import { RatIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface PetCardProps {
-  pet: Pet;
-  onDelete: (petId: string) => void;
+  pet: OwnedPets;
 }
 
-export default function PetCard({ pet, onDelete }: PetCardProps) {
+export default function PetCard({ pet }: PetCardProps) {
+  const deletePetMutation = deletePet();
   const isDead = pet.isDead;
 
   return (
@@ -28,7 +29,7 @@ export default function PetCard({ pet, onDelete }: PetCardProps) {
           </span>
           <Trash2Icon
             className={`w-6 h-6 ${isDead ? "text-black" : "text-red-600"} cursor-pointer`}
-            onClick={() => onDelete(pet.id)}
+            onClick={() => deletePetMutation.mutate(pet.id)}
           />
         </div>
         <div className="flex-grow">

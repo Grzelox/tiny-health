@@ -10,8 +10,8 @@ export default function Welcome() {
       <h1 className="text-4xl font-bold text-primary-800 mb-4">tiny health</h1>
       <p className="text-xl text-secondary-600 mb-8">
         Aplikacja do śledzenia zdrowia i historii medycznej twojego małego
-        przyjaciela
+        przyjaciela, zaloguj się aby rozpocząć korzystanie z aplikacji.
       </p>
-      </div>
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
+export async function DELETE(request: Request) {
   const supabase = await createClient();
   const {
     data: { session },
@@ -15,24 +15,19 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const searchParams = new URL(request.url).searchParams;
-  const ownerId = searchParams.get("ownerId");
-  if (!ownerId) {
-    return NextResponse.json(
-      { error: "Owner ID is required" },
-      { status: 400 },
-    );
-  }
+  const { petId } = await request.json();
+
   try {
-    const pets = await prisma.pet.findMany({
+    const deletedPet = await prisma.pet.delete({
       where: {
-        ownerId: ownerId,
+        id: Number(petId),
       },
     });
-    return NextResponse.json(pets, { status: 200 });
+    return NextResponse.json("OK", { status: 200 });
   } catch (error) {
+    console.error("Error deleting pet:", error);
     return NextResponse.json(
-      { error: "Error fetching pets data" },
+      { error: "Error deleting pet record" },
       { status: 500 },
     );
   }

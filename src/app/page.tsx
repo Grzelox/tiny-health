@@ -4,7 +4,7 @@ import Dashboard from "@/components/Dashboard";
 import Welcome from "@/components/Welcome";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -13,7 +13,9 @@ export default function Home() {
   useEffect(() => {
     const fetchUser = async () => {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       setUser(user);
       setIsLoading(false);
     };
@@ -21,7 +23,11 @@ export default function Home() {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center">
+        <span className="text-blue-500 text-lg">Loading...</span>
+      </div>
+    );
   }
 
   return user ? <Dashboard /> : <Welcome />;
