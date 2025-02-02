@@ -6,7 +6,6 @@ import { PetData, UploadedImage, VetVisit } from "@/types/pet";
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const { data: petQueryData = null, isLoading, error } = usePetData(params.id);
-  console.log("petQueryData", petQueryData);
   if (isLoading) {
     return (
       <div className="flex items-center justify-center">

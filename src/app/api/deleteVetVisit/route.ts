@@ -1,4 +1,3 @@
-import { VetVisit } from "@/types/pet";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
@@ -15,7 +14,8 @@ export async function DELETE(request: Request) {
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const { id }: VetVisit = await request.json();
+  const { id } = await request.json();
+  console.log("id", id);
   try {
     const deletedVisit = await prisma.vetVisit.delete({
       where: {

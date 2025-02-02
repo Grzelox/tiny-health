@@ -107,8 +107,8 @@ export const useEditVetVisit = () => {
       if (!response.ok) throw new Error("Failed to edit visit");
       return response.json();
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pet"] });
     },
   });
 };
@@ -121,7 +121,7 @@ export const useDeleteVetVisit = () => {
       const response = await fetch(`/api/deleteVetVisit`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visitId }),
+        body: JSON.stringify({ id: visitId }),
       });
       if (!response.ok) throw new Error("Failed to delete visit");
       return response.json();

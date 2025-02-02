@@ -1,9 +1,8 @@
-// src/components/PetModals.tsx
 import React from 'react';
 import AddVetVisitModal from '@/components/VetVisit/AddVetVisitModal';
 import EditVetVisitModal from '@/components/Pet/EditVetVisitModal';
 import EditPetModal from '@/components/Pet/EditPetModal';
-import { Pet, VetVisit } from '@/types/pet';
+import { PetData, VetVisit } from '@/types/pet';
 
 interface PetModalsProps {
   petId: number;

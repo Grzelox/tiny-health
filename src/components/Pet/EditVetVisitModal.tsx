@@ -1,3 +1,4 @@
+import { useEditVetVisit } from "@/hooks/useQueries";
 import { VetVisit } from "@/types/pet";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
@@ -21,6 +22,8 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
   const [medication, setMedication] = useState("");
   const [date, setDate] = useState("");
 
+  const { mutate: editVetVisit } = useEditVetVisit();
+
   useEffect(() => {
     if (visit) {
       setDescription(visit.description || "");
@@ -30,26 +33,14 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
   }, [visit]);
 
   const handleSubmit = async () => {
-    try {
-      const response = await fetch("/api/editVetVisit", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          description,
-          medication,
-          date,
-          id: visitId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update visit");
-      }
-    } catch (error) {
-      console.error("Error updating visit:", error);
-    }
+    const updatedVisit: VetVisit = {
+      id: visitId,
+      petId: visit?.petId || 0,
+      description: description,
+      medication: medication,
+      date: new Date(date),
+    };
+    editVetVisit(updatedVisit);
     onClose();
   };
 

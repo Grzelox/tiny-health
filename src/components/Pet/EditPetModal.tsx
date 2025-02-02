@@ -36,7 +36,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
     if (pet) {
       setName(pet.name);
       setBreed(pet.breed);
-      setBirthday(pet.birthDate);
+      setBirthday(pet.bornAt);
       setWeight(pet.weight);
       setColor(pet.color);
       setIsDead(pet.isDead);

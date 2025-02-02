@@ -19,7 +19,6 @@ export default function PetSummary({
 }) {
   const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const handleEditClick = () => setIsEditPetModalOpen(true);
-  console.log("petSummary", pet);
   return (
     <div>
       <div>

@@ -14,7 +14,6 @@ interface PetInfoProps {
 }
 
 export default function PetInfo({ petData, onEditClick }: PetInfoProps) {
-  console.log("pet info", petData);
   if (!petData) return null;
   return (
     <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
