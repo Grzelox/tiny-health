@@ -1,15 +1,13 @@
 "use client";
 
 import { UploadDropzone, useUploadThing } from "@/utils/uploadthing";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function MediaUploader({ petId }: { petId: number }) {
-  const [uploadedFiles, setUploadedFiles] = useState<
-    { url: string; key: string }[]
-  >([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(
-    null,
-  );
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { startUpload } = useUploadThing("imageUploader", {
     /**
@@ -19,14 +17,8 @@ export default function MediaUploader({ petId }: { petId: number }) {
       return files;
     },
     onUploadBegin: (name) => {},
-    onClientUploadComplete: (res) => {
-      setUploadedFiles((prev) => [
-        ...prev,
-        ...res.map((file) => ({ url: file.url, key: file.key })),
-      ]);
-    },
-    onUploadProgress(p) {
-    },
+    onClientUploadComplete: (res) => {},
+    onUploadProgress(p) {},
   });
 
   return (
@@ -41,10 +33,10 @@ export default function MediaUploader({ petId }: { petId: number }) {
           alert("Upload Aborted");
         }}
         onClientUploadComplete={(res) => {
-          setUploadedFiles((prev) => [
-            ...prev,
-            ...res.map((file) => ({ url: file.url, key: file.key })),
-          ]);
+          queryClient.invalidateQueries({
+            queryKey: ["pets"],
+          });
+          window.location.reload(); //reload page after sucesfull upload
         }}
         appearance={{
           container:

@@ -29,7 +29,6 @@ export const usePetData = (petId: string) => {
       );
       if (!response.ok) throw new Error("Failed to fetch pet data");
       const data = await response.json();
-      console.log("data from usePetData", data);
       return data[0] ? { ...data[0] } : null;
     },
     enabled: !!petId,

@@ -38,16 +38,17 @@ export const ourFileRouter = {
       const petId = input.petId;
       if (!userId) throw new UploadThingError("Unauthorized");
       if (!petId) throw new UploadThingError("Pet ID is required");
-      // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { userId, petId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      //console.log("Upload complete for userId:", metadata.userId);
       await saveFileToDatabase({ url: file.url, metadata });
-      //console.log("file url", file.url);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.userId, petId: metadata.petId };
+      return {
+        uploadedBy: metadata.userId,
+        petId: metadata.petId,
+        shouldInvalidateQueries: true,
+      };
     }),
 } satisfies FileRouter;
 
@@ -68,8 +69,5 @@ async function saveFileToDatabase({
         createdAt: new Date().toISOString(),
       },
     });
-   //console.log("File saved to database successfully", res);
-  } catch (err) {
-    //console.error("Error saving file to database", err);
-  }
+  } catch (err) {}
 }
