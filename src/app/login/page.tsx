@@ -40,7 +40,9 @@ export default function LoginPage() {
 
   const handleSignOut = async (): Promise<void> => {
     const { error } = await supabase.auth.signOut();
-    window.location.reload();
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
     if (error) {
       console.error("Error signing out:", error.message);
     }

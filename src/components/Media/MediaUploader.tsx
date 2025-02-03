@@ -36,7 +36,9 @@ export default function MediaUploader({ petId }: { petId: number }) {
           queryClient.invalidateQueries({
             queryKey: ["pets"],
           });
-          window.location.reload(); //reload page after sucesfull upload
+          if (typeof window !== "undefined") {
+            window.location.reload();
+          }
         }}
         appearance={{
           container:
@@ -47,8 +49,7 @@ export default function MediaUploader({ petId }: { petId: number }) {
             "ut-ready:bg-primary-600 ut-uploading:cursor-not-allowed rounded-lg px-4 py-2 text-white bg-primary-700 transition-colors",
           uploadIcon: "text-primary-500",
         }}
-        onUploadBegin={() => {
-        }}
+        onUploadBegin={() => {}}
         className="bg-pastel-yellow text-black py-2 px-4 rounded-full hover:bg-pastel-yellow-dark transition mt-4"
       />
     </div>
