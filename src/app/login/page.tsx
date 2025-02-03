@@ -40,6 +40,7 @@ export default function LoginPage() {
 
   const handleSignOut = async (): Promise<void> => {
     const { error } = await supabase.auth.signOut();
+    window.location.reload();
     if (error) {
       console.error("Error signing out:", error.message);
     }
@@ -53,10 +54,7 @@ export default function LoginPage() {
           appearance={{ theme: ThemeSupa }}
           providers={["google"]}
           onlyThirdPartyProviders={true}
-          redirectTo={
-            process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL ||
-            "https://tiny-health.vercel.app"
-          }
+          redirectTo={`${window.location.origin}/`}
         />
       </AuthContainer>
     );
