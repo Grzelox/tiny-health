@@ -54,7 +54,8 @@ export default function LoginPage() {
           providers={["google"]}
           onlyThirdPartyProviders={true}
           redirectTo={
-            process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL || "http://localhost:3000"
+            process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL ||
+            "https://tiny-health.vercel.app"
           }
         />
       </AuthContainer>
