@@ -2,12 +2,10 @@
 
 import { UploadDropzone, useUploadThing } from "@/utils/uploadthing";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 
 export default function MediaUploader({ petId }: { petId: number }) {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const { startUpload } = useUploadThing("imageUploader", {
     /**
@@ -50,7 +48,7 @@ export default function MediaUploader({ petId }: { petId: number }) {
           uploadIcon: "text-primary-500",
         }}
         onUploadBegin={() => {}}
-        className="bg-pastel-yellow text-black py-2 px-4 rounded-full hover:bg-pastel-yellow-dark transition mt-4"
+        className="bg-pastel-yellow text-black py-4 rounded-full hover:bg-pastel-yellow-dark transition mt-4"
       />
     </div>
   );

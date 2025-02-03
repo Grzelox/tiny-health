@@ -40,11 +40,12 @@ export default function LoginPage() {
 
   const handleSignOut = async (): Promise<void> => {
     const { error } = await supabase.auth.signOut();
-    if (typeof window !== "undefined") {
-      window.location.reload();
-    }
     if (error) {
       console.error("Error signing out:", error.message);
+      return;
+    }
+    if (typeof window !== "undefined") {
+      window.location.reload();
     }
   };
 
@@ -56,7 +57,7 @@ export default function LoginPage() {
           appearance={{ theme: ThemeSupa }}
           providers={["google"]}
           onlyThirdPartyProviders={true}
-          redirectTo={`${window.location.origin}/`}
+          redirectTo={process.env.NEXT_PUBLIC_BASE_URL}
         />
       </AuthContainer>
     );

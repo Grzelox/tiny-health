@@ -29,9 +29,12 @@ export default function AuthSection() {
 
   const handleSignOut = async (): Promise<void> => {
     const { error } = await supabase.auth.signOut();
-    window.location.reload();
     if (error) {
       console.error("Error signing out:", error.message);
+      return;
+    }
+    if (typeof window !== "undefined") {
+      window.location.reload();
     }
   };
 
