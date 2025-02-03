@@ -57,7 +57,9 @@ export default function LoginPage() {
           appearance={{ theme: ThemeSupa }}
           providers={["google"]}
           onlyThirdPartyProviders={true}
-          redirectTo="https://tiny-health.vercel.app"
+          redirectTo={
+            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+          }
         />
       </AuthContainer>
     );
