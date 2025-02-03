@@ -49,8 +49,8 @@ export const useAddPet = () => {
       const data = await response.json();
       return { ...data };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pets", variables.ownerId] });
     },
   });
 };
@@ -59,7 +59,16 @@ export const useEditPet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (petData: Pet) => {
+    mutationFn: async (petData: {
+      id: string;
+      name: string;
+      breed: string;
+      bornAt: string;
+      weight: number;
+      color: string;
+      isDead: boolean;
+      ownerId: string;
+    }) => {
       const response = await fetch("/api/editPet", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -69,7 +78,7 @@ export const useEditPet = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
+      queryClient.invalidateQueries({ queryKey: ["pets", variables.ownerId] });
       queryClient.invalidateQueries({ queryKey: ["pet", variables.id] });
     },
   });
@@ -89,7 +98,9 @@ export const useAddVetVisit = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+      queryClient.invalidateQueries({
+        queryKey: ["pet", variables.petId.toString()],
+      });
     },
   });
 };
@@ -107,8 +118,10 @@ export const useEditVetVisit = () => {
       if (!response.ok) throw new Error("Failed to edit visit");
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pet"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["pet", variables.petId.toString()],
+      });
     },
   });
 };
@@ -117,7 +130,8 @@ export const useDeleteVetVisit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (visitId: Number) => {
+    mutationFn: async (petData: { petId: number; visitId: number }) => {
+      const { petId, visitId } = petData;
       const response = await fetch(`/api/deleteVetVisit`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -126,8 +140,10 @@ export const useDeleteVetVisit = () => {
       if (!response.ok) throw new Error("Failed to delete visit");
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pet"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["pet", variables.petId.toString()],
+      });
     },
   });
 };
@@ -136,15 +152,18 @@ export const deletePet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (petId: string) => {
+    mutationFn: async (petData: { petId: string }) => {
+      const { petId } = petData;
       const response = await fetch(`/api/deletePet`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ petId }),
+        body: JSON.stringify({ petId: petId }),
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["pets"],
+      });
     },
     onError: (error: Error) => {
       console.error("Error deleting pet:", error);

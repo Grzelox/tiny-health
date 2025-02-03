@@ -29,7 +29,7 @@ export default function PetCard({ pet }: PetCardProps) {
           </span>
           <Trash2Icon
             className={`w-6 h-6 ${isDead ? "text-black" : "text-red-600"} cursor-pointer`}
-            onClick={() => deletePetMutation.mutate(pet.id)}
+            onClick={() => deletePetMutation.mutate({ petId: pet.id })}
           />
         </div>
         <div className="flex-grow">

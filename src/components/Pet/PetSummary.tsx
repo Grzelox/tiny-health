@@ -1,10 +1,12 @@
+"use client";
+
 import { PetData, UploadedImage, VetVisit } from "@/types/pet";
 import { useState } from "react";
 
+import Gallery from "../Media/Gallery";
 import MediaUploader from "../Media/MediaUploader";
 import VetVisitList from "../VetVisit/VetVisitList";
 import PetInfo from "./PetInfo";
-import Gallery from "../Media/Gallery";
 
 export default function PetSummary({
   petId,
@@ -22,7 +24,7 @@ export default function PetSummary({
   return (
     <div>
       <div>
-        <PetInfo petData={pet} onEditClick={handleEditClick} />
+        <PetInfo petData={pet} />
       </div>
       <div>
         <VetVisitList petId={petId} vetVisits={vetVisits} />

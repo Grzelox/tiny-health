@@ -14,7 +14,6 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  //console.log("middleware session", session);
   // Get the current path
   const path = req.nextUrl.pathname;
 
