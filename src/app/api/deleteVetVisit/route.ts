@@ -15,7 +15,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const { id } = await request.json();
-  console.log("id", id);
   try {
     const deletedVisit = await prisma.vetVisit.delete({
       where: {

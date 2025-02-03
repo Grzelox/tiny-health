@@ -1,11 +1,12 @@
-import { Pet } from "@/types/pet";
+import { useEditPet } from "@/hooks/useQueries";
+import { Pet, PetData } from "@/types/pet";
 import { createClient } from "@/utils/supabase/client";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  pet: Pet | null;
+  pet: PetData | null;
 }
 
 const EditPetModal: React.FC<EditPetModalProps> = ({
@@ -22,6 +23,8 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
   const [ownerId, setOwnerId] = useState<string | null>(null);
   const supabase = createClient();
 
+  const { mutate: editPet } = useEditPet();
+
   useEffect(() => {
     const getUser = async () => {
       const {
@@ -36,41 +39,29 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
     if (pet) {
       setName(pet.name);
       setBreed(pet.breed);
-      setBirthday(pet.bornAt);
+      const formattedDate = new Date(pet.bornAt).toISOString().split("T")[0];
+      setBirthday(formattedDate);
       setWeight(pet.weight);
       setColor(pet.color);
       setIsDead(pet.isDead);
     }
   }, [pet]);
 
-  const handleSubmit = async () => {
-    try {
-      if (!pet) {
-        throw new Error("Pet not found");
-      }
-      const response = await fetch("/api/editPet", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          breed,
-          birthDate,
-          weight,
-          color,
-          ownerId,
-          isDead,
-          id: pet.id,
-        }),
-      });
+  const handleSubmit = () => {
+    if (!pet) {
+      return;
+    }
 
-      if (!response.ok) {
-        throw new Error("Failed to add new pet");
-      }
-
-      const newPet = await response.json();
-    } catch (error) {}
+    editPet({
+      id: pet.id.toString(),
+      name,
+      breed,
+      bornAt: new Date(birthDate).toISOString(),
+      weight,
+      color,
+      isDead,
+      ownerId: ownerId ?? "",
+    });
     onClose();
   };
 

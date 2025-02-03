@@ -1,4 +1,4 @@
-import { VetVisit } from "@/types/pet";
+import { useAddVetVisit } from "@/hooks/useQueries";
 import React, { useState } from "react";
 
 interface AddVetVisitModalProps {
@@ -16,29 +16,16 @@ const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({
   const [medication, setMedication] = useState("");
   const [date, setDate] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch("/api/addVetVisit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          description,
-          medication,
-          date,
-          petId,
-        }),
-      });
+  const { mutate: addVetVisit } = useAddVetVisit();
 
-      if (!response.ok) {
-        throw new Error("Failed to add new pet");
-      }
-
-      const newVisit = await response.json();
-    } catch (error) {
-      console.error("Error adding new visit:", error);
-    }
+  const handleSubmit = () => {
+    const newVisit = {
+      petId,
+      description,
+      medication,
+      date: new Date(date),
+    };
+    addVetVisit(newVisit);
     onClose();
   };
 

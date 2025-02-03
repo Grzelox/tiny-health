@@ -48,7 +48,6 @@ export default function MediaUploader({ petId }: { petId: number }) {
           uploadIcon: "text-primary-500",
         }}
         onUploadBegin={() => {
-          console.log("upload begin");
         }}
         className="bg-pastel-yellow text-black py-2 px-4 rounded-full hover:bg-pastel-yellow-dark transition mt-4"
       />

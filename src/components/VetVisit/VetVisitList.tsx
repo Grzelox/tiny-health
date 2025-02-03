@@ -1,10 +1,12 @@
-import { useDeleteVetVisit } from "@/hooks/useQueries";
+import {
+  useDeleteVetVisit,
+} from "@/hooks/useQueries";
 import { VetVisit } from "@/types/pet";
 import React, { useState } from "react";
 
-import EditVetVisitModal from "../Pet/EditVetVisitModal";
 import AddVetVisitModal from "./AddVetVisitModal";
 import VetVisitItem from "./VetVisitItem";
+import EditVetVisitModal from "../Pet/EditVetVisitModal";
 
 interface VetVisitListProps {
   petId: number;
@@ -28,7 +30,7 @@ export default function VetVisitList({ petId, vetVisits }: VetVisitListProps) {
   };
 
   const handleRemoveClick = (visitId: number) => {
-    deleteVetVisit(visitId);
+    deleteVetVisit({ petId: petId, visitId: visitId });
   };
 
   if (!vetVisits) return null;

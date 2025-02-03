@@ -14,17 +14,17 @@ export async function PATCH(request: Request) {
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const { name, breed, birthDate, weight, color, ownerId, id, isDead } =
+  const { name, breed, bornAt, weight, color, ownerId, id, isDead } =
     await request.json();
   try {
     const updatedPet = await prisma.pet.update({
       where: {
-        id: id,
+        id: Number(id),
       },
       data: {
         name,
         breed,
-        bornAt: new Date(birthDate),
+        bornAt,
         weight: weight,
         color,
         ownerId,
@@ -40,5 +40,4 @@ export async function PATCH(request: Request) {
       { status: 500 },
     );
   }
-};
-
+}

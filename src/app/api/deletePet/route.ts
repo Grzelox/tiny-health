@@ -16,7 +16,6 @@ export async function DELETE(request: Request) {
   }
 
   const { petId } = await request.json();
-
   try {
     const deletedPet = await prisma.pet.delete({
       where: {
