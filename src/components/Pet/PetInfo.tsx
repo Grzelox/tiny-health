@@ -48,19 +48,19 @@ export default function PetInfo({ petData }: PetInfoProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-primary-50 p-4 rounded-lg">
             <Calendar className="w-6 h-6 text-primary-600 mb-2" />
-            <p className="text-sm text-secondary-600">Birth Date</p>
+            <p className="text-sm text-secondary-600">Data urodzenia</p>
             <p className="font-medium">
-              {new Date(petData.bornAt).toLocaleDateString()}
+              {new Date(petData.bornAt).toLocaleDateString("pl-PL")}
             </p>
           </div>
           <div className="bg-primary-50 p-4 rounded-lg">
             <Stethoscope className="w-6 h-6 text-primary-600 mb-2" />
-            <p className="text-sm text-secondary-600">Weight [g]</p>
+            <p className="text-sm text-secondary-600">Waga [g]</p>
             <p className="font-medium">{petData.weight}</p>
           </div>
           <div className="bg-primary-50 p-4 rounded-lg">
             <PaintRoller className="w-6 h-6 text-primary-600 mb-2" />
-            <p className="text-sm text-secondary-600">Color</p>
+            <p className="text-sm text-secondary-600">Kolor</p>
             <p className="font-medium">{petData.color}</p>
           </div>
         </div>
