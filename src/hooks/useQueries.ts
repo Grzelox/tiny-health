@@ -1,16 +1,14 @@
 import { Pet, VetVisit } from "@/types/pet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const usePets = (ownerId: string | null) => {
+export const usePets = (ownerId: string | any) => {
   return useQuery({
     queryKey: ["pets", ownerId],
     queryFn: async () => {
       if (!ownerId) return [];
       const searchParams = new URLSearchParams();
       searchParams.set("ownerId", ownerId);
-      const response = await fetch(
-        `/api/getOwnedPets?${searchParams.toString()}`,
-      );
+      const response = await fetch(`/api/getOwnedPets?${searchParams.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch pets");
       return response.json();
     },
@@ -24,9 +22,7 @@ export const usePetData = (petId: string) => {
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       searchParams.set("id", petId);
-      const response = await fetch(
-        `/api/getPetData?${searchParams.toString()}`,
-      );
+      const response = await fetch(`/api/getPetData?${searchParams.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch pet data");
       const data = await response.json();
       return data[0] ? { ...data[0] } : null;
@@ -165,8 +161,68 @@ export const deletePet = () => {
         queryKey: ["pets"],
       });
     },
-    onError: (error: Error) => {
-      console.error("Error deleting pet:", error);
+    onError: (error: Error) => {},
+  });
+};
+
+export interface WeightRecord {
+  id: string;
+  petId: number;
+  weight: number;
+}
+
+export const useGetWeightHistory = (petId: number) => {
+  return useQuery({
+    queryKey: ["weightHistory", petId],
+    queryFn: async () => {
+      if (!petId) return [];
+      const searchParams = new URLSearchParams();
+      searchParams.set("petId", petId.toString());
+      const response = await fetch(`/api/getWeightHistory?${searchParams.toString()}`);
+      if (!response.ok) throw new Error("Failed to fetch weight history");
+      return response.json();
+    },
+    enabled: !!petId,
+  });
+};
+
+export const useAddWeightRecord = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (weightData: Omit<WeightRecord, "id">) => {
+      const response = await fetch("/api/addWeightRecord", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(weightData),
+      });
+      if (!response.ok) throw new Error("Failed to add weight record");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["weightHistory", variables.petId] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+    },
+  });
+};
+
+export const useDeleteWeightRecord = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ petId, id }: { petId: number; id: string }) => {
+      const response = await fetch(`/api/deleteWeightRecord?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete weight record");
+      }
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["weightHistory", variables.petId] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
     },
   });
 };

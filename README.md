@@ -1,7 +1,8 @@
 # 🐁 Tiny Health
 
 <div align="center">
-  <img src="docs.png" alt="Tiny Health Dashboard" width="800"/>
+  <img src="public/example1.webp" alt="Tiny Health Dashboard" width="800"/>
+  <img src="public/example2.webp" alt="Tiny Health Features" width="800"/>
 </div>
 
 ## About
@@ -21,7 +22,7 @@ This project also served as a learning ground to deepen my understanding of mode
 - **UI/Styling**: React, Tailwind CSS
 - **State Management**: React Query
 - **Database**: Supabase
-- **Authentication**: Supabase Auth with Google Sign-in
+- **Authentication**: Clerk with Google Sign-in
 - **Hosting**: Vercel
 - **ORM**: Prisma
 
@@ -32,6 +33,7 @@ This project also served as a learning ground to deepen my understanding of mode
 - Node.js (v18 or higher)
 - npm or yarn
 - Supabase account
+- Clerk account
 
 ### Installation
 
@@ -56,7 +58,7 @@ yarn install
 cp .env.example .env.local
 ```
 
-Fill in your Supabase credentials in `.env.local`
+Fill in your Supabase and Clerk credentials in `.env.local`
 
 4. Set up the database
 

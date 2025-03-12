@@ -1,31 +1,25 @@
-import { createClient } from "@/utils/supabase/server";
-import { PrismaClient } from "@prisma/client";
+import { withPrisma } from "@/utils/prisma";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
-
 export async function DELETE(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const user = session?.user;
+  const { userId } = await auth();
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const { id } = await request.json();
   try {
-    const deletedVisit = await prisma.vetVisit.delete({
-      where: {
-        id: Number(id),
-      },
+    const result = await withPrisma(async (prisma) => {
+      const deletedVisit = await prisma.vetVisit.delete({
+        where: {
+          id: Number(id),
+        },
+      });
+      return deletedVisit;
     });
-    return NextResponse.json("OK", { status: 201 });
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Error deleting vet visit record" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Error deleting vet visit record" }, { status: 500 });
   }
 }

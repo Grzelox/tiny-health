@@ -2,12 +2,12 @@
 
 import AddPetButton from "@/components/Pet/AddPetButton";
 import PetCard from "@/components/Pet/PetCard";
-import { useAuthUser } from "@/hooks/useAuth";
 import { usePets } from "@/hooks/useQueries";
 import { OwnedPets } from "@/types/pet";
-import { User } from "@supabase/supabase-js";
+import { useUser } from "@clerk/nextjs";
 import React, { useState } from "react";
 
+import LoadingSpinner from "./LoadingSpinner";
 import AddPetModal from "./Pet/AddPetModal";
 
 interface DashboardContentProps {
@@ -15,10 +15,7 @@ interface DashboardContentProps {
   onOpenModal: () => void;
 }
 
-const DashboardContent: React.FC<DashboardContentProps> = ({
-  pets,
-  onOpenModal,
-}) => {
+const DashboardContent: React.FC<DashboardContentProps> = ({ pets, onOpenModal }) => {
   const gridClassName = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
 
   if (pets.length === 0) {
@@ -41,14 +38,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const user = useAuthUser() as User;
-  const { data: pets = [], isLoading, error } = usePets(user?.id);
+  const { user } = useUser();
+  const userId = user?.id;
+  const { data: pets = [], isLoading, error } = usePets(userId);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center">
-        <span className="text-blue-500 text-lg">Loading...</span>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -65,11 +62,7 @@ export default function Dashboard() {
     <div className="min-h-screen">
       <h1 className="text-3xl font-bold text-primary-800 mb-8">Moje stadko</h1>
       <DashboardContent pets={pets} onOpenModal={() => setIsModalOpen(true)} />
-      <AddPetModal
-        user={user}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <AddPetModal user={user} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

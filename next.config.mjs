@@ -48,13 +48,13 @@ const config = {
         hostname: "utfs.io",
         protocol: "https",
         port: "",
-        pathname: "/**", // General pattern to match any path
+        pathname: "/**",
       },
       {
         hostname: "utfs.io",
         protocol: "http",
         port: "",
-        pathname: "/**", // General pattern to match any path
+        pathname: "/**",
       },
     ],
   },

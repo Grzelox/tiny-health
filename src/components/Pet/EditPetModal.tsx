@@ -1,6 +1,5 @@
 import { useEditPet } from "@/hooks/useQueries";
 import { Pet, PetData } from "@/types/pet";
-import { createClient } from "@/utils/supabase/client";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
@@ -9,11 +8,7 @@ interface EditPetModalProps {
   pet: PetData | null;
 }
 
-const EditPetModal: React.FC<EditPetModalProps> = ({
-  isOpen,
-  onClose,
-  pet,
-}) => {
+const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => {
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [birthDate, setBirthday] = useState("");
@@ -21,19 +16,8 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
   const [color, setColor] = useState("");
   const [isDead, setIsDead] = useState(false);
   const [ownerId, setOwnerId] = useState<string | null>(null);
-  const supabase = createClient();
 
   const { mutate: editPet } = useEditPet();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setOwnerId(user?.id ?? null);
-    };
-    getUser();
-  }, [supabase]);
 
   useEffect(() => {
     if (pet) {
@@ -70,9 +54,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">
-          Aktualizuj dane myszy
-        </h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Aktualizuj dane myszy</h2>
         <div className="space-y-4">
           <p>Imię myszy</p>
           <input
@@ -125,10 +107,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
           </div>
         </div>
         <div className="mt-6 flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">
             Zamknij
           </button>
           <button

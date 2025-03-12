@@ -2,14 +2,23 @@
 
 import PetSummary from "@/components/Pet/PetSummary";
 import { usePetData } from "@/hooks/useQueries";
-import { PetData, UploadedImage, VetVisit } from "@/types/pet";
+import { PetData } from "@/types/pet";
+import { useQueryClient } from "@tanstack/react-query";
+import { SyncLoader } from "react-spinners";
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
-  const { data: petQueryData = null, isLoading, error } = usePetData(params.id);
+  const queryClient = useQueryClient();
+  const { data: petQueryData = null, isLoading, error, refetch } = usePetData(params.id);
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["pet", params.id] });
+    return refetch();
+  };
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center">
-        <span className="text-blue-500 text-lg">Loading...</span>
+      <div className="flex items-center justify-center h-[50vh]">
+        <SyncLoader color="#3b82f6" size={15} margin={8} />
       </div>
     );
   }
@@ -33,6 +42,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
       pet={petData}
       vetVisits={vetVisits}
       images={images}
+      onRefresh={handleRefresh}
     />
   );
 }

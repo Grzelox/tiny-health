@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 import type { FileRouter } from "uploadthing/next";
 import { createUploadthing } from "uploadthing/next";
@@ -30,11 +30,7 @@ export const ourFileRouter = {
       }),
     )
     .middleware(async ({ input }) => {
-      const supabase = await createClient();
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const userId = session?.user.id;
+      const { userId } = await auth();
       const petId = input.petId;
       if (!userId) throw new UploadThingError("Unauthorized");
       if (!petId) throw new UploadThingError("Pet ID is required");
@@ -54,13 +50,7 @@ export const ourFileRouter = {
 
 export type OurFileRouter = typeof ourFileRouter;
 
-async function saveFileToDatabase({
-  url,
-  metadata,
-}: {
-  url: string;
-  metadata: any;
-}) {
+async function saveFileToDatabase({ url, metadata }: { url: string; metadata: any }) {
   try {
     const res = await prisma.file.create({
       data: {

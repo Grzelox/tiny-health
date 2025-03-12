@@ -32,11 +32,7 @@ describe("AddPetModal Component", () => {
 
   const renderComponent = (isOpen: boolean) => {
     render(
-      <AddPetModal
-        isOpen={isOpen}
-        onClose={mockOnClose}
-        setUpdatedPets={mockSetUpdatedPets}
-      />,
+      <AddPetModal isOpen={isOpen} onClose={mockOnClose} setUpdatedPets={mockSetUpdatedPets} />,
     );
   };
 
@@ -61,10 +57,7 @@ describe("AddPetModal Component", () => {
     fireEvent.click(screen.getByText("Dodaj"));
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        "/api/addPet",
-        expect.any(Object),
-      );
+      expect(global.fetch).toHaveBeenCalledWith("/api/addPet", expect.any(Object));
       expect(mockSetUpdatedPets).toHaveBeenCalledWith(true);
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     });

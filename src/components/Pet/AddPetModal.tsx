@@ -1,10 +1,9 @@
 import { useAddPet } from "@/hooks/useQueries";
 import { NewPet } from "@/types/pet";
-import { User } from "@supabase/supabase-js";
 import React, { useState } from "react";
 
 interface AddPetModalProps {
-  user: User | null;
+  user: any | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -35,7 +34,6 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
 
   const handleSubmit = async () => {
     if (!user) {
-      console.error("No authenticated user found");
       return;
     }
 
@@ -46,7 +44,6 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
       });
       onClose();
     } catch (error) {
-      console.error("Error adding pet:", error);
     }
   };
 
@@ -55,9 +52,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">
-          Dodaj nową myszkę
-        </h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Dodaj nową myszkę</h2>
         <div className="space-y-4">
           <p>Imię myszy</p>
           <input
@@ -106,10 +101,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
           />
         </div>
         <div className="mt-6 flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">
             Zamknij
           </button>
           <button
