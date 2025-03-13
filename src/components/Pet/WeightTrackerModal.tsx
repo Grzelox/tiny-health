@@ -77,7 +77,6 @@ export default function WeightTrackerModal({
         day: "2-digit",
       });
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "Nieprawidłowa data";
     }
   };
@@ -96,7 +95,6 @@ export default function WeightTrackerModal({
         minute: "2-digit",
       });
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "Nieprawidłowa data";
     }
   };

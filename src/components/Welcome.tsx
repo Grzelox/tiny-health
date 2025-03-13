@@ -21,8 +21,8 @@ export default function Welcome() {
           swoich małych przyjaciół
         </h1>
         <p className="text-xl text-secondary-600 max-w-2xl mx-auto mb-8">
-          Zadbaj o dobrostan swoich gryzoni. Śledź ich historię medyczną, planuj wizyty u
-          weterynarza i monitoruj ich stan zdrowia w jednym miejscu.
+          Zadbaj o dobrostan swoich gryzoni. Zapisuj wszystkie wizyty u weterynarza i najważniejsze
+          informacje w jednym miejscu. Stwórz galerię zdjęć swojego pupila i śledź ich rozwój.
         </p>
       </motion.div>
 
@@ -47,10 +47,11 @@ export default function Welcome() {
             </div>
           </div>
           <div className="w-full md:w-1/3 text-left">
-            <h3 className="text-2xl font-semibold text-primary-800 mb-4">Historia medyczna</h3>
+            <h3 className="text-2xl font-semibold text-primary-800 mb-4">
+              Wszystkie myszy w jednym miejscu
+            </h3>
             <p className="text-lg text-secondary-600">
-              Zapisuj wszystkie wizyty u weterynarza, zabiegi i leki w jednym miejscu. Nigdy nie
-              zapomnisz o kolejnym szczepieniu czy kontroli. Miej pełną dokumentację medyczną zawsze
+              Zapisuj najważniejsze informacje o swoich myszkach w jednym miejscu i zawsze miej je
               pod ręką.
             </p>
           </div>
@@ -76,10 +77,9 @@ export default function Welcome() {
             </div>
           </div>
           <div className="w-full md:w-1/3 text-left">
-            <h3 className="text-2xl font-semibold text-primary-800 mb-4">Monitorowanie wagi</h3>
+            <h3 className="text-2xl font-semibold text-primary-800 mb-4">Galeria pod ręką</h3>
             <p className="text-lg text-secondary-600">
-              Śledź zmiany wagi swoich pupili i obserwuj ich rozwój na wykresach. Wczesne wykryj
-              niepokojące zmiany w ich kondycji. Analizuj trendy i dbaj o prawidłową dietę.
+              Dodawaj najfajniejsze zdjęcia swojego pupila i wracaj do wspomnień.
             </p>
           </div>
         </motion.div>

@@ -8,7 +8,7 @@ export const usePets = (ownerId: string | any) => {
       if (!ownerId) return [];
       const searchParams = new URLSearchParams();
       searchParams.set("ownerId", ownerId);
-      const response = await fetch(`/api/getOwnedPets?${searchParams.toString()}`);
+      const response = await fetch(`/api/v1/pets?${searchParams.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch pets");
       return response.json();
     },
@@ -22,7 +22,7 @@ export const usePetData = (petId: string) => {
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       searchParams.set("id", petId);
-      const response = await fetch(`/api/getPetData?${searchParams.toString()}`);
+      const response = await fetch(`/api/v1/pet?${searchParams.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch pet data");
       const data = await response.json();
       return data[0] ? { ...data[0] } : null;
@@ -36,7 +36,7 @@ export const useAddPet = () => {
 
   return useMutation({
     mutationFn: async (petData: Omit<Pet, "id" | "updatedAt">) => {
-      const response = await fetch("/api/addPet", {
+      const response = await fetch("/api/v1/pet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...petData }),
@@ -65,7 +65,7 @@ export const useEditPet = () => {
       isDead: boolean;
       ownerId: string;
     }) => {
-      const response = await fetch("/api/editPet", {
+      const response = await fetch("/api/v1/pet", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(petData),
@@ -85,7 +85,7 @@ export const useAddVetVisit = () => {
 
   return useMutation({
     mutationFn: async (visitData: Omit<VetVisit, "id">) => {
-      const response = await fetch("/api/addVetVisit", {
+      const response = await fetch("/api/v1/visit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(visitData),
@@ -106,7 +106,7 @@ export const useEditVetVisit = () => {
 
   return useMutation({
     mutationFn: async (visitData: VetVisit) => {
-      const response = await fetch("/api/editVetVisit", {
+      const response = await fetch("/api/v1/visit", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(visitData),
@@ -128,10 +128,8 @@ export const useDeleteVetVisit = () => {
   return useMutation({
     mutationFn: async (petData: { petId: number; visitId: number }) => {
       const { petId, visitId } = petData;
-      const response = await fetch(`/api/deleteVetVisit`, {
+      const response = await fetch(`/api/v1/visit?id=${visitId}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: visitId }),
       });
       if (!response.ok) throw new Error("Failed to delete visit");
       return response.json();
@@ -150,11 +148,11 @@ export const deletePet = () => {
   return useMutation({
     mutationFn: async (petData: { petId: string }) => {
       const { petId } = petData;
-      const response = await fetch(`/api/deletePet`, {
+      const response = await fetch(`/api/v1/pet?petId=${petId}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ petId: petId }),
       });
+      if (!response.ok) throw new Error("Failed to delete pet");
+      return response.json();
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -178,7 +176,7 @@ export const useGetWeightHistory = (petId: number) => {
       if (!petId) return [];
       const searchParams = new URLSearchParams();
       searchParams.set("petId", petId.toString());
-      const response = await fetch(`/api/getWeightHistory?${searchParams.toString()}`);
+      const response = await fetch(`/api/v1/weight?${searchParams.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch weight history");
       return response.json();
     },
@@ -191,7 +189,7 @@ export const useAddWeightRecord = () => {
 
   return useMutation({
     mutationFn: async (weightData: Omit<WeightRecord, "id">) => {
-      const response = await fetch("/api/addWeightRecord", {
+      const response = await fetch("/api/v1/weight", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(weightData),
@@ -211,7 +209,7 @@ export const useDeleteWeightRecord = () => {
 
   return useMutation({
     mutationFn: async ({ petId, id }: { petId: number; id: string }) => {
-      const response = await fetch(`/api/deleteWeightRecord?id=${id}`, {
+      const response = await fetch(`/api/v1/weight?id=${id}`, {
         method: "DELETE",
       });
 

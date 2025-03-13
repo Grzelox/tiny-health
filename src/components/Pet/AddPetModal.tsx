@@ -19,17 +19,38 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     isDead: false,
   });
 
+  // Format date for display in the input field
+  const formatDateForInput = (dateString: string): string => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+      return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD
+    } catch (error) {
+      return "";
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setPet((prev) => ({
-      ...prev,
-      [name]:
-        name === "weight"
-          ? Number(value)
-          : name === "bornAt"
-            ? new Date(value).toISOString()
-            : value,
-    }));
+
+    if (name === "weight") {
+      setPet((prev) => ({
+        ...prev,
+        weight: Number(value),
+      }));
+    } else if (name === "bornAt") {
+      // For date fields, store the ISO string in state but display formatted date
+      setPet((prev) => ({
+        ...prev,
+        bornAt: value ? new Date(value).toISOString() : "",
+      }));
+    } else {
+      setPet((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async () => {
@@ -44,6 +65,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
       });
       onClose();
     } catch (error) {
+      console.error("Error adding pet:", error);
     }
   };
 
@@ -86,16 +108,16 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
             type="date"
             name="bornAt"
             placeholder="Data Urodzenia"
-            value={pet.bornAt}
+            value={formatDateForInput(pet.bornAt)}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <p>Waga</p>
           <input
-            type="text"
+            type="number"
             name="weight"
             placeholder="Waga"
-            value={pet.weight}
+            value={pet.weight || ""}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
@@ -107,6 +129,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
           <button
             onClick={handleSubmit}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            disabled={!pet.name || !pet.bornAt}
           >
             Dodaj
           </button>

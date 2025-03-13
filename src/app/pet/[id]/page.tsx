@@ -32,9 +32,9 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
   }
 
   const petData = petQueryData as PetData;
-  const vetVisits = petData.vetVisits;
-  const images = petData.uploadedFiles;
-  const petId = petData.id;
+  const vetVisits = petData?.vetVisits ?? [];
+  const images = petData?.uploadedFiles ?? [];
+  const petId = petData?.id ?? 0;
 
   return (
     <PetSummary
