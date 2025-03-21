@@ -1,11 +1,11 @@
 import { deletePet } from "@/hooks/useQueries";
 import { OwnedPets } from "@/types/pet";
 import { format } from "date-fns";
-import { RatIcon, Trash2Icon } from "lucide-react";
+import { RatIcon, ShareIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface PetCardProps {
-  pet: OwnedPets;
+  pet: OwnedPets & { isShared?: boolean };
 }
 
 export default function PetCard({ pet }: PetCardProps) {
@@ -18,19 +18,19 @@ export default function PetCard({ pet }: PetCardProps) {
     >
       <div className="p-6 h-full flex flex-col relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <RatIcon
-            className={`w-8 h-8 ${isDead ? "text-gray-600" : "text-primary-600"}`}
-          />
-          <span
-            className={`text-sm ${isDead ? "text-gray-600" : "text-secondary-600"}`}
-          >
-            Ostatnia modyfikacja:{" "}
-            {format(new Date(pet.updatedAt), "dd.MM.yyyy")}
+          <div className="flex items-center gap-2">
+            <RatIcon className={`w-8 h-8 ${isDead ? "text-gray-600" : "text-primary-600"}`} />
+            {pet.isShared && <ShareIcon className="w-5 h-5 text-primary-600" />}
+          </div>
+          <span className={`text-sm ${isDead ? "text-gray-600" : "text-secondary-600"}`}>
+            Ostatnia modyfikacja: {format(new Date(pet.updatedAt), "dd.MM.yyyy")}
           </span>
-          <Trash2Icon
-            className={`w-6 h-6 ${isDead ? "text-black" : "text-red-600"} cursor-pointer`}
-            onClick={() => deletePetMutation.mutate({ petId: pet.id })}
-          />
+          {!pet.isShared && (
+            <Trash2Icon
+              className={`w-6 h-6 ${isDead ? "text-black" : "text-red-600"} cursor-pointer`}
+              onClick={() => deletePetMutation.mutate({ petId: pet.id })}
+            />
+          )}
         </div>
         <div className="flex-grow">
           <h3
@@ -38,9 +38,7 @@ export default function PetCard({ pet }: PetCardProps) {
           >
             {pet.name}
           </h3>
-          <p className={`text-secondary-600 ${isDead ? "text-gray-600" : ""}`}>
-            {pet.breed}
-          </p>
+          <p className={`text-secondary-600 ${isDead ? "text-gray-600" : ""}`}>{pet.breed}</p>
         </div>
         <div className="mt-4">
           <Link href={`/pet/${pet.id}`}>

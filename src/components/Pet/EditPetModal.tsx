@@ -1,5 +1,5 @@
 import { useEditPet } from "@/hooks/useQueries";
-import { Pet, PetData } from "@/types/pet";
+import { PetData } from "@/types/pet";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
@@ -44,6 +44,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
       weight,
       color,
       isDead,
+      notes: pet.notes,
       ownerId: ownerId ?? "",
     });
     onClose();

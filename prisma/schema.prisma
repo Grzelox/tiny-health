@@ -23,6 +23,7 @@ model Pet {
   bornAt    DateTime
   weight    Int
   color     String
+  notes     String?    @db.Text
   ownerId   String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -31,6 +32,18 @@ model Pet {
   weights   Weight[]
   uploadedFiles File[]
 
+  @@index([ownerId])
+}
+
+model UserShare {
+  id          Int      @id @default(autoincrement())
+  ownerId     String   
+  sharedWith  String   
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([ownerId, sharedWith])
+  @@index([sharedWith])
   @@index([ownerId])
 }
 

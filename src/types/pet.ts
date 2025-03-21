@@ -16,6 +16,7 @@ export interface Pet {
   weight: number;
   isDead: boolean;
   ownerId: string;
+  notes?: string;
 }
 
 export interface NewPet {
@@ -25,6 +26,7 @@ export interface NewPet {
   bornAt: string;
   weight: number;
   isDead: boolean;
+  notes?: string;
 }
 export interface VetVisit {
   id: number;
@@ -49,6 +51,7 @@ export interface PetData {
   bornAt: string;
   isDead: boolean;
   ownerId: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
   uploadedFiles: UploadedImage[];

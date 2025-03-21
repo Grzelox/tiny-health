@@ -1,14 +1,14 @@
 "use client";
 
 import PetSummary from "@/components/Pet/PetSummary";
-import { usePetData } from "@/hooks/useQueries";
+import { usePet } from "@/hooks/useQueries";
 import { PetData } from "@/types/pet";
 import { useQueryClient } from "@tanstack/react-query";
 import { SyncLoader } from "react-spinners";
 
 export default function PetDetailsPage({ params }: { params: { id: string } }) {
   const queryClient = useQueryClient();
-  const { data: petQueryData = null, isLoading, error, refetch } = usePetData(params.id);
+  const { data: petQueryData = null, isLoading, error, refetch } = usePet(params.id);
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["pet", params.id] });

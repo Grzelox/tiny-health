@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, breed, bornAt, weight, color, ownerId } = await request.json();
+  const { name, breed, bornAt, weight, color, ownerId, notes } = await request.json();
   try {
     const result = await withPrisma(async (prisma) => {
       const newPet = await prisma.pet.create({
@@ -59,6 +59,7 @@ export async function POST(request: Request) {
           weight,
           color,
           ownerId,
+          notes,
           updatedAt: new Date().toISOString(),
         },
       });
@@ -87,7 +88,7 @@ export async function PATCH(request: Request) {
   if (!userId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const { name, breed, bornAt, weight, color, ownerId, id, isDead } = await request.json();
+  const { name, breed, bornAt, weight, color, ownerId, id, isDead, notes } = await request.json();
   try {
     const result = await withPrisma(async (prisma) => {
       // Get the current pet to check if weight has changed
@@ -109,6 +110,7 @@ export async function PATCH(request: Request) {
           color,
           ownerId,
           isDead,
+          notes,
           updatedAt: new Date(),
         },
       });
