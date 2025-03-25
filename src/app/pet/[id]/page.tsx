@@ -2,7 +2,7 @@
 
 import PetSummary from "@/components/Pet/PetSummary";
 import { usePet } from "@/hooks/useQueries";
-import { PetData } from "@/types/pet";
+import { FullPetData } from "@/types/pet";
 import { useQueryClient } from "@tanstack/react-query";
 import { use } from "react";
 import { SyncLoader } from "react-spinners";
@@ -35,7 +35,7 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
     );
   }
 
-  const petData = petQueryData as PetData;
+  const petData = petQueryData as FullPetData;
   const vetVisits = petData?.vetVisits ?? [];
   const images = petData?.uploadedFiles ?? [];
   const petId = petData?.id ?? 0;

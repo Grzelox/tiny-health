@@ -1,4 +1,3 @@
-import { Github } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -19,8 +18,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-sm hover:text-primary-300 transition-colors"
               >
-                <Github size={16} />
-                Grzelox
+                Grzelo
               </Link>
             </div>
             <p className="text-sm">&copy; {new Date().getFullYear()} tiny health</p>

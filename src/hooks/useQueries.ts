@@ -1,23 +1,6 @@
-import { Pet, PetData, VetVisit } from "@/types/pet";
+import { Pet, PetWithShared, VetVisit } from "@/types/pet";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-interface PetWithShared extends PetData {
-  isShared: boolean;
-}
-
-interface ShareResponse {
-  ownerId: string;
-  sharedWith: string;
-  createdAt: string;
-  updatedAt: string;
-  user?: {
-    id: string;
-    firstName?: string;
-    lastName?: string;
-    emailAddresses: Array<{ emailAddress: string }>;
-  };
-}
 
 export const usePets = () => {
   const { userId } = useAuth();
@@ -72,7 +55,7 @@ export const useEditPet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Partial<Pet> & { id: string }) => {
+    mutationFn: async (data: Record<string, any>) => {
       console.log("update data", data);
       const response = await fetch("/api/v1/pet", {
         method: "PATCH",

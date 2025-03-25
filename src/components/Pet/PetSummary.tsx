@@ -1,6 +1,6 @@
 "use client";
 
-import { PetData, UploadedImage, VetVisit } from "@/types/pet";
+import { FullPetData, UploadedImage, VetVisit } from "@/types/pet";
 import { useState } from "react";
 
 import Gallery from "../Media/Gallery";
@@ -10,7 +10,7 @@ import PetInfo from "./PetInfo";
 
 interface PetSummaryProps {
   petId: number;
-  pet: PetData;
+  pet: FullPetData;
   vetVisits: VetVisit[];
   images: UploadedImage[];
   onRefresh: () => Promise<any>;

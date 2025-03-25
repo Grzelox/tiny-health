@@ -1,11 +1,11 @@
 import { deletePet } from "@/hooks/useQueries";
-import { OwnedPets } from "@/types/pet";
+import { Pets } from "@/types/pet";
 import { format } from "date-fns";
 import { RatIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface PetCardProps {
-  pet: OwnedPets & { isShared?: boolean };
+  pet: Pets & { isShared?: boolean };
 }
 
 export default function PetCard({ pet }: PetCardProps) {

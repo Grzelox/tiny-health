@@ -1,11 +1,11 @@
 import { useEditPet } from "@/hooks/useQueries";
-import { PetData } from "@/types/pet";
+import { FullPetData } from "@/types/pet";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  pet: PetData | null;
+  pet: FullPetData | null;
 }
 
 const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => {

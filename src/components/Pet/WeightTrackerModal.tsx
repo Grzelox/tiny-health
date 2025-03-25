@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/Animations/LoadingSpinner";
 import { useAddWeightRecord, useDeleteWeightRecord, useGetWeightHistory } from "@/hooks/useQueries";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";

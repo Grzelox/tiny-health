@@ -1,4 +1,4 @@
-export interface OwnedPets {
+export interface Pets {
   id: string;
   name: string;
   breed: string;
@@ -19,30 +19,7 @@ export interface Pet {
   notes?: string;
 }
 
-export interface NewPet {
-  name: string;
-  breed: string;
-  color: string;
-  bornAt: string;
-  weight: number;
-  isDead: boolean;
-  notes?: string;
-}
-export interface VetVisit {
-  id: number;
-  petId: number;
-  date: Date;
-  description: string;
-  medication: string;
-}
-
-export interface UploadedImage {
-  id: string;
-  url: string;
-  createdAt: string;
-}
-
-export interface PetData {
+export interface FullPetData {
   id: number;
   name: string;
   breed: string;
@@ -56,4 +33,22 @@ export interface PetData {
   updatedAt: string;
   uploadedFiles: UploadedImage[];
   vetVisits: VetVisit[];
+}
+
+export interface PetWithShared extends FullPetData {
+  isShared: boolean;
+}
+
+export interface VetVisit {
+  id: number;
+  petId: number;
+  date: Date;
+  description: string;
+  medication: string;
+}
+
+export interface UploadedImage {
+  id: string;
+  url: string;
+  createdAt: string;
 }

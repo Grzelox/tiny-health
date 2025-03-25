@@ -1,10 +1,10 @@
 import { useUpdatePetNotes } from "@/hooks/useQueries";
-import { PetData } from "@/types/pet";
+import { FullPetData } from "@/types/pet";
 import { EditIcon } from "lucide-react";
 import React, { useState } from "react";
 
 interface PetNotesProps {
-  petData: PetData;
+  petData: FullPetData;
   onUpdate: () => void;
 }
 

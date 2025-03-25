@@ -1,5 +1,5 @@
 import { useEditPet } from "@/hooks/useQueries";
-import { PetData } from "@/types/pet";
+import { FullPetData } from "@/types/pet";
 import {
   Calendar,
   EditIcon,
@@ -16,7 +16,7 @@ import PetNotes from "./PetNotes";
 import WeightTrackerModal from "./WeightTrackerModal";
 
 interface PetInfoProps {
-  petData: PetData;
+  petData: FullPetData;
   onRefresh: () => Promise<void>;
 }
 

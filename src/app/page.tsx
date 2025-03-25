@@ -1,7 +1,7 @@
 "use client";
 
+import LoadingSpinner from "@/components/Animations/LoadingSpinner";
 import Dashboard from "@/components/Dashboard";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import Welcome from "@/components/Welcome";
 import { useUser } from "@clerk/nextjs";
 

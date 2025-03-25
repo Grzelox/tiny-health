@@ -1,8 +1,8 @@
-import React from 'react';
-import AddVetVisitModal from '@/components/VetVisit/AddVetVisitModal';
-import EditVetVisitModal from '@/components/Pet/EditVetVisitModal';
-import EditPetModal from '@/components/Pet/EditPetModal';
-import { PetData, VetVisit } from '@/types/pet';
+import EditPetModal from "@/components/Pet/EditPetModal";
+import EditVetVisitModal from "@/components/Pet/EditVetVisitModal";
+import AddVetVisitModal from "@/components/VetVisit/AddVetVisitModal";
+import { FullPetData, VetVisit } from "@/types/pet";
+import React from "react";
 
 interface PetModalsProps {
   petId: number;
@@ -11,7 +11,7 @@ interface PetModalsProps {
   isEditPetModalOpen: boolean;
   currVisit: VetVisit | null;
   vetVisits: VetVisit[];
-  petData: PetData | null;
+  petData: FullPetData | null;
   onCloseAddVisitModal: () => void;
   onCloseEditVisitModal: () => void;
   onCloseEditPetModal: () => void;
@@ -30,22 +30,14 @@ const PetModals: React.FC<PetModalsProps> = ({
   onCloseEditPetModal,
 }) => (
   <>
-    <AddVetVisitModal
-      petId={petId}
-      isOpen={isAddVisitModalOpen}
-      onClose={onCloseAddVisitModal}
-    />
+    <AddVetVisitModal petId={petId} isOpen={isAddVisitModalOpen} onClose={onCloseAddVisitModal} />
     <EditVetVisitModal
       isOpen={isEditVisitModalOpen}
       onClose={onCloseEditVisitModal}
       visits={vetVisits}
       visitId={currVisit?.id ?? 0}
     />
-    <EditPetModal
-      isOpen={isEditPetModalOpen}
-      onClose={onCloseEditPetModal}
-      pet={petData}
-    />
+    <EditPetModal isOpen={isEditPetModalOpen} onClose={onCloseEditPetModal} pet={petData} />
   </>
 );
 

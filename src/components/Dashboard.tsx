@@ -3,18 +3,18 @@
 import AddPetButton from "@/components/Pet/AddPetButton";
 import PetCard from "@/components/Pet/PetCard";
 import { usePets } from "@/hooks/useQueries";
-import { OwnedPets } from "@/types/pet";
+import { Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
 import { ShareIcon } from "lucide-react";
 import React, { useState } from "react";
 
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "./Animations/LoadingSpinner";
 import AddPetModal from "./Pet/AddPetModal";
 import SharePetsModal from "./SharePetsModal";
 
 interface DashboardContentProps {
-  ownedPets: OwnedPets[];
-  sharedPets: (OwnedPets & { isShared: boolean })[];
+  ownedPets: Pets[];
+  sharedPets: (Pets & { isShared: boolean })[];
   onOpenModal: () => void;
 }
 
@@ -111,7 +111,7 @@ export default function Dashboard() {
   );
 }
 
-const sortPets = (pets: OwnedPets[]): OwnedPets[] => {
+const sortPets = (pets: Pets[]): Pets[] => {
   return [...pets].sort((a, b) => {
     if (a.isDead === b.isDead) {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();

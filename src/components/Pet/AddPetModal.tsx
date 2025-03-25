@@ -1,5 +1,5 @@
 import { useAddPet } from "@/hooks/useQueries";
-import { NewPet } from "@/types/pet";
+import { Pet } from "@/types/pet";
 import React, { useState } from "react";
 
 interface AddPetModalProps {
@@ -10,7 +10,7 @@ interface AddPetModalProps {
 
 const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
   const addPetMutation = useAddPet();
-  const [pet, setPet] = useState<NewPet>({
+  const [pet, setPet] = useState<Omit<Pet, "id" | "updatedAt" | "ownerId">>({
     name: "",
     breed: "",
     bornAt: "",
