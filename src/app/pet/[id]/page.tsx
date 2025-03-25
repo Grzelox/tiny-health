@@ -4,14 +4,18 @@ import PetSummary from "@/components/Pet/PetSummary";
 import { usePet } from "@/hooks/useQueries";
 import { PetData } from "@/types/pet";
 import { useQueryClient } from "@tanstack/react-query";
+import { use } from "react";
 import { SyncLoader } from "react-spinners";
 
-export default function PetDetailsPage({ params }: { params: { id: string } }) {
+export default function PetDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const queryClient = useQueryClient();
-  const { data: petQueryData = null, isLoading, error, refetch } = usePet(params.id);
+
+  const { data: petQueryData = null, isLoading, error, refetch } = usePet(resolvedParams.id);
+  console.log("petQueryData", petQueryData);
 
   const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ["pet", params.id] });
+    queryClient.invalidateQueries({ queryKey: ["pet", resolvedParams.id] });
     return refetch();
   };
 

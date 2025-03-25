@@ -1,7 +1,7 @@
 import { deletePet } from "@/hooks/useQueries";
 import { OwnedPets } from "@/types/pet";
 import { format } from "date-fns";
-import { RatIcon, ShareIcon, Trash2Icon } from "lucide-react";
+import { RatIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface PetCardProps {
@@ -20,7 +20,6 @@ export default function PetCard({ pet }: PetCardProps) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <RatIcon className={`w-8 h-8 ${isDead ? "text-gray-600" : "text-primary-600"}`} />
-            {pet.isShared && <ShareIcon className="w-5 h-5 text-primary-600" />}
           </div>
           <span className={`text-sm ${isDead ? "text-gray-600" : "text-secondary-600"}`}>
             Ostatnia modyfikacja: {format(new Date(pet.updatedAt), "dd.MM.yyyy")}

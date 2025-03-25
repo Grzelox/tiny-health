@@ -38,10 +38,11 @@ export const usePet = (petId: string) => {
   return useQuery<PetWithShared>({
     queryKey: ["pet", petId, userId],
     queryFn: async () => {
-      const response = await fetch(`/api/v1/pets/${petId}`);
+      const response = await fetch(`/api/v1/pet?id=${petId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch pet");
       }
+      console.log("response", response);
       return response.json();
     },
   });
@@ -72,7 +73,8 @@ export const useEditPet = () => {
 
   return useMutation({
     mutationFn: async (data: Partial<Pet> & { id: string }) => {
-      const response = await fetch(`/api/v1/pets/${data.id}`, {
+      console.log("update data", data);
+      const response = await fetch("/api/v1/pet", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +98,7 @@ export const useAddVetVisit = () => {
 
   return useMutation({
     mutationFn: async (data: Omit<VetVisit, "id" | "petId"> & { petId: string }) => {
-      const response = await fetch(`/api/v1/pets/${data.petId}/vet-visits`, {
+      const response = await fetch(`/api/v1/visit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +122,7 @@ export const useDeleteVetVisit = () => {
 
   return useMutation({
     mutationFn: async ({ petId, visitId }: { petId: string; visitId: string }) => {
-      const response = await fetch(`/api/v1/pets/${petId}/vet-visits/${visitId}`, {
+      const response = await fetch(`/api/v1/visit/${visitId}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -147,7 +149,7 @@ export const useEditVetVisit = () => {
       visitId: string;
       data: Omit<VetVisit, "id" | "petId">;
     }) => {
-      const response = await fetch(`/api/v1/pets/${petId}/vet-visits/${visitId}`, {
+      const response = await fetch(`/api/v1/visit/${visitId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -233,12 +235,12 @@ export const useUpdatePetNotes = () => {
 
   return useMutation({
     mutationFn: async ({ id, notes }: { id: string; notes: string }) => {
-      const response = await fetch(`/api/v1/pets/${id}/notes`, {
+      const response = await fetch(`/api/v1/pet/notes`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ notes }),
+        body: JSON.stringify({ id, notes }),
       });
       if (!response.ok) {
         throw new Error("Failed to update notes");
@@ -248,20 +250,6 @@ export const useUpdatePetNotes = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["pets"] });
       queryClient.invalidateQueries({ queryKey: ["pet", variables.id] });
-    },
-  });
-};
-
-export const useSharedUsers = () => {
-  const { userId } = useAuth();
-  return useQuery<ShareResponse[]>({
-    queryKey: ["shared-users", userId],
-    queryFn: async () => {
-      const response = await fetch("/api/v1/share");
-      if (!response.ok) {
-        throw new Error("Failed to fetch shared users");
-      }
-      return response.json();
     },
   });
 };
@@ -312,7 +300,7 @@ export const deletePet = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ petId }: { petId: string }) => {
-      const response = await fetch(`/api/v1/pets/${petId}`, {
+      const response = await fetch(`/api/v1/pet?id=${petId}`, {
         method: "DELETE",
       });
       if (!response.ok) {

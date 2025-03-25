@@ -13,8 +13,6 @@ import React, { useState } from "react";
 
 import EditPetModal from "./EditPetModal";
 import PetNotes from "./PetNotes";
-import PetShare from "./PetShare";
-import PetWeightChart from "./PetWeightChart";
 import WeightTrackerModal from "./WeightTrackerModal";
 
 interface PetInfoProps {
@@ -48,33 +46,56 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-primary-800">{petData.name}</h1>
-          <p className="text-gray-600">
-            {petData.breed} • {petData.color}
-          </p>
+      <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center space-x-4">
+            <RatIcon className="w-12 h-12 text-primary-600" />
+            <div>
+              <h1 className="text-3xl font-bold text-primary-800">{petData.name}</h1>
+              <p className="text-secondary-600">
+                {petData.breed} • {petData.color}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRefresh}
+              className={`p-2 text-gray-600 hover:text-gray-800 ${isRefreshing ? "animate-spin" : ""}`}
+              disabled={isRefreshing}
+            >
+              <RefreshCcw className="w-5 h-5" />
+            </button>
+            <button onClick={handleOpenModal} className="p-2 text-gray-600 hover:text-gray-800">
+              <EditIcon className="w-5 h-5" />
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleRefresh}
-            className={`p-2 text-gray-600 hover:text-gray-800 ${isRefreshing ? "animate-spin" : ""}`}
-            disabled={isRefreshing}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-primary-50 p-4 rounded-lg">
+            <Calendar className="w-6 h-6 text-primary-600 mb-2" />
+            <p className="text-sm text-secondary-600">Data urodzenia</p>
+            <p className="font-medium">{new Date(petData.bornAt).toLocaleDateString("pl-PL")}</p>
+          </div>
+          <div
+            className="bg-primary-50 p-4 rounded-lg cursor-pointer relative"
+            onClick={handleWeightTrackerClick}
           >
-            <RefreshCcw className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleOpenModal}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-          >
-            Edytuj
-          </button>
+            <LineChart className="absolute top-2 right-2 w-5 h-5 text-primary-500" />
+            <Stethoscope className="w-6 h-6 text-primary-600 mb-2" />
+            <p className="text-sm text-secondary-600">Waga [g]</p>
+            <p className="font-medium">{petData.weight}</p>
+          </div>
+          <div className="bg-primary-50 p-4 rounded-lg">
+            <PaintRoller className="w-6 h-6 text-primary-600 mb-2" />
+            <p className="text-sm text-secondary-600">Kolor</p>
+            <p className="font-medium">{petData.color}</p>
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8">
         <PetNotes petData={petData} onUpdate={onRefresh} />
-        <PetShare petData={petData} />
       </div>
 
       <EditPetModal isOpen={isModalOpen} onClose={handleCloseModal} pet={petData} />

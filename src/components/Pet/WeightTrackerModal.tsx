@@ -27,7 +27,7 @@ export default function WeightTrackerModal({
   petId,
   currentWeight,
 }: WeightTrackerModalProps): JSX.Element {
-  const [newWeight, setNewWeight] = useState<string>(currentWeight.toString());
+  const [newWeight, setNewWeight] = useState<string>(currentWeight?.toString() ?? "0");
   const { data: weightHistory, isLoading } = useGetWeightHistory(petId);
   const addWeightMutation = useAddWeightRecord();
   const deleteWeightMutation = useDeleteWeightRecord();

@@ -10,17 +10,33 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
 
+    const id = searchParams.get("id");
     if (!id) {
       return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
     }
 
+    const availableUserIds = await withPrisma(async (prisma) => {
+      return prisma.userShare.findMany({
+        where: {
+          sharedWith: userId,
+        },
+        select: {
+          ownerId: true,
+        },
+      });
+    });
+
+    const accessibleOwnerIds = availableUserIds.map((share) => share.ownerId);
+    accessibleOwnerIds.push(userId);
+
     const result = await withPrisma(async (prisma) => {
-      const pet = await prisma.pet.findMany({
+      const pet = await prisma.pet.findFirst({
         where: {
           id: Number(id),
-          ownerId: userId,
+          ownerId: {
+            in: accessibleOwnerIds,
+          },
         },
         include: {
           vetVisits: true,
@@ -28,13 +44,12 @@ export async function GET(request: Request) {
         },
       });
 
-      if (!pet || pet.length === 0) {
+      if (!pet) {
         return NextResponse.json({ message: "Pet not found" }, { status: 404 });
       }
-
+      console.log("result", pet);
       return pet;
     });
-
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ message: "Error fetching pet data" }, { status: 500 });
@@ -88,43 +103,24 @@ export async function PATCH(request: Request) {
   if (!userId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const { name, breed, bornAt, weight, color, ownerId, id, isDead, notes } = await request.json();
+  const payload = await request.json();
+  console.log("PATCH request received", payload);
+
   try {
     const result = await withPrisma(async (prisma) => {
-      // Get the current pet to check if weight has changed
-      const currentPet = await prisma.pet.findUnique({
-        where: { id: Number(id) },
-        select: { weight: true },
-      });
-
-      // Update the pet
       const updatedPet = await prisma.pet.update({
         where: {
-          id: Number(id),
+          id: Number(payload.id),
         },
         data: {
-          name,
-          breed,
-          bornAt,
-          weight: weight,
-          color,
-          ownerId,
-          isDead,
-          notes,
+          ...(payload.name !== undefined && { name: payload.name }),
+          ...(payload.breed !== undefined && { breed: payload.breed }),
+          ...(payload.bornAt !== undefined && { bornAt: payload.bornAt }),
+          ...(payload.color !== undefined && { color: payload.color }),
+          ...(payload.isDead !== undefined && { isDead: payload.isDead }),
           updatedAt: new Date(),
         },
       });
-
-      // If weight has changed, create a new weight record
-      if (weight && (!currentPet || currentPet.weight !== weight)) {
-        await prisma.weight.create({
-          data: {
-            petId: Number(id),
-            weight: Number(weight),
-            createdAt: new Date(),
-          },
-        });
-      }
 
       return updatedPet;
     });
@@ -142,7 +138,7 @@ export async function DELETE(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const petId = searchParams.get("petId");
+    const petId = searchParams.get("id");
 
     if (!petId) {
       return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });

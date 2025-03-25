@@ -12,42 +12,65 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [birthDate, setBirthday] = useState("");
-  const [weight, setWeight] = useState(0);
   const [color, setColor] = useState("");
   const [isDead, setIsDead] = useState(false);
   const [ownerId, setOwnerId] = useState<string | null>(null);
+
+  // Track initial values to compare against
+  const [initialValues, setInitialValues] = useState<{
+    name: string;
+    breed: string;
+    birthDate: string;
+    color: string;
+    isDead: boolean;
+  } | null>(null);
 
   const { mutate: editPet } = useEditPet();
 
   useEffect(() => {
     if (pet) {
+      const formattedDate = pet.bornAt ? new Date(pet.bornAt).toISOString().split("T")[0] : "";
+
+      // Set current form values
       setName(pet.name);
       setBreed(pet.breed);
-      const formattedDate = new Date(pet.bornAt).toISOString().split("T")[0];
       setBirthday(formattedDate);
-      setWeight(pet.weight);
       setColor(pet.color);
       setIsDead(pet.isDead);
+
+      // Store initial values for comparison
+      setInitialValues({
+        name: pet.name,
+        breed: pet.breed,
+        birthDate: formattedDate,
+        color: pet.color,
+        isDead: pet.isDead,
+      });
     }
   }, [pet]);
 
   const handleSubmit = () => {
-    if (!pet) {
-      return;
-    }
+    if (!pet || !initialValues) return;
 
-    editPet({
+    // Create an object with only the changed values
+    const changes: Record<string, any> = {
       id: pet.id.toString(),
-      name,
-      breed,
-      bornAt: new Date(birthDate).toISOString(),
-      weight,
-      color,
-      isDead,
-      notes: pet.notes,
-      ownerId: ownerId ?? "",
-    });
-    onClose();
+    };
+
+    if (name !== initialValues.name) changes.name = name;
+    if (breed !== initialValues.breed) changes.breed = breed;
+    if (birthDate !== initialValues.birthDate) changes.bornAt = new Date(birthDate).toISOString();
+    if (color !== initialValues.color) changes.color = color;
+    if (isDead !== initialValues.isDead) changes.isDead = isDead;
+
+    // Only send the update if there are actual changes
+    if (Object.keys(changes).length > 1) {
+      // > 1 because id is always included
+      editPet(changes);
+      onClose();
+    } else {
+      onClose(); // No changes, just close the modal
+    }
   };
 
   if (!isOpen) return null;
@@ -87,14 +110,6 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             placeholder="Data Urodzenia"
             value={birthDate}
             onChange={(e) => setBirthday(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          />
-          <p>Waga</p>
-          <input
-            type="text"
-            placeholder="Waga"
-            value={weight}
-            onChange={(e) => setWeight(Number(e.target.value))}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <div className="flex items-center justify-between">
