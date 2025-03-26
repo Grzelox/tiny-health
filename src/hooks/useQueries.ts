@@ -1,4 +1,4 @@
-import { Pet, PetWithShared, VetVisit } from "@/types/pet";
+import { Pet, PetWithShared, VetVisit, WeightRecord } from "@/types/pet";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -17,15 +17,13 @@ export const usePets = () => {
 };
 
 export const usePet = (petId: string) => {
-  const { userId } = useAuth();
   return useQuery<PetWithShared>({
-    queryKey: ["pet", petId, userId],
+    queryKey: ["pet", petId],
     queryFn: async () => {
       const response = await fetch(`/api/v1/pet?id=${petId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch pet");
       }
-      console.log("response", response);
       return response.json();
     },
   });
@@ -55,8 +53,7 @@ export const useEditPet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Record<string, any>) => {
-      console.log("update data", data);
+    mutationFn: async ({ data }: { data: Record<string, any> }) => {
       const response = await fetch("/api/v1/pet", {
         method: "PATCH",
         headers: {
@@ -71,7 +68,7 @@ export const useEditPet = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.id.toString()] });
     },
   });
 };
@@ -80,7 +77,7 @@ export const useAddVetVisit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Omit<VetVisit, "id" | "petId"> & { petId: string }) => {
+    mutationFn: async ({ data }: { data: Omit<VetVisit, "id"> }) => {
       const response = await fetch(`/api/v1/visit`, {
         method: "POST",
         headers: {
@@ -94,28 +91,7 @@ export const useAddVetVisit = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
-    },
-  });
-};
-
-export const useDeleteVetVisit = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ petId, visitId }: { petId: string; visitId: string }) => {
-      const response = await fetch(`/api/v1/visit/${visitId}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete vet visit");
-      }
-      return response.json();
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petId.toString()] });
     },
   });
 };
@@ -123,16 +99,8 @@ export const useDeleteVetVisit = () => {
 export const useEditVetVisit = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      petId,
-      visitId,
-      data,
-    }: {
-      petId: string;
-      visitId: string;
-      data: Omit<VetVisit, "id" | "petId">;
-    }) => {
-      const response = await fetch(`/api/v1/visit/${visitId}`, {
+    mutationFn: async ({ data }: { data: VetVisit }) => {
+      const response = await fetch("/api/v1/visit", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -145,21 +113,39 @@ export const useEditVetVisit = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petId.toString()] });
     },
   });
 };
 
-export interface WeightRecord {
-  id: string;
-  petId: number;
-  weight: number;
-}
+export const useDeleteVetVisit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ petId, visitId }: { petId: number; visitId: string }) => {
+      const response = await fetch("/api/v1/visit", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: visitId }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete vet visit");
+      }
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["pet", variables.petId.toString()],
+      });
+    },
+  });
+};
 
 export const useGetWeightHistory = (petId: number) => {
   return useQuery({
-    queryKey: ["weightHistory", petId],
+    queryKey: ["weightHistory", petId.toString()],
     queryFn: async () => {
       if (!petId) return [];
       const searchParams = new URLSearchParams();
@@ -176,18 +162,20 @@ export const useAddWeightRecord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (weightData: Omit<WeightRecord, "id">) => {
+    mutationFn: async ({ data }: { data: Omit<WeightRecord, "id"> }) => {
       const response = await fetch("/api/v1/weight", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(weightData),
+        body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error("Failed to add weight record");
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["weightHistory", variables.petId] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+      queryClient.invalidateQueries({
+        queryKey: ["weightHistory", variables.data.petId.toString()],
+      });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petId.toString()] });
     },
   });
 };
@@ -207,8 +195,10 @@ export const useDeleteWeightRecord = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["weightHistory", variables.petId] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId] });
+      queryClient.invalidateQueries({
+        queryKey: ["weightHistory", variables.petId.toString()],
+      });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petId.toString()] });
     },
   });
 };

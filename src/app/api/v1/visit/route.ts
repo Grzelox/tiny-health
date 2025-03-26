@@ -10,9 +10,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { description, medication, date, petId }: VetVisit = await request.json();
-
-    if (!petId || !date || !description) {
+    const data = await request.json();
+    if (!data.petId || !data.date || !data.description) {
       return NextResponse.json(
         { message: "Pet ID, date, and description are required" },
         { status: 400 },
@@ -20,23 +19,12 @@ export async function POST(request: Request) {
     }
 
     const result = await withPrisma(async (prisma) => {
-      const pet = await prisma.pet.findFirst({
-        where: {
-          id: Number(petId),
-          ownerId: userId,
-        },
-      });
-
-      if (!pet) {
-        return NextResponse.json({ message: "Pet not found" }, { status: 404 });
-      }
-
       const vetVisit = await prisma.vetVisit.create({
         data: {
-          description: description,
-          medication: medication,
-          date: new Date(date),
-          petId: Number(petId),
+          description: data.description,
+          medication: data.medication,
+          date: new Date(data.date),
+          petId: Number(data.petId),
         },
       });
 
@@ -63,7 +51,6 @@ export async function PATCH(request: Request) {
     }
 
     const result = await withPrisma(async (prisma) => {
-      // Update vet visit
       const updatedVisit = await prisma.vetVisit.update({
         where: {
           id: Number(id),
@@ -91,8 +78,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+    const { id }: { id: string } = await request.json();
 
     if (!id) {
       return NextResponse.json({ message: "Visit ID is required" }, { status: 400 });

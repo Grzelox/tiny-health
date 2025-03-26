@@ -19,6 +19,18 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     isDead: false,
   });
 
+  // Reset form function
+  const resetForm = () => {
+    setPet({
+      name: "",
+      breed: "",
+      bornAt: "",
+      weight: 0,
+      color: "",
+      isDead: false,
+    });
+  };
+
   // Format date for display in the input field
   const formatDateForInput = (dateString: string): string => {
     if (!dateString) return "";
@@ -63,6 +75,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
         ...pet,
         ownerId: user.id,
       });
+
+      // Reset the form state after successful submission
+      resetForm();
+
+      // Close the modal
       onClose();
     } catch (error) {
       console.error("Error adding pet:", error);

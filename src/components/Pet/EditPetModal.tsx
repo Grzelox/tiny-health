@@ -66,7 +66,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
     // Only send the update if there are actual changes
     if (Object.keys(changes).length > 1) {
       // > 1 because id is always included
-      editPet(changes);
+      editPet({ data: changes });
       onClose();
     } else {
       onClose(); // No changes, just close the modal

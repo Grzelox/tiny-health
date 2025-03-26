@@ -10,7 +10,6 @@ export async function POST(request: Request) {
   }
 
   const { email } = await request.json();
-  console.log("post email", email);
   if (!email) {
     return NextResponse.json({ message: "Email is required" }, { status: 400 });
   }
@@ -22,7 +21,6 @@ export async function POST(request: Request) {
       emailAddress: [email],
     });
 
-    console.log("found users", users);
 
     if (!users) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });

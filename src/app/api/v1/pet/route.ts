@@ -47,7 +47,6 @@ export async function GET(request: Request) {
       if (!pet) {
         return NextResponse.json({ message: "Pet not found" }, { status: 404 });
       }
-      console.log("result", pet);
       return pet;
     });
     return NextResponse.json(result);
@@ -104,7 +103,6 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const payload = await request.json();
-  console.log("PATCH request received", payload);
 
   try {
     const result = await withPrisma(async (prisma) => {

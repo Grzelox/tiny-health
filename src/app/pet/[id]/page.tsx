@@ -12,7 +12,6 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
   const queryClient = useQueryClient();
 
   const { data: petQueryData = null, isLoading, error, refetch } = usePet(resolvedParams.id);
-  console.log("petQueryData", petQueryData);
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["pet", resolvedParams.id] });

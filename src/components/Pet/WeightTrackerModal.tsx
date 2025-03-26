@@ -39,8 +39,10 @@ export default function WeightTrackerModal({
 
     addWeightMutation.mutate(
       {
-        petId,
-        weight: weightValue,
+        data: {
+          petId,
+          weight: weightValue,
+        },
       },
       {
         onSuccess: () => {

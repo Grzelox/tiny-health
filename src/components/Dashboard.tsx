@@ -59,7 +59,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
         {sharedPets.length > 0 && (
           <div>
-            <h2 className="text-2xl font-semibold text-primary-800 mb-6">Udostępnione Tobie</h2>
+            <h2 className="text-2xl font-semibold text-primary-800 mb-6">Udostępnione</h2>
             <div className={gridClassName}>
               {sortPets(sharedPets).map((pet) => (
                 <PetCard key={pet.id} pet={pet} />

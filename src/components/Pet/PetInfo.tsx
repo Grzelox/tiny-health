@@ -1,4 +1,3 @@
-import { useEditPet } from "@/hooks/useQueries";
 import { FullPetData } from "@/types/pet";
 import {
   Calendar,

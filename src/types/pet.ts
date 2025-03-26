@@ -52,3 +52,9 @@ export interface UploadedImage {
   url: string;
   createdAt: string;
 }
+
+export interface WeightRecord {
+  id: string;
+  petId: number;
+  weight: number;
+}
