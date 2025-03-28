@@ -1,12 +1,10 @@
-import {
-  useDeleteVetVisit,
-} from "@/hooks/useQueries";
+import { useDeleteVetVisit } from "@/hooks/useQueries";
 import { VetVisit } from "@/types/pet";
 import React, { useState } from "react";
 
+import EditVetVisitModal from "../Pet/EditVetVisitModal";
 import AddVetVisitModal from "./AddVetVisitModal";
 import VetVisitItem from "./VetVisitItem";
-import EditVetVisitModal from "../Pet/EditVetVisitModal";
 
 interface VetVisitListProps {
   petId: number;
@@ -37,20 +35,13 @@ export default function VetVisitList({ petId, vetVisits }: VetVisitListProps) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-primary-800 mb-4">
-        Historia wizyt
-      </h2>
-      <button
-        onClick={handleAddClick}
-        className="mb-4 bg-primary-600 text-white py-2 px-4 rounded"
-      >
+      <h2 className="text-xl font-semibold text-primary-800 mb-4">Historia wizyt</h2>
+      <button onClick={handleAddClick} className="mb-4 bg-primary-600 text-white py-2 px-4 rounded">
         Dodaj nową wizytę
       </button>
       <div className="space-y-4">
         {vetVisits
-          .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-          )
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .map((visit) => (
             <VetVisitItem
               key={visit.id}

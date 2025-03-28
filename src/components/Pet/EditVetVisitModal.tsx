@@ -40,7 +40,7 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
       medication: medication,
       date: new Date(date),
     };
-    editVetVisit(updatedVisit);
+    editVetVisit({ data: updatedVisit });
     onClose();
   };
 
@@ -49,9 +49,7 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">
-          Edytuj wizytę
-        </h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Edytuj wizytę</h2>
         <div className="space-y-4">
           <textarea
             placeholder="Opis"
@@ -75,10 +73,7 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
           />
         </div>
         <div className="mt-6 flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">
             Zamknij
           </button>
           <button

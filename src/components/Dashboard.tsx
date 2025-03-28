@@ -2,26 +2,70 @@
 
 import AddPetButton from "@/components/Pet/AddPetButton";
 import PetCard from "@/components/Pet/PetCard";
-import { useAuthUser } from "@/hooks/useAuth";
 import { usePets } from "@/hooks/useQueries";
-import { OwnedPets } from "@/types/pet";
-import { User } from "@supabase/supabase-js";
+import { PetWithShared, Pets } from "@/types/pet";
+import { useUser } from "@clerk/nextjs";
+import { ShareIcon } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 import React, { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
+import LoadingSpinner from "./Animations/LoadingSpinner";
 import AddPetModal from "./Pet/AddPetModal";
+import SharePetsModal from "./SharePetsModal";
 
 interface DashboardContentProps {
-  pets: OwnedPets[];
+  ownedPets: PetWithShared[];
+  sharedPets: PetWithShared[];
   onOpenModal: () => void;
 }
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
-  pets,
+  ownedPets,
+  sharedPets,
   onOpenModal,
 }) => {
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const gridClassName = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
 
-  if (pets.length === 0) {
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch("/api/pets/export");
+
+      if (!response.ok) {
+        throw new Error(`Error fetching CSV: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let filename = `pets-export-${new Date().toISOString().split("T")[0]}.csv`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      link.setAttribute("download", filename);
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      //TOOD: display error messasge to end user
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  if (ownedPets.length === 0 && sharedPets.length === 0) {
     return (
       <div className={gridClassName}>
         <AddPetButton onClick={onOpenModal} />
@@ -30,25 +74,71 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   }
 
   return (
-    <div className={gridClassName}>
-      {sortPets(pets).map((pet) => (
-        <PetCard key={pet.id} pet={pet} />
-      ))}
-      <AddPetButton onClick={onOpenModal} />
-    </div>
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-primary-900">Moje stadko</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={handleExportData}
+            disabled={isExporting}
+            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className="w-5 h-5 flex items-center justify-center">
+              {isExporting ? (
+                <ClipLoader size={16} color="#4F46E5" />
+              ) : (
+                <DownloadIcon className="w-5 h-5" />
+              )}
+            </span>
+            <span>{isExporting ? "Przygotowywanie" : "Pobierz dane"}</span>
+          </button>
+          <button
+            onClick={() => setIsShareModalOpen(true)}
+            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50"
+          >
+            <ShareIcon className="w-5 h-5" />
+            <span>Udostępnij stado</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-12">
+        <div>
+          <div className={gridClassName}>
+            {sortPets(ownedPets).map((pet) => (
+              <PetCard key={pet.id} pet={pet} />
+            ))}
+            <AddPetButton onClick={onOpenModal} />
+          </div>
+        </div>
+
+        {sharedPets.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-semibold text-primary-800 mb-6">Udostępnione</h2>
+            <div className={gridClassName}>
+              {sortPets(sharedPets).map((pet) => (
+                <PetCard key={pet.id} pet={pet} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <SharePetsModal isOpen={isShareModalOpen} onClose={() => setIsShareModalOpen(false)} />
+    </>
   );
 };
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const user = useAuthUser() as User;
-  const { data: pets = [], isLoading, error } = usePets(user?.id);
+  const { user } = useUser();
+  const userId = user?.id;
+  const { data: pets = [], isLoading, error } = usePets(userId);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center">
-        <span className="text-blue-500 text-lg">Loading...</span>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -61,20 +151,22 @@ export default function Dashboard() {
     );
   }
 
+  const ownedPets = pets.filter((pet) => !pet.isShared);
+  const sharedPets = pets.filter((pet) => pet.isShared);
+
   return (
     <div className="min-h-screen">
-      <h1 className="text-3xl font-bold text-primary-800 mb-8">Moje stadko</h1>
-      <DashboardContent pets={pets} onOpenModal={() => setIsModalOpen(true)} />
-      <AddPetModal
-        user={user}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      <DashboardContent
+        ownedPets={ownedPets}
+        sharedPets={sharedPets}
+        onOpenModal={() => setIsModalOpen(true)}
       />
+      <AddPetModal user={user} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
 
-const sortPets = (pets: OwnedPets[]): OwnedPets[] => {
+const sortPets = (pets: PetWithShared[]): PetWithShared[] => {
   return [...pets].sort((a, b) => {
     if (a.isDead === b.isDead) {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();

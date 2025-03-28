@@ -1,15 +1,27 @@
 "use client";
 
 import PetSummary from "@/components/Pet/PetSummary";
-import { usePetData } from "@/hooks/useQueries";
-import { PetData, UploadedImage, VetVisit } from "@/types/pet";
+import { usePet } from "@/hooks/useQueries";
+import { FullPetData } from "@/types/pet";
+import { useQueryClient } from "@tanstack/react-query";
+import { use } from "react";
+import { SyncLoader } from "react-spinners";
 
-export default function PetDetailsPage({ params }: { params: { id: string } }) {
-  const { data: petQueryData = null, isLoading, error } = usePetData(params.id);
+export default function PetDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const queryClient = useQueryClient();
+
+  const { data: petQueryData = null, isLoading, error, refetch } = usePet(resolvedParams.id);
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["pet", resolvedParams.id] });
+    return refetch();
+  };
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center">
-        <span className="text-blue-500 text-lg">Loading...</span>
+      <div className="flex items-center justify-center h-[50vh]">
+        <SyncLoader color="#3b82f6" size={15} margin={8} />
       </div>
     );
   }
@@ -22,10 +34,10 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
     );
   }
 
-  const petData = petQueryData as PetData;
-  const vetVisits = petData.vetVisits;
-  const images = petData.uploadedFiles;
-  const petId = petData.id;
+  const petData = petQueryData as FullPetData;
+  const vetVisits = petData?.vetVisits ?? [];
+  const images = petData?.uploadedFiles ?? [];
+  const petId = petData?.id ?? 0;
 
   return (
     <PetSummary
@@ -33,6 +45,7 @@ export default function PetDetailsPage({ params }: { params: { id: string } }) {
       pet={petData}
       vetVisits={vetVisits}
       images={images}
+      onRefresh={handleRefresh}
     />
   );
 }

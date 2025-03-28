@@ -26,6 +26,7 @@ export default function MediaUploader({ petId }: { petId: number }) {
          * @see https://docs.uploadthing.com/api-reference/react#uploaddropzone
          */
         endpoint="imageUploader"
+        // @ts-expect-error - The input prop is required by the server but not recognized by TypeScript
         input={{ petId: petId.toString() }}
         onUploadAborted={() => {
           alert("Upload Aborted");
