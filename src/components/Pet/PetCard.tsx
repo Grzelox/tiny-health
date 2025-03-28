@@ -1,4 +1,4 @@
-import { deletePet } from "@/hooks/useQueries";
+import { useDeletePet } from "@/hooks/useQueries";
 import { PetWithShared } from "@/types/pet";
 import { format } from "date-fns";
 import { RatIcon, Trash2Icon } from "lucide-react";
@@ -9,7 +9,7 @@ interface PetCardProps {
 }
 
 export default function PetCard({ pet }: PetCardProps) {
-  const deletePetMutation = deletePet();
+  const deletePetMutation = useDeletePet();
   const isDead = pet.isDead;
 
   return (
