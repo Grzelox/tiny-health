@@ -21,10 +21,9 @@ export default function Welcome() {
           swoich małych bohaterów
         </h1>
         <p className="text-xl text-secondary-600 max-w-2xl mx-auto mb-8">
-          Twoje myszy zasługują na najlepszą opiekę! Dzięki naszemu narzędziu możesz łatwo
-          rejestrować wizyty u weterynarza, monitorować zmiany w wadze i przechowywać wszystkie
-          istotne informacje w jednym miejscu. Uwieczniaj wyjątkowe chwile, dodając zdjęcia swoich
-          podopiecznych.
+          Dzięki naszemu narzędziu możesz łatwo rejestrować wizyty u weterynarza, monitorować zmiany
+          w wadze i przechowywać wszystkie istotne informacje w jednym miejscu. Uwieczniaj wyjątkowe
+          chwile, dodając zdjęcia swoich podopiecznych. Twoje myszy zasługują na najlepszą opiekę!
         </p>
       </motion.div>
 

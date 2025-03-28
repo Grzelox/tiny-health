@@ -120,13 +120,13 @@ export const useDeleteVetVisit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ petId, visitId }: { petId: number; visitId: string }) => {
+    mutationFn: async ({ petId, visitId }: { petId: number; visitId: number }) => {
       const response = await fetch("/api/v1/visit", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: visitId }),
+        body: JSON.stringify({ id: visitId.toString() }),
       });
       if (!response.ok) {
         throw new Error("Failed to delete vet visit");

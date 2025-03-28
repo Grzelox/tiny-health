@@ -3,7 +3,7 @@
 import AddPetButton from "@/components/Pet/AddPetButton";
 import PetCard from "@/components/Pet/PetCard";
 import { usePets } from "@/hooks/useQueries";
-import { Pets } from "@/types/pet";
+import { PetWithShared, Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
 import { ShareIcon } from "lucide-react";
 import { DownloadIcon } from "lucide-react";
@@ -15,8 +15,8 @@ import AddPetModal from "./Pet/AddPetModal";
 import SharePetsModal from "./SharePetsModal";
 
 interface DashboardContentProps {
-  ownedPets: Pets[];
-  sharedPets: (Pets & { isShared: boolean })[];
+  ownedPets: PetWithShared[];
+  sharedPets: PetWithShared[];
   onOpenModal: () => void;
 }
 
@@ -58,10 +58,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
-
-      console.log("Data exported successfully.");
     } catch (error) {
-      console.error("Failed to export data:", error);
+      //TOOD: display error messasge to end user
     } finally {
       setIsExporting(false);
     }
@@ -168,7 +166,7 @@ export default function Dashboard() {
   );
 }
 
-const sortPets = (pets: Pets[]): Pets[] => {
+const sortPets = (pets: PetWithShared[]): PetWithShared[] => {
   return [...pets].sort((a, b) => {
     if (a.isDead === b.isDead) {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();

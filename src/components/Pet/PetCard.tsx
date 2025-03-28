@@ -1,11 +1,11 @@
 import { deletePet } from "@/hooks/useQueries";
-import { Pets } from "@/types/pet";
+import { PetWithShared } from "@/types/pet";
 import { format } from "date-fns";
 import { RatIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface PetCardProps {
-  pet: Pets & { isShared?: boolean };
+  pet: PetWithShared;
 }
 
 export default function PetCard({ pet }: PetCardProps) {
@@ -27,7 +27,7 @@ export default function PetCard({ pet }: PetCardProps) {
           {!pet.isShared && (
             <Trash2Icon
               className={`w-6 h-6 ${isDead ? "text-black" : "text-red-600"} cursor-pointer`}
-              onClick={() => deletePetMutation.mutate({ petId: pet.id })}
+              onClick={() => deletePetMutation.mutate({ petId: pet.id.toString() })}
             />
           )}
         </div>
