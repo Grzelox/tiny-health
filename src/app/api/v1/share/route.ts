@@ -67,7 +67,6 @@ export async function GET(request: Request) {
           ownerId: userId,
         },
       });
-      console.log("Shared response", shares);
       const userIds = shares.map((share) => share.sharedWith);
       const users = await clerk.users.getUserList({
         userId: userIds,
