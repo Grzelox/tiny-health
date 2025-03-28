@@ -21,7 +21,6 @@ export async function POST(request: Request) {
       emailAddress: [email],
     });
 
-
     if (!users) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
@@ -53,7 +52,6 @@ export async function POST(request: Request) {
   }
 }
 
-// Get list of users who have access to my pets
 export async function GET(request: Request) {
   const { userId } = await auth();
 
@@ -62,24 +60,22 @@ export async function GET(request: Request) {
   }
 
   try {
+    const clerk = await clerkClient();
     const result = await withPrisma(async (prisma) => {
-      // Get all shares where I'm the owner
       const shares = await prisma.userShare.findMany({
         where: {
           ownerId: userId,
         },
       });
-
-      // Get user details from Clerk
+      console.log("Shared response", shares);
       const userIds = shares.map((share) => share.sharedWith);
-      const users = await clerkClient.users.getUserList({
+      const users = await clerk.users.getUserList({
         userId: userIds,
       });
 
-      // Map shares to include user details
       return shares.map((share) => ({
         ...share,
-        user: users.find((u) => u.id === share.sharedWith),
+        user: users.data.find((u) => u.id === share.sharedWith),
       }));
     });
 

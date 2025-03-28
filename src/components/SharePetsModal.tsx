@@ -1,6 +1,6 @@
 // src/components/SharePetsModal.tsx
-import { useSharePets } from "@/hooks/useQueries";
-import { XIcon } from "lucide-react";
+import { useRemoveShare, useSharePets, useSharedUsers } from "@/hooks/useQueries";
+import { TrashIcon, UserX2Icon, XIcon } from "lucide-react";
 import React, { useState } from "react";
 
 interface SharePetsModalProps {
@@ -12,6 +12,8 @@ export default function SharePetsModal({ isOpen, onClose }: SharePetsModalProps)
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const { mutate: sharePets, isPending: isSharing } = useSharePets();
+  const { data: sharedUsers = [], isLoading: isLoadingUsers } = useSharedUsers();
+  const { mutate: removeShare, isPending: isRemoving } = useRemoveShare();
 
   if (!isOpen) return null;
 
@@ -34,9 +36,21 @@ export default function SharePetsModal({ isOpen, onClose }: SharePetsModalProps)
     }
   };
 
+  const handleRemoveAccess = async (userId: string) => {
+    try {
+      await removeShare(userId, {
+        onError: (error: Error) => {
+          setError(error.message);
+        },
+      });
+    } catch (error) {
+      setError("Failed to remove access");
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-primary-800">Udostępnij Zwierzęta</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -48,7 +62,7 @@ export default function SharePetsModal({ isOpen, onClose }: SharePetsModalProps)
           Wpisz adres email osoby, której chcesz udostępnić wszystkie swoje zwierzęta.
         </p>
 
-        <form onSubmit={handleShare}>
+        <form onSubmit={handleShare} className="mb-6">
           <div className="mb-4">
             <input
               type="email"
@@ -80,6 +94,44 @@ export default function SharePetsModal({ isOpen, onClose }: SharePetsModalProps)
             </button>
           </div>
         </form>
+
+        {/* Shared users list */}
+        <div className="border-t pt-4">
+          <h3 className="text-lg font-medium text-primary-800 mb-3">Osoby z dostępem</h3>
+
+          {isLoadingUsers ? (
+            <div className="text-center py-3">
+              <span className="text-gray-500">Ładowanie...</span>
+            </div>
+          ) : sharedUsers.length === 0 ? (
+            <p className="text-gray-500 text-center py-2">Brak udostępnień</p>
+          ) : (
+            <ul className="divide-y">
+              {sharedUsers.map((sharedUser) => (
+                <li key={sharedUser.id} className="py-3 flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="text-sm">
+                      <p className="font-medium text-gray-900">
+                        {sharedUser.user?.firstName} {sharedUser.user?.lastName}
+                      </p>
+                      <p className="text-gray-500">
+                        {sharedUser.user?.emailAddresses?.[0]?.emailAddress}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveAccess(sharedUser.sharedWith)}
+                    disabled={isRemoving}
+                    className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
+                    title="Cofnij dostęp"
+                  >
+                    <UserX2Icon className="w-5 h-5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

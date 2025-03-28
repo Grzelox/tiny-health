@@ -248,6 +248,19 @@ export const useSharePets = () => {
   });
 };
 
+export const useSharedUsers = () => {
+  return useQuery({
+    queryKey: ["shared-users"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/share");
+      if (!response.ok) {
+        throw new Error("Failed to fetch shared users");
+      }
+      return response.json();
+    },
+  });
+};
+
 export const useRemoveShare = () => {
   const queryClient = useQueryClient();
 
