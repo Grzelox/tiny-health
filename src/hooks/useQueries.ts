@@ -280,7 +280,7 @@ export const useRemoveShare = () => {
   });
 };
 
-export const deletePet = () => {
+export const useDeletePet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

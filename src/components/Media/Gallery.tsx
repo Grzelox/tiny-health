@@ -9,8 +9,9 @@ interface GalleryProps {
 }
 
 export default function Gallery({ uploadedFiles }: GalleryProps) {
-  if (uploadedFiles.length === 0) return null;
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
+  if (uploadedFiles.length === 0) return null;
 
   const handleImageClick = (index: number) => {
     setSelectedImageIndex(index);
