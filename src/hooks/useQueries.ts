@@ -1,9 +1,7 @@
 import { Pet, PetWithShared, VetVisit, WeightRecord } from "@/types/pet";
-import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const usePets = () => {
-  const { userId } = useAuth();
+export const usePets = (userId: string) => {
   return useQuery<PetWithShared[]>({
     queryKey: ["pets", userId],
     queryFn: async () => {
@@ -37,11 +35,11 @@ export const useAddPet = () => {
       const response = await fetch("/api/v1/pet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...petData }),
+        body: JSON.stringify(petData),
       });
       if (!response.ok) throw new Error("Failed to add pet");
       const data = await response.json();
-      return { ...data };
+      return { data };
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["pets", variables.ownerId] });
@@ -271,6 +269,7 @@ export const useRemoveShare = () => {
 
 export const deletePet = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async ({ petId }: { petId: string }) => {
       const response = await fetch(`/api/v1/pet?id=${petId}`, {

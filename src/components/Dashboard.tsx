@@ -6,7 +6,9 @@ import { usePets } from "@/hooks/useQueries";
 import { Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
 import { ShareIcon } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 import React, { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 import LoadingSpinner from "./Animations/LoadingSpinner";
 import AddPetModal from "./Pet/AddPetModal";
@@ -24,7 +26,46 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   onOpenModal,
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const gridClassName = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch("/api/pets/export");
+
+      if (!response.ok) {
+        throw new Error(`Error fetching CSV: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let filename = `pets-export-${new Date().toISOString().split("T")[0]}.csv`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      link.setAttribute("download", filename);
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      console.log("Data exported successfully.");
+    } catch (error) {
+      console.error("Failed to export data:", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (ownedPets.length === 0 && sharedPets.length === 0) {
     return (
@@ -38,13 +79,29 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     <>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-primary-900">Moje stadko</h1>
-        <button
-          onClick={() => setIsShareModalOpen(true)}
-          className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50"
-        >
-          <ShareIcon className="w-5 h-5" />
-          <span>Udostępnij dane innemu użytkownikowi</span>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleExportData}
+            disabled={isExporting}
+            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className="w-5 h-5 flex items-center justify-center">
+              {isExporting ? (
+                <ClipLoader size={16} color="#4F46E5" />
+              ) : (
+                <DownloadIcon className="w-5 h-5" />
+              )}
+            </span>
+            <span>{isExporting ? "Przygotowywanie" : "Pobierz dane"}</span>
+          </button>
+          <button
+            onClick={() => setIsShareModalOpen(true)}
+            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50"
+          >
+            <ShareIcon className="w-5 h-5" />
+            <span>Udostępnij stado</span>
+          </button>
+        </div>
       </div>
 
       <div className="space-y-12">
