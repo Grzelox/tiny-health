@@ -43,6 +43,8 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
     setIsWeightModalOpen(false);
   };
 
+  const hasDeathDate = petData.isDead && petData.deathDate;
+
   return (
     <div>
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
@@ -53,6 +55,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
               <h1 className="text-3xl font-bold text-primary-800">{petData.name}</h1>
               <p className="text-secondary-600">
                 {petData.breed} • {petData.color}
+                {petData.isDead && <span className="ml-2 text-red-600">• Zmarła</span>}
               </p>
             </div>
           </div>
@@ -70,12 +73,22 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
           <div className="bg-primary-50 p-4 rounded-lg">
             <Calendar className="w-6 h-6 text-primary-600 mb-2" />
             <p className="text-sm text-secondary-600">Data urodzenia</p>
             <p className="font-medium">{new Date(petData.bornAt).toLocaleDateString("pl-PL")}</p>
           </div>
+
+          {hasDeathDate && (
+            <div className="bg-primary-50 p-4 rounded-lg">
+              <p className="text-sm text-secondary-600">Data śmierci</p>
+              <p className="font-medium">
+                {new Date(petData.deathDate!).toLocaleDateString("pl-PL")}
+              </p>
+            </div>
+          )}
+
           <div
             className="bg-primary-50 p-4 rounded-lg cursor-pointer relative"
             onClick={handleWeightTrackerClick}
