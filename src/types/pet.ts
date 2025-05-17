@@ -4,6 +4,7 @@ export interface Pets {
   breed: string;
   updatedAt: string;
   isDead: boolean;
+  deathDate?: string;
 }
 
 export interface Pet {
@@ -15,6 +16,7 @@ export interface Pet {
   updatedAt: string;
   weight: number;
   isDead: boolean;
+  deathDate?: string;
   ownerId: string;
   notes?: string;
 }
@@ -27,6 +29,7 @@ export interface FullPetData {
   weight: number;
   bornAt: string;
   isDead: boolean;
+  deathDate?: string;
   ownerId: string;
   notes?: string;
   createdAt: string;

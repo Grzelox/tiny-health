@@ -52,6 +52,7 @@ export const useEditPet = () => {
 
   return useMutation({
     mutationFn: async ({ data }: { data: Record<string, any> }) => {
+      console.log("data Input", data);
       const response = await fetch("/api/v1/pet", {
         method: "PATCH",
         headers: {

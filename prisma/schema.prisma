@@ -29,6 +29,7 @@ model Pet {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   isDead    Boolean    @default(false)
+  deathDate DateTime?
   vetVisits VetVisit[]
   weights   Weight[]
   uploadedFiles File[]

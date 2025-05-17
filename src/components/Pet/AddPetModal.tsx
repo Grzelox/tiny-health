@@ -17,6 +17,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     weight: 0,
     color: "",
     isDead: false,
+    deathDate: "",
   });
 
   // Reset form function
@@ -28,6 +29,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
       weight: 0,
       color: "",
       isDead: false,
+      deathDate: "",
     });
   };
 
@@ -43,19 +45,33 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target as HTMLInputElement;
 
-    if (name === "weight") {
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setPet((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+
+      // Clear death date if isDead is unchecked
+      if (name === "isDead" && !checked) {
+        setPet((prev) => ({
+          ...prev,
+          deathDate: "",
+        }));
+      }
+    } else if (name === "weight") {
       setPet((prev) => ({
         ...prev,
         weight: Number(value),
       }));
-    } else if (name === "bornAt") {
+    } else if (name === "bornAt" || name === "deathDate") {
       // For date fields, store the ISO string in state but display formatted date
       setPet((prev) => ({
         ...prev,
-        bornAt: value ? new Date(value).toISOString() : "",
+        [name]: value ? new Date(value).toISOString() : "",
       }));
     } else {
       setPet((prev) => ({
@@ -74,6 +90,8 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
       await addPetMutation.mutateAsync({
         ...pet,
         ownerId: user.id,
+        // Don't send deathDate if isDead is false
+        ...(pet.isDead ? {} : { deathDate: undefined }),
       });
 
       // Reset the form state after successful submission
@@ -138,6 +156,30 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
+          <div className="flex items-center justify-between">
+            <p>Czy myszka zmarła?</p>
+            <input
+              type="checkbox"
+              name="isDead"
+              checked={pet.isDead}
+              onChange={handleChange}
+              className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+            />
+          </div>
+
+          {pet.isDead && (
+            <>
+              <p>Data śmierci</p>
+              <input
+                type="date"
+                name="deathDate"
+                placeholder="Data śmierci"
+                value={formatDateForInput(pet.deathDate || "")}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </>
+          )}
         </div>
         <div className="mt-6 flex justify-end space-x-4">
           <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">

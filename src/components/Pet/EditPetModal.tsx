@@ -14,6 +14,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   const [birthDate, setBirthday] = useState("");
   const [color, setColor] = useState("");
   const [isDead, setIsDead] = useState(false);
+  const [deathDate, setDeathDate] = useState("");
   const [ownerId, setOwnerId] = useState<string | null>(null);
 
   // Track initial values to compare against
@@ -23,28 +24,34 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
     birthDate: string;
     color: string;
     isDead: boolean;
+    deathDate: string;
   } | null>(null);
 
   const { mutate: editPet } = useEditPet();
 
   useEffect(() => {
     if (pet) {
-      const formattedDate = pet.bornAt ? new Date(pet.bornAt).toISOString().split("T")[0] : "";
+      const formattedBirthDate = pet.bornAt ? new Date(pet.bornAt).toISOString().split("T")[0] : "";
+      const formattedDeathDate = pet.deathDate
+        ? new Date(pet.deathDate).toISOString().split("T")[0]
+        : "";
 
       // Set current form values
       setName(pet.name);
       setBreed(pet.breed);
-      setBirthday(formattedDate);
+      setBirthday(formattedBirthDate);
       setColor(pet.color);
       setIsDead(pet.isDead);
+      setDeathDate(formattedDeathDate);
 
       // Store initial values for comparison
       setInitialValues({
         name: pet.name,
         breed: pet.breed,
-        birthDate: formattedDate,
+        birthDate: formattedBirthDate,
         color: pet.color,
         isDead: pet.isDead,
+        deathDate: formattedDeathDate,
       });
     }
   }, [pet]);
@@ -62,6 +69,19 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
     if (birthDate !== initialValues.birthDate) changes.bornAt = new Date(birthDate).toISOString();
     if (color !== initialValues.color) changes.color = color;
     if (isDead !== initialValues.isDead) changes.isDead = isDead;
+
+    // Add death date if changed, or set to null if unchecked
+    if (isDead) {
+      if (deathDate && deathDate !== initialValues.deathDate) {
+        changes.deathDate = new Date(deathDate).toISOString();
+      } else if (!deathDate && initialValues.deathDate) {
+        // If no death date is provided but it was set before
+        changes.deathDate = new Date().toISOString(); // Default to current date
+      }
+    } else {
+      // If pet is not dead, clear the death date
+      changes.deathDate = null;
+    }
 
     // Only send the update if there are actual changes
     if (Object.keys(changes).length > 1) {
@@ -104,7 +124,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             onChange={(e) => setColor(e.target.value)}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
-          <p> Data urodzenia</p>
+          <p>Data urodzenia</p>
           <input
             type="date"
             placeholder="Data Urodzenia"
@@ -121,6 +141,19 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
               className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             />
           </div>
+
+          {isDead && (
+            <>
+              <p>Data śmierci</p>
+              <input
+                type="date"
+                placeholder="Data śmierci"
+                value={deathDate}
+                onChange={(e) => setDeathDate(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </>
+          )}
         </div>
         <div className="mt-6 flex justify-end space-x-4">
           <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">
