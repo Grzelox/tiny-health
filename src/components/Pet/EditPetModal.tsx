@@ -1,5 +1,5 @@
 import { useEditPet } from "@/hooks/useQueries";
-import { FullPetData } from "@/types/pet";
+import { AnimalType, FullPetData } from "@/types/pet";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
@@ -8,9 +8,21 @@ interface EditPetModalProps {
   pet: FullPetData | null;
 }
 
+const ANIMAL_TYPES: AnimalType[] = [
+  "Mysz",
+  "Szczur",
+  "Myszoskoczek",
+  "Fretka",
+  "Świnka Morska",
+  "Chomik",
+  "Szynszyla",
+  "Królik",
+];
+
 const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => {
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
+  const [animalType, setAnimalType] = useState<AnimalType>("Mysz");
   const [birthDate, setBirthday] = useState("");
   const [color, setColor] = useState("");
   const [isDead, setIsDead] = useState(false);
@@ -21,6 +33,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   const [initialValues, setInitialValues] = useState<{
     name: string;
     breed: string;
+    animalType: AnimalType;
     birthDate: string;
     color: string;
     isDead: boolean;
@@ -39,6 +52,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
       // Set current form values
       setName(pet.name);
       setBreed(pet.breed);
+      setAnimalType(pet.animalType);
       setBirthday(formattedBirthDate);
       setColor(pet.color);
       setIsDead(pet.isDead);
@@ -48,6 +62,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
       setInitialValues({
         name: pet.name,
         breed: pet.breed,
+        animalType: pet.animalType,
         birthDate: formattedBirthDate,
         color: pet.color,
         isDead: pet.isDead,
@@ -66,6 +81,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
     if (name !== initialValues.name) changes.name = name;
     if (breed !== initialValues.breed) changes.breed = breed;
+    if (animalType !== initialValues.animalType) changes.animalType = animalType;
     if (birthDate !== initialValues.birthDate) changes.bornAt = new Date(birthDate).toISOString();
     if (color !== initialValues.color) changes.color = color;
     if (isDead !== initialValues.isDead) changes.isDead = isDead;
@@ -98,12 +114,25 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">Aktualizuj dane myszy</h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Aktualizuj dane zwierzaka</h2>
         <div className="space-y-4">
-          <p>Imię myszy</p>
+          <p>Rodzaj</p>
+          <select
+            value={animalType}
+            onChange={(e) => setAnimalType(e.target.value as AnimalType)}
+            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          >
+            {ANIMAL_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          <p>Imię</p>
           <input
             type="text"
-            placeholder="Imię myszy"
+            placeholder="Imię"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -133,7 +162,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <div className="flex items-center justify-between">
-            <p>Czy myszka zmarła?</p>
+            <p>Czy zwierzak zmarł?</p>
             <input
               type="checkbox"
               checked={isDead}

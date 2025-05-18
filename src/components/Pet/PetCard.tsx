@@ -1,7 +1,7 @@
 import { useDeletePet } from "@/hooks/useQueries";
 import { PetWithShared } from "@/types/pet";
 import { format } from "date-fns";
-import { RatIcon, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface PetCardProps {
@@ -9,6 +9,7 @@ interface PetCardProps {
 }
 
 export default function PetCard({ pet }: PetCardProps) {
+  console.log("Pet data", pet);
   const deletePetMutation = useDeletePet();
   const isDead = pet.isDead;
 
@@ -18,11 +19,9 @@ export default function PetCard({ pet }: PetCardProps) {
     >
       <div className="p-6 h-full flex flex-col relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <RatIcon className={`w-8 h-8 ${isDead ? "text-gray-600" : "text-primary-600"}`} />
-          </div>
+        
           <span className={`text-sm ${isDead ? "text-gray-600" : "text-secondary-600"}`}>
-            Ostatnia modyfikacja: {format(new Date(pet.updatedAt), "dd.MM.yyyy")}
+            {pet.animalType} | {pet.breed}
           </span>
           {!pet.isShared && (
             <Trash2Icon
@@ -37,7 +36,9 @@ export default function PetCard({ pet }: PetCardProps) {
           >
             {pet.name}
           </h3>
-          <p className={`text-secondary-600 ${isDead ? "text-gray-600" : ""}`}>{pet.breed}</p>
+          <p className={`text-secondary-600 ${isDead ? "text-gray-600" : ""}`}>
+            {pet.animalType} - {pet.breed}
+          </p>
         </div>
         <div className="mt-4">
           <Link href={`/pet/${pet.id}`}>

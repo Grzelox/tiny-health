@@ -1,5 +1,5 @@
 import { useAddPet } from "@/hooks/useQueries";
-import { Pet } from "@/types/pet";
+import { AnimalType, Pet } from "@/types/pet";
 import React, { useState } from "react";
 
 interface AddPetModalProps {
@@ -8,11 +8,23 @@ interface AddPetModalProps {
   onClose: () => void;
 }
 
+const ANIMAL_TYPES: AnimalType[] = [
+  "Mysz",
+  "Szczur",
+  "Myszoskoczek",
+  "Fretka",
+  "Świnka Morska",
+  "Chomik",
+  "Szynszyla",
+  "Królik",
+];
+
 const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
   const addPetMutation = useAddPet();
   const [pet, setPet] = useState<Omit<Pet, "id" | "updatedAt" | "ownerId">>({
     name: "",
     breed: "",
+    animalType: "Mysz",
     bornAt: "",
     weight: 0,
     color: "",
@@ -25,6 +37,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     setPet({
       name: "",
       breed: "",
+      animalType: "Mysz",
       bornAt: "",
       weight: 0,
       color: "",
@@ -109,13 +122,27 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">Dodaj nową myszkę</h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Dodaj nowego zwierzaka</h2>
         <div className="space-y-4">
-          <p>Imię myszy</p>
+          <p>Rodzaj</p>
+          <select
+            name="animalType"
+            value={pet.animalType}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          >
+            {ANIMAL_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          <p>Imię</p>
           <input
             type="text"
             name="name"
-            placeholder="Imię myszy"
+            placeholder="Imię"
             value={pet.name}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -157,7 +184,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
           <div className="flex items-center justify-between">
-            <p>Czy myszka zmarła?</p>
+            <p>Czy zwierzak zmarł?</p>
             <input
               type="checkbox"
               name="isDead"
