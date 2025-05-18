@@ -47,6 +47,7 @@ export async function GET(request: Request) {
           createdAt: true,
           updatedAt: true,
           notes: true,
+          animalType: true,
         },
       });
 
@@ -72,6 +73,7 @@ export async function GET(request: Request) {
           createdAt: true,
           updatedAt: true,
           notes: true,
+          animalType: true,
         },
       });
 
@@ -135,6 +137,7 @@ export async function GET(request: Request) {
       createdAt: new Date(pet.createdAt).toLocaleString(),
       updatedAt: new Date(pet.updatedAt).toLocaleString(),
       notes: pet.notes || "",
+      animalType: pet.animalType || "",
     }));
 
     const vetVisitsData = data.vetVisits.map((visit) => ({

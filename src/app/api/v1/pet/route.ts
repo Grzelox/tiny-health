@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, breed, bornAt, weight, color, ownerId, notes, isDead, deathDate } =
+  const { name, breed, bornAt, weight, color, ownerId, notes, isDead, deathDate, animalType } =
     await request.json();
   try {
     const result = await withPrisma(async (prisma) => {
@@ -77,6 +77,7 @@ export async function POST(request: Request) {
           notes,
           isDead: isDead || false,
           deathDate,
+          animalType,
           updatedAt: new Date().toISOString(),
         },
       });
@@ -120,6 +121,7 @@ export async function PATCH(request: Request) {
           ...(payload.color !== undefined && { color: payload.color }),
           ...(payload.isDead !== undefined && { isDead: payload.isDead }),
           ...(payload.deathDate !== undefined && { deathDate: new Date(payload.deathDate) }),
+          ...(payload.animalType !== undefined && { animalType: payload.animalType }),
           updatedAt: new Date(),
         },
       });

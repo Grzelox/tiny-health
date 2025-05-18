@@ -21,6 +21,7 @@ model Pet {
   id        Int        @id @default(autoincrement())
   name      String
   breed     String
+  animalType String    @default("Mysz")
   bornAt    DateTime
   weight    Int
   color     String

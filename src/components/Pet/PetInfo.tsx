@@ -54,7 +54,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
             <div>
               <h1 className="text-3xl font-bold text-primary-800">{petData.name}</h1>
               <p className="text-secondary-600">
-                {petData.breed} • {petData.color}
+                {petData.animalType} • {petData.breed} • {petData.color}
                 {petData.isDead && <span className="ml-2 text-red-600">• Zmarła</span>}
               </p>
             </div>
