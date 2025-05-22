@@ -12,7 +12,7 @@ const AddPetButton = ({ onClick }: AddPetButtonProps) => {
     >
       <div className="flex flex-col items-center text-primary-600">
         <Plus className="w-12 h-12 mb-2" />
-        <span className="text-lg font-medium">Dodaj zwierzaka</span>
+        <span className="text-lg font-medium">Dodaj gryzonia</span>
       </div>
     </button>
   );

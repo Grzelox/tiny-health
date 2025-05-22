@@ -19,7 +19,6 @@ export interface Pets {
 }
 
 export interface Pet {
-  id: string;
   name: string;
   breed: string;
   animalType: AnimalType;
@@ -35,6 +34,7 @@ export interface Pet {
 
 export interface FullPetData {
   id: number;
+  uuid: string;
   name: string;
   breed: string;
   animalType: AnimalType;
@@ -58,6 +58,7 @@ export interface PetWithShared extends FullPetData {
 export interface VetVisit {
   id: number;
   petId: number;
+  uuid: string;
   date: Date;
   description: string;
   medication: string;

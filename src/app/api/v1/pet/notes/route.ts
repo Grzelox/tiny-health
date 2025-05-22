@@ -9,7 +9,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { id, notes } = await request.json();
+  const {id, notes } = await request.json();
 
   if (!id) {
     return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
@@ -17,12 +17,21 @@ export async function PATCH(request: Request) {
 
   try {
     const result = await withPrisma(async (prisma) => {
-      // First verify the pet belongs to the user
+      const pet = await prisma.pet.findFirst({
+        where: {
+          id: id,
+          ownerId: userId,
+        },
+      });
+
+      if (!pet) {
+        return NextResponse.json({ message: "Pet not found" }, { status: 404 });
+      }
 
       // Update only the notes field
       const updatedPet = await prisma.pet.update({
         where: {
-          id: Number(id),
+          id: id,
         },
         data: {
           notes,

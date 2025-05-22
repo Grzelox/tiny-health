@@ -116,6 +116,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
         onClose={handleCloseWeightModal}
         petId={petData.id}
         currentWeight={petData.weight}
+        uuid={petData.uuid}
       />
     </div>
   );

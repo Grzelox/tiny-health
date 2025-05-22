@@ -19,14 +19,13 @@ export default function PetCard({ pet }: PetCardProps) {
     >
       <div className="p-6 h-full flex flex-col relative z-10">
         <div className="flex items-center justify-between mb-4">
-        
           <span className={`text-sm ${isDead ? "text-gray-600" : "text-secondary-600"}`}>
             {pet.animalType} | {pet.breed}
           </span>
           {!pet.isShared && (
             <Trash2Icon
               className={`w-6 h-6 ${isDead ? "text-black" : "text-red-600"} cursor-pointer`}
-              onClick={() => deletePetMutation.mutate({ petId: pet.id.toString() })}
+              onClick={() => deletePetMutation.mutate({ petId: pet.id, ownerId: pet.ownerId })}
             />
           )}
         </div>
@@ -41,7 +40,7 @@ export default function PetCard({ pet }: PetCardProps) {
           </p>
         </div>
         <div className="mt-4">
-          <Link href={`/pet/${pet.id}`}>
+          <Link href={`/pet/${pet.uuid}`}>
             <span
               className={`text-sm ${isDead ? "text-black" : "text-primary-600"} hover:${isDead ? "text-gray-700" : "text-primary-700"}`}
             >

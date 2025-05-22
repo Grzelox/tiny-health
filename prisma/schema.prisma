@@ -19,6 +19,7 @@ model KeepAlive {
 
 model Pet {
   id        Int        @id @default(autoincrement())
+  uuid      String     @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name      String
   breed     String
   animalType String    @default("Mysz")

@@ -10,16 +10,26 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const petId = searchParams.get("petId");
+    const petId = Number(searchParams.get("petId"));
 
     if (!petId) {
       return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
     }
 
     const result = await withPrisma(async (prisma) => {
+      const pet = await prisma.pet.findFirst({
+        where: {
+          id: petId,  
+        },
+      });
+
+      if (!pet) {
+        return NextResponse.json({ message: "Pet not found" }, { status: 404 });
+      }
+
       const weights = await prisma.weight.findMany({
         where: {
-          petId: Number(petId),
+          petId: pet.id,
         },
         orderBy: {
           createdAt: "asc",

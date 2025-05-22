@@ -16,7 +16,8 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
   const handleSave = () => {
     updateNotes(
       {
-        id: petData.id.toString(),
+        id: petData.id,
+        uuid: petData.uuid,
         notes: notes,
       },
       {

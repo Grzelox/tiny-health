@@ -52,7 +52,7 @@ export default function Welcome() {
               Prosty, intuicyjny interfejs
             </h3>
             <p className="text-lg text-secondary-600">
-              Śledź historię zdrowotną swoich myszek – od wizyt u weterynarza, przez zmiany w wadze,
+              Śledź historię zdrowotną swoich gryzoni – od wizyt u weterynarza, przez zmiany w wadze,
               aż po notatki. Wszystko, czego potrzebujesz, dostępne w jednym miejscu.
             </p>
           </div>
@@ -108,7 +108,7 @@ export default function Welcome() {
             <h3 className="text-2xl font-semibold text-primary-800 mb-4">Prywatny i bezpieczny</h3>
             <p className="text-lg text-secondary-600">
               Nasz serwis jest całkowicie darmowy, wolny od reklam, a eksport danych daje Ci pełną
-              kontrolę nad informacjami o Twoich zwierzakach.
+              kontrolę nad informacjami o Twoich gryzoniach.
             </p>
           </div>
         </motion.div>
