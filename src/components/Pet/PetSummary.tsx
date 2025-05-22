@@ -16,14 +16,21 @@ interface PetSummaryProps {
   onRefresh: () => Promise<any>;
 }
 
-export default function PetSummary({ petId, pet, vetVisits, images, onRefresh }: PetSummaryProps) {
+export default function PetSummary({
+  petId,
+  pet,
+  vetVisits,
+  images,
+  onRefresh,
+}: PetSummaryProps) {
+  console.log("Pet Summary", pet);
   const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const handleEditClick = () => setIsEditPetModalOpen(true);
   return (
     <div className="container mx-auto px-4 py-8">
       <PetInfo petData={pet} onRefresh={onRefresh} />
       <div>
-        <VetVisitList petId={petId} vetVisits={vetVisits} />
+        <VetVisitList petId={petId} uuid={pet.uuid} vetVisits={vetVisits} />
       </div>
       <div>
         <MediaUploader petId={petId} />

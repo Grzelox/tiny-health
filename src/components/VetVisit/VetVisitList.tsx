@@ -8,14 +8,15 @@ import VetVisitItem from "./VetVisitItem";
 
 interface VetVisitListProps {
   petId: number;
+  uuid: string;
   vetVisits: VetVisit[];
 }
 
-export default function VetVisitList({ petId, vetVisits }: VetVisitListProps) {
+export default function VetVisitList({ petId, uuid, vetVisits }: VetVisitListProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedVisit, setSelectedVisit] = useState<VetVisit | null>(null);
-
+  console.log("Vet Visit List", uuid);
   const { mutate: deleteVetVisit } = useDeleteVetVisit();
 
   const handleAddClick = () => {
@@ -28,7 +29,7 @@ export default function VetVisitList({ petId, vetVisits }: VetVisitListProps) {
   };
 
   const handleRemoveClick = (visitId: number) => {
-    deleteVetVisit({ petId: petId, visitId: visitId });
+    deleteVetVisit({ petId: petId, uuid: uuid, visitId: visitId });
   };
 
   if (!vetVisits) return null;
@@ -56,6 +57,7 @@ export default function VetVisitList({ petId, vetVisits }: VetVisitListProps) {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         petId={petId}
+        uuid={uuid}
       />
 
       <EditVetVisitModal
@@ -63,6 +65,7 @@ export default function VetVisitList({ petId, vetVisits }: VetVisitListProps) {
         onClose={() => setIsEditModalOpen(false)}
         visits={vetVisits}
         visitId={selectedVisit?.id ?? 0}
+        uuid={uuid}
       />
     </div>
   );

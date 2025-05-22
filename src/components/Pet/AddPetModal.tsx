@@ -122,7 +122,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">Dodaj nowego zwierzaka</h2>
+        <h2 className="text-2xl font-bold text-primary-800 mb-6">Dodaj nowego gryzonia</h2>
         <div className="space-y-4">
           <p>Rodzaj</p>
           <select

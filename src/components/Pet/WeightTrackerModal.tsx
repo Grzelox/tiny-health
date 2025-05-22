@@ -19,6 +19,7 @@ interface WeightTrackerModalProps {
   onClose: () => void;
   petId: number;
   currentWeight: number;
+  uuid: string;
 }
 
 export default function WeightTrackerModal({
@@ -26,9 +27,10 @@ export default function WeightTrackerModal({
   onClose,
   petId,
   currentWeight,
+  uuid,
 }: WeightTrackerModalProps): JSX.Element {
   const [newWeight, setNewWeight] = useState<string>(currentWeight?.toString() ?? "0");
-  const { data: weightHistory, isLoading } = useGetWeightHistory(petId);
+  const { data: weightHistory, isLoading } = useGetWeightHistory(petId, uuid);
   const addWeightMutation = useAddWeightRecord();
   const deleteWeightMutation = useDeleteWeightRecord();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -43,6 +45,7 @@ export default function WeightTrackerModal({
           petId,
           weight: weightValue,
         },
+        uuid: uuid,
       },
       {
         onSuccess: () => {
@@ -55,7 +58,7 @@ export default function WeightTrackerModal({
   const handleDeleteWeight = (petId: number, id: string): void => {
     setDeletingId(id);
     deleteWeightMutation.mutate(
-      { petId, id },
+      { petId, id, uuid },
       {
         onSuccess: () => {
           setDeletingId(null);

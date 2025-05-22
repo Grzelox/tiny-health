@@ -11,9 +11,9 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
 
-    const id = searchParams.get("id");
-    if (!id) {
-      return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
+    const uuid = searchParams.get("uuid");
+    if (!uuid) {
+      return NextResponse.json({ message: "Pet UUID is required" }, { status: 400 });
     }
 
     const availableUserIds = await withPrisma(async (prisma) => {
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     const result = await withPrisma(async (prisma) => {
       const pet = await prisma.pet.findFirst({
         where: {
-          id: Number(id),
+          uuid: uuid,
           ownerId: {
             in: accessibleOwnerIds,
           },
@@ -112,7 +112,7 @@ export async function PATCH(request: Request) {
     const result = await withPrisma(async (prisma) => {
       const updatedPet = await prisma.pet.update({
         where: {
-          id: Number(payload.id),
+          uuid: payload.uuid,
         },
         data: {
           ...(payload.name !== undefined && { name: payload.name }),
@@ -142,7 +142,7 @@ export async function DELETE(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const petId = searchParams.get("id");
+    const petId = Number(searchParams.get("petId"));
 
     if (!petId) {
       return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
@@ -151,7 +151,7 @@ export async function DELETE(request: Request) {
     const result = await withPrisma(async (prisma) => {
       const pet = await prisma.pet.findFirst({
         where: {
-          id: Number(petId),
+          id: petId,
           ownerId: userId,
         },
       });
@@ -162,7 +162,7 @@ export async function DELETE(request: Request) {
 
       await prisma.pet.delete({
         where: {
-          id: Number(petId),
+          id: petId,
         },
       });
 

@@ -106,7 +106,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         <div>
           <div className={gridClassName}>
             {sortPets(ownedPets).map((pet) => (
-              <PetCard key={pet.id} pet={pet} />
+              <PetCard key={pet.uuid} pet={pet} />
             ))}
             <AddPetButton onClick={onOpenModal} />
           </div>
@@ -117,7 +117,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             <h2 className="text-2xl font-semibold text-primary-800 mb-6">Udostępnione</h2>
             <div className={gridClassName}>
               {sortPets(sharedPets).map((pet) => (
-                <PetCard key={pet.id} pet={pet} />
+                <PetCard key={pet.uuid} pet={pet} />
               ))}
             </div>
           </div>
