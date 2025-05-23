@@ -17,7 +17,7 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
     updateNotes(
       {
         id: petData.id,
-        uuid: petData.uuid,
+        petUuid: petData.uuid,
         notes: notes,
       },
       {
