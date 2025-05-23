@@ -16,6 +16,11 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "tiny health - mouse health tracking",
   description: "track your mouse's health and medical history",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
