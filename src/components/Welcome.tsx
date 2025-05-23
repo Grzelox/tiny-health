@@ -84,28 +84,34 @@ export default function Welcome() {
   const features = [
     {
       icon: Heart,
-      title: "Monitorowanie zdrowia",
-      description: "Śledź stan zdrowia swoich gryzoni z łatwością i precyzją",
+      title: "Historia wizyt u weterynarza",
+      description: "Śledź historię wizyt u weterynarza swoich gryzoni z łatwością i precyzją",
     },
     {
       icon: BarChart3,
       title: "Analiza wagi",
-      description: "Wizualizuj zmiany wagi w czasie za pomocą interaktywnych wykresów",
+      description: "Wizualizuj zmiany wagi w czasie za pomocą historii wagi i wykresu",
     },
     {
       icon: Camera,
       title: "Galeria zdjęć",
-      description: "Zachowaj najpiękniejsze chwile ze swoimi małymi przyjaciółmi",
+      description: "Dodawaj najfajniejsze zdjęcia swojego pupila i wracaj do wspomnień.",
     },
     {
       icon: Users,
       title: "Udostępnianie",
-      description: "Podziel się opieką z rodziną i znajomymi weterynarza",
+      description: "Podziel się danymi z swoimi najbliższymi osobami",
     },
     {
       icon: Download,
       title: "Eksport danych",
-      description: "Pobierz wszystkie dane w wygodnym formacie CSV",
+      description: "W dowolnej chwili wyeksportuj wszystkie zgromadzone dane",
+    },
+    {
+      icon: Shield,
+      title: "Darmowy i bezpieczny",
+      description:
+        "Serwis jest całkowicie darmowy, wolny od reklam i stworzony zgodnie z panującymi standardami bezpieczeństwa",
     },
   ];
 
@@ -141,14 +147,15 @@ export default function Welcome() {
               <span className="text-gradient">tiny health</span>
               <br />
               <span className="text-2xl md:text-4xl lg:text-5xl font-medium text-secondary-700">
-                Zdrowie Twoich gryzoni w jednym miejscu
+                dbaj o zdrowie swoich małych bohaterów
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-secondary-600 max-w-4xl mx-auto mb-12 leading-relaxed">
-              Profesjonalne narzędzie do monitorowania zdrowia, wagi i historii medycznej Twoich
-              małych podopiecznych. Proste, bezpieczne i zawsze pod ręką.
+              Dzięki naszemu narzędziu możesz łatwo rejestrować wizyty u weterynarza, monitorować
+              zmiany w wadze i przechowywać wszystkie istotne informacje w jednym miejscu.
+              Uwieczniaj wyjątkowe chwile, dodając zdjęcia swoich podopiecznych.
             </p>
 
             {/* CTA Buttons */}
@@ -179,9 +186,6 @@ export default function Welcome() {
             <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-6">
               Wszystko czego potrzebujesz
             </h2>
-            <p className="text-xl text-secondary-600 max-w-3xl mx-auto">
-              Kompletne rozwiązanie do opieki nad zdrowiem Twoich gryzoni
-            </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -203,7 +207,7 @@ export default function Welcome() {
             src="/example1.webp"
             alt="Historia medyczna - przykład"
             title="Prosty interfejs"
-            description="Intuicyjny panel pozwala na łatwe zarządzanie danymi medycznymi. Wszystkie informacje o wizytach, lekach i notatkach w jednym miejscu."
+            description="Śledź historię zdrowotną swoich myszek – od wizyt u weterynarza, przez zmiany w wadze, aż po notatki. Wszystko, czego potrzebujesz, dostępne w jednym miejscu."
             delay={0.2}
           />
 
@@ -219,8 +223,8 @@ export default function Welcome() {
           <ImageShowcase
             src="/example3.webp"
             alt="Wykres wagi - przykład"
-            title="Analiza i raporty"
-            description="Śledź zmiany wagi w czasie dzięki interaktywnym wykresom. Eksportuj dane do PDF lub CSV dla weterynarza."
+            title="Prywatny i bezpieczny"
+            description="Nasz serwis jest całkowicie darmowy, wolny od reklam, a eksport danych daje Ci pełną kontrolę nad informacjami o Twoich zwierzakach."
             delay={0.6}
           />
         </div>
@@ -235,16 +239,12 @@ export default function Welcome() {
           <div className="card-modern p-12 rounded-3xl max-w-4xl mx-auto relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50" />
             <div className="relative">
-              <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-6">
-                Zadbaj o swoich małych bohaterów
-              </h2>
               <p className="text-xl text-secondary-700 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Dołącz do tysięcy opiekunów, którzy ufają tiny health w opiece nad swoimi
-                gryzoniami. Całkowicie za darmo, bez reklam.
+                Dołącz do naszej społeczności i zadbaj o zdrowie swoich małych bohaterów już dziś!
               </p>
               <SignUpButton mode="modal">
                 <button className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-glow">
-                  Rozpocznij przygodę
+                  Rozpocznij przygodę z serwisem
                 </button>
               </SignUpButton>
             </div>
