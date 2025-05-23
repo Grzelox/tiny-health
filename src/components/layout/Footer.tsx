@@ -23,7 +23,7 @@ export default function Footer() {
                 className="w-10 h-10 sm:w-12 sm:h-12"
               />
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gradient bg-gradient-to-r from-white to-primary-100 bg-clip-text text-transparent">
+                <h3 className="text-xl sm:text-2xl font-bold text-white sm:text-gradient sm:bg-gradient-to-r sm:from-white sm:to-primary-100 sm:bg-clip-text sm:text-transparent">
                   tiny health
                 </h3>
                 <p className="text-primary-100/80 text-xs sm:text-sm font-medium">

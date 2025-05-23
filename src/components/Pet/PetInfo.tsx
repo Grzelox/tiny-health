@@ -112,25 +112,36 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
 
             {/* Weight */}
             <div
-              className="glass-effect bg-secondary-50/80 backdrop-blur-sm p-6 rounded-xl border border-secondary-200/50 hover:shadow-modern-lg hover:border-secondary-300/70 transition-all duration-300 cursor-pointer group relative hover:bg-secondary-100/60"
-              onClick={handleWeightTrackerClick}
+              className={`glass-effect bg-secondary-50/80 backdrop-blur-sm p-6 rounded-xl border border-secondary-200/50 hover:shadow-modern-lg hover:border-secondary-300/70 transition-all duration-300 group relative hover:bg-secondary-100/60 ${
+                petData.weight !== null ? "cursor-pointer" : ""
+              }`}
+              onClick={petData.weight !== null ? handleWeightTrackerClick : undefined}
             >
               <div className="flex items-center justify-between mb-3">
                 <Stethoscope className="w-6 h-6 text-secondary-600" />
-                <div className="relative">
-                  <div className="p-2 bg-secondary-100/80 rounded-lg group-hover:bg-secondary-200/90 transition-all duration-300">
-                    <LineChart className="w-5 h-5 text-secondary-600 group-hover:text-secondary-700 group-hover:scale-110 transition-all duration-300" />
+                {petData.weight !== null && (
+                  <div className="relative">
+                    <div className="p-2 bg-secondary-100/80 rounded-lg group-hover:bg-secondary-200/90 transition-all duration-300">
+                      <LineChart className="w-5 h-5 text-secondary-600 group-hover:text-secondary-700 group-hover:scale-110 transition-all duration-300" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
-                </div>
+                )}
               </div>
               <p className="text-sm text-secondary-600 mb-1 font-medium group-hover:text-secondary-700 transition-colors duration-300">
                 Waga [g]
+                {petData.weight !== null && (
+                  <span className="text-xs text-secondary-500 group-hover:text-secondary-600 ml-1">
+                    • kliknij aby zobaczyć historię
+                  </span>
+                )}
               </p>
               <p className="font-semibold text-secondary-800 group-hover:text-secondary-900 transition-colors duration-300">
-                {petData.weight}
+                {petData.weight !== null ? `${petData.weight} g` : "Nie podano"}
               </p>
-              <div className="absolute inset-0 bg-gradient-to-r from-secondary-100/0 via-secondary-100/20 to-secondary-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+              {petData.weight !== null && (
+                <div className="absolute inset-0 bg-gradient-to-r from-secondary-100/0 via-secondary-100/20 to-secondary-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+              )}
             </div>
 
             {/* Color */}

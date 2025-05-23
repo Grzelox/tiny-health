@@ -5,29 +5,30 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header className="glass-effect border-b border-white/30 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2 group">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center">
+        <Link href="/" className="flex items-center gap-1 sm:gap-2 group">
           <div className="relative">
             <Image
               src="/favicon.ico"
               alt="tiny health logo"
               width={80}
               height={80}
-              className="w-12 h-12 transition-transform duration-300 group-hover:scale-110"
+              className="w-8 h-8 sm:w-12 sm:h-12 transition-transform duration-300 group-hover:scale-110"
             />
           </div>
-          <span className="text-xl font-bold text-gradient hover:from-primary-700 hover:to-primary-900 transition-all duration-300">
+          <span className="text-lg sm:text-xl font-bold text-gradient hover:from-primary-700 hover:to-primary-900 transition-all duration-300">
             tiny health
           </span>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <SignedIn>
             <div className="p-1 rounded-full bg-gradient-to-r from-primary-100 to-secondary-100">
               <UserButton
                 appearance={{
                   elements: {
-                    avatarBox: "w-10 h-10 rounded-full border-2 border-white shadow-modern",
+                    avatarBox:
+                      "w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-modern",
                   },
                 }}
               />
@@ -35,15 +36,17 @@ export default function Header() {
           </SignedIn>
 
           <SignedOut>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <SignInButton mode="modal">
-                <button className="btn-secondary px-4 py-2 text-sm font-medium rounded-lg">
-                  Zaloguj się
+                <button className="btn-secondary px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg">
+                  <span className="hidden sm:inline">Zaloguj się</span>
+                  <span className="sm:hidden">Login</span>
                 </button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <button className="btn-primary px-4 py-2 text-sm font-medium rounded-lg">
-                  Zarejestruj się
+                <button className="btn-primary px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg">
+                  <span className="hidden sm:inline">Zarejestruj się</span>
+                  <span className="sm:hidden">Rejestr.</span>
                 </button>
               </SignUpButton>
             </div>

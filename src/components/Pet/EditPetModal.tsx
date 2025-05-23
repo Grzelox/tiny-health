@@ -9,6 +9,14 @@ interface EditPetModalProps {
   pet: FullPetData | null;
 }
 
+interface ValidationErrors {
+  name?: string;
+  breed?: string;
+  color?: string;
+  birthDate?: string;
+  deathDate?: string;
+}
+
 const ANIMAL_TYPES: AnimalType[] = [
   "Mysz",
   "Szczur",
@@ -20,6 +28,8 @@ const ANIMAL_TYPES: AnimalType[] = [
   "Królik",
 ];
 
+const MAX_STRING_LENGTH = 300;
+
 const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => {
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
@@ -29,6 +39,8 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   const [isDead, setIsDead] = useState(false);
   const [deathDate, setDeathDate] = useState("");
   const [ownerId, setOwnerId] = useState<string | null>(null);
+
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   // Track initial values to compare against
   const [initialValues, setInitialValues] = useState<{
@@ -72,8 +84,78 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
     }
   }, [pet]);
 
+  // Run validation whenever form data changes
+  useEffect(() => {
+    validateForm();
+  }, [name, breed, color, birthDate, deathDate, isDead]);
+
+  // Validation function
+  const validateForm = (): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    // Name validation
+    if (!name.trim()) {
+      newErrors.name = "Imię jest wymagane";
+    } else if (name.length > MAX_STRING_LENGTH) {
+      newErrors.name = `Imię nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+    }
+
+    // Breed validation
+    if (breed && breed.length > MAX_STRING_LENGTH) {
+      newErrors.breed = `Rasa nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+    }
+
+    // Color validation
+    if (color && color.length > MAX_STRING_LENGTH) {
+      newErrors.color = `Umaszczenie nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+    }
+
+    // Birth date validation
+    if (!birthDate) {
+      newErrors.birthDate = "Data urodzenia jest wymagana";
+    } else {
+      const birth = new Date(birthDate);
+      const today = new Date();
+      if (birth > today) {
+        newErrors.birthDate = "Data urodzenia nie może być z przyszłości";
+      }
+    }
+
+    // Death date validation
+    if (isDead) {
+      if (!deathDate) {
+        newErrors.deathDate = "Data śmierci jest wymagana";
+      } else {
+        const death = new Date(deathDate);
+        const birth = new Date(birthDate);
+        const today = new Date();
+
+        if (death > today) {
+          newErrors.deathDate = "Data śmierci nie może być z przyszłości";
+        } else if (birthDate && death < birth) {
+          newErrors.deathDate = "Data śmierci nie może być wcześniejsza niż data urodzenia";
+        }
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Clear error when field changes
+  const clearError = (fieldName: keyof ValidationErrors) => {
+    if (errors[fieldName]) {
+      setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
+    }
+  };
+
   const handleSubmit = () => {
     if (!pet || !initialValues) return;
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
 
     // Create an object with only the changed values
     const changes: Record<string, any> = {
@@ -159,9 +241,17 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
               type="text"
               placeholder="Wprowadź imię gryzonia"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400"
+              onChange={(e) => {
+                setName(e.target.value);
+                clearError("name");
+              }}
+              className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
+                errors.name
+                  ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                  : "border-secondary-200/50"
+              }`}
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
 
           {/* Grid for Breed and Color */}
@@ -172,9 +262,17 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                 type="text"
                 placeholder="Laboratoryjna"
                 value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400"
+                onChange={(e) => {
+                  setBreed(e.target.value);
+                  clearError("breed");
+                }}
+                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
+                  errors.breed
+                    ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                    : "border-secondary-200/50"
+                }`}
               />
+              {errors.breed && <p className="text-red-500 text-xs mt-1">{errors.breed}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-secondary-700">Umaszczenie</label>
@@ -182,9 +280,17 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                 type="text"
                 placeholder="np. Czarna"
                 value={color}
-                onChange={(e) => setColor(e.target.value)}
-                className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400"
+                onChange={(e) => {
+                  setColor(e.target.value);
+                  clearError("color");
+                }}
+                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
+                  errors.color
+                    ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                    : "border-secondary-200/50"
+                }`}
               />
+              {errors.color && <p className="text-red-500 text-xs mt-1">{errors.color}</p>}
             </div>
           </div>
 
@@ -194,9 +300,17 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             <input
               type="date"
               value={birthDate}
-              onChange={(e) => setBirthday(e.target.value)}
-              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800"
+              onChange={(e) => {
+                setBirthday(e.target.value);
+                clearError("birthDate");
+              }}
+              className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 ${
+                errors.birthDate
+                  ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                  : "border-secondary-200/50"
+              }`}
             />
+            {errors.birthDate && <p className="text-red-500 text-xs mt-1">{errors.birthDate}</p>}
           </div>
 
           {/* Death Status */}
@@ -209,7 +323,13 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                 <input
                   type="checkbox"
                   checked={isDead}
-                  onChange={(e) => setIsDead(e.target.checked)}
+                  onChange={(e) => {
+                    setIsDead(e.target.checked);
+                    if (!e.target.checked) {
+                      setDeathDate("");
+                      clearError("deathDate");
+                    }
+                  }}
                   className="sr-only peer"
                 />
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-secondary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary-600"></div>
@@ -222,9 +342,19 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                 <input
                   type="date"
                   value={deathDate}
-                  onChange={(e) => setDeathDate(e.target.value)}
-                  className="w-full p-3 bg-white/80 border border-gray-300/50 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all duration-300 text-gray-700"
+                  onChange={(e) => {
+                    setDeathDate(e.target.value);
+                    clearError("deathDate");
+                  }}
+                  className={`w-full p-3 bg-white/80 border rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all duration-300 text-gray-700 ${
+                    errors.deathDate
+                      ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300/50"
+                  }`}
                 />
+                {errors.deathDate && (
+                  <p className="text-red-500 text-xs mt-1">{errors.deathDate}</p>
+                )}
               </div>
             )}
           </div>
@@ -240,7 +370,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
           </button>
           <button
             onClick={handleSubmit}
-            disabled={isPending}
+            disabled={isPending || Object.keys(errors).length > 0}
             className="btn-secondary px-6 py-3 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-secondary-gradient text-white hover:shadow-modern-lg"
           >
             {isPending ? (

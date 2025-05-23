@@ -1,4 +1,4 @@
-import { Pet, PetWithShared, VetVisit, WeightRecord } from "@/types/pet";
+import { Pet, PetWithShared, VetVisit } from "@/types/pet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const usePets = (userId: string) => {
@@ -170,7 +170,13 @@ export const useAddWeightRecord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ data, petUuid }: { data: Omit<WeightRecord, "id">; petUuid: string }) => {
+    mutationFn: async ({
+      data,
+      petUuid,
+    }: {
+      data: { petId: number; weight: number };
+      petUuid: string;
+    }) => {
       const response = await fetch("/api/v1/weight", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
