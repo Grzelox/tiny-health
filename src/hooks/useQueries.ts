@@ -51,7 +51,7 @@ export const useEditPet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ data }: { data: Record<string, any> }) => {
+    mutationFn: async ({ data, petUuid }: { data: Record<string, any>; petUuid?: string }) => {
       const response = await fetch("/api/v1/pet", {
         method: "PATCH",
         headers: {
@@ -67,7 +67,9 @@ export const useEditPet = () => {
     onSuccess: (_, variables) => {
       console.log("variables", variables);
       queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
+      if (variables.petUuid) {
+        queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
+      }
     },
   });
 };
@@ -311,6 +313,26 @@ export const useDeletePet = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["pets", variables.ownerId] });
+    },
+  });
+};
+
+export const useDeleteFile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ fileId, petUuid }: { fileId: string; petUuid: string }) => {
+      const response = await fetch(`/api/v1/files?fileId=${fileId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete file");
+      }
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
   });
 };

@@ -130,11 +130,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
               </div>
               <p className="text-sm text-secondary-600 mb-1 font-medium group-hover:text-secondary-700 transition-colors duration-300">
                 Waga [g]
-                {petData.weight !== null && (
-                  <span className="text-xs text-secondary-500 group-hover:text-secondary-600 ml-1">
-                    • kliknij aby zobaczyć historię
-                  </span>
-                )}
+                {petData.weight !== null}
               </p>
               <p className="font-semibold text-secondary-800 group-hover:text-secondary-900 transition-colors duration-300">
                 {petData.weight !== null ? `${petData.weight} g` : "Nie podano"}

@@ -64,7 +64,7 @@ export default function VetVisitList({ petId, petUuid, vetVisits }: VetVisitList
         onClose={() => setIsEditModalOpen(false)}
         visits={vetVisits}
         visitId={selectedVisit?.id ?? 0}
-        uuid={petUuid}
+        petUuid={petUuid}
       />
     </div>
   );

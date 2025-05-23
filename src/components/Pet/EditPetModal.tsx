@@ -159,7 +159,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
     // Create an object with only the changed values
     const changes: Record<string, any> = {
-      uuid: pet.uuid,
+      petId: pet.id,
     };
 
     if (name !== initialValues.name) changes.name = name;
@@ -184,8 +184,8 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
     // Only send the update if there are actual changes
     if (Object.keys(changes).length > 1) {
-      // > 1 because id is always included
-      editPet({ data: changes });
+      // > 1 because petId is always included
+      editPet({ data: changes, petUuid: pet.uuid });
       onClose();
     } else {
       onClose(); // No changes, just close the modal

@@ -5,8 +5,8 @@ import { ourFileRouter } from "./core";
 export const { GET, POST } = createRouteHandler({
   router: ourFileRouter,
   config: {
-    logLevel: "Error",
-    isDev: false,
+    logLevel: "Debug",
+    isDev: true,
     // handleDaemonPromise: "await",
   },
 });

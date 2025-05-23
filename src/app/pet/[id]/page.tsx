@@ -46,18 +46,10 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
   const petData = petQueryData as FullPetData;
   const vetVisits = petData?.vetVisits ?? [];
   const images = petData?.uploadedFiles ?? [];
-  const petId = petData?.id ?? 0;
-  const petUuid = petData?.uuid ?? "";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
-      <PetSummary
-        petId={petId}
-        pet={petData}
-        vetVisits={vetVisits}
-        images={images}
-        onRefresh={handleRefresh}
-      />
+      <PetSummary pet={petData} vetVisits={vetVisits} images={images} onRefresh={handleRefresh} />
     </div>
   );
 }
