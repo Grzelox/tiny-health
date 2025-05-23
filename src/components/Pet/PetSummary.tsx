@@ -16,26 +16,33 @@ interface PetSummaryProps {
   onRefresh: () => Promise<any>;
 }
 
-export default function PetSummary({
-  petId,
-  pet,
-  vetVisits,
-  images,
-  onRefresh,
-}: PetSummaryProps) {
+export default function PetSummary({ petId, pet, vetVisits, images, onRefresh }: PetSummaryProps) {
   const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const handleEditClick = () => setIsEditPetModalOpen(true);
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <PetInfo petData={pet} onRefresh={onRefresh} />
-      <div>
-        <VetVisitList petId={petId} petUuid={pet.uuid} vetVisits={vetVisits} />
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Pet Information Section */}
+      <div className="mb-12">
+        <PetInfo petData={pet} onRefresh={onRefresh} />
       </div>
-      <div>
-        <MediaUploader petId={petId} />
-      </div>
-      <div>
-        <Gallery uploadedFiles={images} />
+
+      {/* Content Grid */}
+      <div className="space-y-12">
+        {/* Vet Visits Section */}
+        <section className="animate-in">
+          <VetVisitList petId={petId} petUuid={pet.uuid} vetVisits={vetVisits} />
+        </section>
+
+        {/* Media Upload Section */}
+        <section className="animate-in">
+          <MediaUploader petId={petId} />
+        </section>
+
+        {/* Gallery Section */}
+        <section className="animate-in">
+          <Gallery uploadedFiles={images} />
+        </section>
       </div>
     </div>
   );

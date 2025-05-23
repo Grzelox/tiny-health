@@ -1,13 +1,5 @@
 import { FullPetData } from "@/types/pet";
-import {
-  Calendar,
-  EditIcon,
-  LineChart,
-  PaintRoller,
-  RatIcon,
-  RefreshCcw,
-  Stethoscope,
-} from "lucide-react";
+import { Calendar, EditIcon, LineChart, PaintRoller, RefreshCcw, Stethoscope } from "lucide-react";
 import React, { useState } from "react";
 
 import EditPetModal from "./EditPetModal";
@@ -46,70 +38,119 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
   const hasDeathDate = petData.isDead && petData.deathDate;
 
   return (
-    <div>
-      <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-4">
-            <RatIcon className="w-12 h-12 text-primary-600" />
+    <div className="animate-in">
+      {/* Main Pet Card */}
+      <div className="card-modern rounded-2xl p-8 mb-8 relative overflow-hidden">
+        {/* Background decoration for living pets */}
+        {!petData.isDead && (
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary-100/30 to-transparent rounded-full blur-3xl" />
+        )}
+
+        <div className="relative">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-primary-800">{petData.name}</h1>
-              <p className="text-secondary-600">
+              <h1
+                className={`text-4xl font-bold mb-2 ${petData.isDead ? "text-gray-700" : "text-gradient"}`}
+              >
+                {petData.name}
+              </h1>
+              <p className={`text-lg ${petData.isDead ? "text-gray-600" : "text-secondary-600"}`}>
                 {petData.animalType} • {petData.breed} • {petData.color}
-                {petData.isDead && <span className="ml-2 text-red-600">• Zmarła</span>}
+                {petData.isDead && (
+                  <span className="ml-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                    Zmarła
+                  </span>
+                )}
               </p>
             </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className={`
+                  btn-secondary p-3 rounded-xl transition-all duration-300 group
+                  ${isRefreshing ? "animate-spin" : "hover:scale-110"}
+                `}
+              >
+                <RefreshCcw className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleOpenModal}
+                className="btn-secondary p-3 rounded-xl hover:scale-110 transition-all duration-300"
+              >
+                <EditIcon className="w-5 h-5" />
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleRefresh}
-              className={`p-2 text-gray-600 hover:text-gray-800 ${isRefreshing ? "animate-spin" : ""}`}
-              disabled={isRefreshing}
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Birth Date */}
+            <div className="glass-effect bg-primary-50/80 backdrop-blur-sm p-6 rounded-xl border border-primary-200/50 hover:shadow-modern-lg transition-all duration-300">
+              <div className="flex items-center justify-between mb-3">
+                <Calendar className="w-6 h-6 text-primary-600" />
+              </div>
+              <p className="text-sm text-secondary-600 mb-1 font-medium">Data urodzenia</p>
+              <p className="font-semibold text-primary-800">
+                {new Date(petData.bornAt).toLocaleDateString("pl-PL")}
+              </p>
+            </div>
+
+            {/* Death Date */}
+            {hasDeathDate && (
+              <div className="glass-effect bg-gray-50/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200/50 hover:shadow-modern-lg transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <Calendar className="w-6 h-6 text-gray-600" />
+                </div>
+                <p className="text-sm text-gray-600 mb-1 font-medium">Data śmierci</p>
+                <p className="font-semibold text-gray-800">
+                  {new Date(petData.deathDate!).toLocaleDateString("pl-PL")}
+                </p>
+              </div>
+            )}
+
+            {/* Weight */}
+            <div
+              className="glass-effect bg-secondary-50/80 backdrop-blur-sm p-6 rounded-xl border border-secondary-200/50 hover:shadow-modern-lg hover:border-secondary-300/70 transition-all duration-300 cursor-pointer group relative hover:bg-secondary-100/60"
+              onClick={handleWeightTrackerClick}
             >
-              <RefreshCcw className="w-5 h-5" />
-            </button>
-            <button onClick={handleOpenModal} className="p-2 text-gray-600 hover:text-gray-800">
-              <EditIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
-          <div className="bg-primary-50 p-4 rounded-lg">
-            <Calendar className="w-6 h-6 text-primary-600 mb-2" />
-            <p className="text-sm text-secondary-600">Data urodzenia</p>
-            <p className="font-medium">{new Date(petData.bornAt).toLocaleDateString("pl-PL")}</p>
-          </div>
-
-          {hasDeathDate && (
-            <div className="bg-primary-50 p-4 rounded-lg">
-              <p className="text-sm text-secondary-600">Data śmierci</p>
-              <p className="font-medium">
-                {new Date(petData.deathDate!).toLocaleDateString("pl-PL")}
+              <div className="flex items-center justify-between mb-3">
+                <Stethoscope className="w-6 h-6 text-secondary-600" />
+                <div className="relative">
+                  <div className="p-2 bg-secondary-100/80 rounded-lg group-hover:bg-secondary-200/90 transition-all duration-300">
+                    <LineChart className="w-5 h-5 text-secondary-600 group-hover:text-secondary-700 group-hover:scale-110 transition-all duration-300" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
+                </div>
+              </div>
+              <p className="text-sm text-secondary-600 mb-1 font-medium group-hover:text-secondary-700 transition-colors duration-300">
+                Waga [g]
               </p>
+              <p className="font-semibold text-secondary-800 group-hover:text-secondary-900 transition-colors duration-300">
+                {petData.weight}
+              </p>
+              <div className="absolute inset-0 bg-gradient-to-r from-secondary-100/0 via-secondary-100/20 to-secondary-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
             </div>
-          )}
 
-          <div
-            className="bg-primary-50 p-4 rounded-lg cursor-pointer relative"
-            onClick={handleWeightTrackerClick}
-          >
-            <LineChart className="absolute top-2 right-2 w-5 h-5 text-primary-500" />
-            <Stethoscope className="w-6 h-6 text-primary-600 mb-2" />
-            <p className="text-sm text-secondary-600">Waga [g]</p>
-            <p className="font-medium">{petData.weight}</p>
-          </div>
-          <div className="bg-primary-50 p-4 rounded-lg">
-            <PaintRoller className="w-6 h-6 text-primary-600 mb-2" />
-            <p className="text-sm text-secondary-600">Kolor</p>
-            <p className="font-medium">{petData.color}</p>
+            {/* Color */}
+            <div className="glass-effect bg-primary-50/80 backdrop-blur-sm p-6 rounded-xl border border-primary-200/50 hover:shadow-modern-lg transition-all duration-300">
+              <div className="flex items-center justify-between mb-3">
+                <PaintRoller className="w-6 h-6 text-primary-600" />
+              </div>
+              <p className="text-sm text-secondary-600 mb-1 font-medium">Kolor</p>
+              <p className="font-semibold text-primary-800">{petData.color}</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-8">
+      {/* Notes Section */}
+      <div className="animate-in">
         <PetNotes petData={petData} onUpdate={onRefresh} />
       </div>
 
+      {/* Modals */}
       <EditPetModal isOpen={isModalOpen} onClose={handleCloseModal} pet={petData} />
       <WeightTrackerModal
         isOpen={isWeightModalOpen}

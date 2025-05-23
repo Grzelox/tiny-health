@@ -41,7 +41,8 @@ export default function PetCard({ pet }: PetCardProps) {
             }
           `}
           >
-            {pet.animalType} | {pet.breed}
+            {pet.animalType}
+            {pet.breed ? ` | ${pet.breed}` : ""}
           </span>
           {!pet.isShared && (
             <button
@@ -79,7 +80,8 @@ export default function PetCard({ pet }: PetCardProps) {
             ${isDead ? "text-gray-600" : "text-secondary-600 group-hover:text-secondary-700"}
           `}
           >
-            {pet.animalType} - {pet.breed}
+            {pet.animalType}
+            {pet.breed ? ` - ${pet.breed}` : ""}
           </p>
         </div>
 

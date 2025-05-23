@@ -1,5 +1,6 @@
 import { useEditPet } from "@/hooks/useQueries";
 import { AnimalType, FullPetData } from "@/types/pet";
+import { Edit, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
@@ -40,7 +41,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
     deathDate: string;
   } | null>(null);
 
-  const { mutate: editPet } = useEditPet();
+  const { mutate: editPet, isPending } = useEditPet();
 
   useEffect(() => {
     if (pet) {
@@ -112,87 +113,147 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <h2 className="text-2xl font-bold text-primary-800 mb-6">Aktualizuj dane gryzonia</h2>
-        <div className="space-y-4">
-          <p>Rodzaj</p>
-          <select
-            value={animalType}
-            onChange={(e) => setAnimalType(e.target.value as AnimalType)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          >
-            {ANIMAL_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-lg border border-white/50 shadow-2xl rounded-2xl p-8 max-w-lg w-full mx-4 relative overflow-hidden animate-slide-up">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-secondary-gradient opacity-10 rounded-full blur-3xl" />
 
-          <p>Imię</p>
-          <input
-            type="text"
-            placeholder="Imię"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          />
-          <p>Rasa</p>
-          <input
-            type="text"
-            placeholder="Rasa"
-            value={breed}
-            onChange={(e) => setBreed(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          />
-          <p>Umaszczenie</p>
-          <input
-            type="text"
-            placeholder="Umaszczenie"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          />
-          <p>Data urodzenia</p>
-          <input
-            type="date"
-            placeholder="Data Urodzenia"
-            value={birthDate}
-            onChange={(e) => setBirthday(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          />
-          <div className="flex items-center justify-between">
-            <p>Czy zwierzak zmarł?</p>
+        {/* Header */}
+        <div className="relative flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-secondary-gradient rounded-xl shadow-modern">
+              <Edit className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-gradient">Edytuj gryzonia</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="btn-secondary p-2 rounded-xl hover:scale-110 transition-all duration-300"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-6 relative">
+          {/* Animal Type */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-secondary-700">Rodzaj</label>
+            <select
+              value={animalType}
+              onChange={(e) => setAnimalType(e.target.value as AnimalType)}
+              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 font-medium"
+            >
+              {ANIMAL_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Name */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-secondary-700">Imię</label>
             <input
-              type="checkbox"
-              checked={isDead}
-              onChange={(e) => setIsDead(e.target.checked)}
-              className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+              type="text"
+              placeholder="Wprowadź imię gryzonia"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400"
             />
           </div>
 
-          {isDead && (
-            <>
-              <p>Data śmierci</p>
+          {/* Grid for Breed and Color */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-secondary-700">Rasa</label>
               <input
-                type="date"
-                placeholder="Data śmierci"
-                value={deathDate}
-                onChange={(e) => setDeathDate(e.target.value)}
-                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                type="text"
+                placeholder="Laboratoryjna"
+                value={breed}
+                onChange={(e) => setBreed(e.target.value)}
+                className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400"
               />
-            </>
-          )}
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-secondary-700">Umaszczenie</label>
+              <input
+                type="text"
+                placeholder="np. Czarna"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400"
+              />
+            </div>
+          </div>
+
+          {/* Birth Date */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-secondary-700">Data urodzenia</label>
+            <input
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthday(e.target.value)}
+              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800"
+            />
+          </div>
+
+          {/* Death Status */}
+          <div className="bg-gray-50/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-semibold text-secondary-700">
+                Czy zwierzak zmarł?
+              </label>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isDead}
+                  onChange={(e) => setIsDead(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-secondary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary-600"></div>
+              </label>
+            </div>
+
+            {isDead && (
+              <div className="mt-4 space-y-2">
+                <label className="text-sm font-semibold text-gray-600">Data śmierci</label>
+                <input
+                  type="date"
+                  value={deathDate}
+                  onChange={(e) => setDeathDate(e.target.value)}
+                  className="w-full p-3 bg-white/80 border border-gray-300/50 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all duration-300 text-gray-700"
+                />
+              </div>
+            )}
+          </div>
         </div>
-        <div className="mt-6 flex justify-end space-x-4">
-          <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">
-            Zamknij
+
+        {/* Buttons */}
+        <div className="mt-8 flex gap-4 justify-end">
+          <button
+            onClick={onClose}
+            className="btn-secondary px-6 py-3 rounded-xl font-medium transition-all duration-300"
+          >
+            Anuluj
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            disabled={isPending}
+            className="btn-secondary px-6 py-3 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-secondary-gradient text-white hover:shadow-modern-lg"
           >
-            Aktualizuj
+            {isPending ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Zapisuję...
+              </>
+            ) : (
+              <>
+                <Edit className="w-4 h-4" />
+                Zapisz zmiany
+              </>
+            )}
           </button>
         </div>
       </div>
