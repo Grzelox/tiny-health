@@ -220,7 +220,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
         <div className="space-y-6 relative">
           {/* Animal Type */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Rodzaj</label>
+            <label className="text-sm font-semibold text-secondary-700">Rodzaj *</label>
             <select
               value={animalType}
               onChange={(e) => setAnimalType(e.target.value as AnimalType)}
@@ -236,7 +236,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
           {/* Name */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Imię</label>
+            <label className="text-sm font-semibold text-secondary-700">Imię *</label>
             <input
               type="text"
               placeholder="Wprowadź imię gryzonia"
@@ -296,7 +296,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
           {/* Birth Date */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Data urodzenia</label>
+            <label className="text-sm font-semibold text-secondary-700">Data urodzenia *</label>
             <input
               type="date"
               value={birthDate}

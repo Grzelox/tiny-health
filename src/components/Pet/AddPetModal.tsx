@@ -237,7 +237,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
         <div className="space-y-6 relative">
           {/* Animal Type */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Rodzaj</label>
+            <label className="text-sm font-semibold text-secondary-700">Rodzaj *</label>
             <select
               name="animalType"
               value={pet.animalType}
@@ -254,7 +254,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
 
           {/* Name */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Imię</label>
+            <label className="text-sm font-semibold text-secondary-700">Imię *</label>
             <input
               type="text"
               name="name"
@@ -309,7 +309,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
           {/* Grid for Birth Date and Weight */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Data urodzenia</label>
+              <label className="text-sm font-semibold text-secondary-700">Data urodzenia *</label>
               <input
                 type="date"
                 name="bornAt"
@@ -324,13 +324,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
               {errors.bornAt && <p className="text-red-500 text-xs mt-1">{errors.bornAt}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">
-                Waga (g) <span className="text-xs text-gray-500">opcjonalne</span>
-              </label>
+              <label className="text-sm font-semibold text-secondary-700">Waga (g)</label>
               <input
                 type="number"
                 name="weight"
-                placeholder="30 (opcjonalne)"
+                placeholder="30"
                 value={pet.weight === null ? "" : pet.weight.toString()}
                 onChange={handleChange}
                 min="0"
