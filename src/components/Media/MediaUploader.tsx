@@ -19,14 +19,12 @@ export default function MediaUploader({ petId, currentFileCount }: MediaUploader
      * @see https://docs.uploadthing.com/api-reference/react#useuploadthing
      */
     onBeforeUploadBegin: (files) => {
-      console.log(`Starting upload for pet ${petId} with ${files.length} files`);
       return files;
     },
     onUploadBegin: (name) => {
-      console.log(`Upload begun for pet ${petId}: ${name}`);
+      // Upload started
     },
     onClientUploadComplete: (res) => {
-      console.log(`Upload completed for pet ${petId}:`, res);
       queryClient.invalidateQueries({
         queryKey: ["pets"],
       });
@@ -85,9 +83,6 @@ export default function MediaUploader({ petId, currentFileCount }: MediaUploader
           endpoint="imageUploader"
           // @ts-expect-error - The input prop is required by the server but not recognized by TypeScript
           input={{ petId: petId.toString() }}
-          onUploadAborted={() => {
-            alert("Upload Aborted");
-          }}
           onClientUploadComplete={(res) => {
             queryClient.invalidateQueries({
               queryKey: ["pets"],

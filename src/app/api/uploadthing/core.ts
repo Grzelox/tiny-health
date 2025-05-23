@@ -71,11 +71,8 @@ export const ourFileRouter = {
       return { userId, petId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("onUploadComplete called with:", { metadata, fileUrl: file.url });
-
       try {
         await saveFileToDatabase({ url: file.url, metadata });
-        console.log("File successfully saved to database");
       } catch (error) {
         console.error("Failed to save file to database:", error);
         // Don't throw here as it would break the upload flow
@@ -94,8 +91,6 @@ export const ourFileRouter = {
 export type OurFileRouter = typeof ourFileRouter;
 
 async function saveFileToDatabase({ url, metadata }: { url: string; metadata: any }) {
-  console.log("saveFileToDatabase called with:", { url, metadata });
-
   try {
     // Validate inputs
     if (!url) {
@@ -111,8 +106,6 @@ async function saveFileToDatabase({ url, metadata }: { url: string; metadata: an
       throw new Error(`Invalid Pet ID: ${metadata.petId}`);
     }
 
-    console.log(`Attempting to save file for pet ${petIdNumber} with URL: ${url}`);
-
     // Create the file record - let Prisma handle createdAt automatically
     const res = await prisma.file.create({
       data: {
@@ -121,7 +114,6 @@ async function saveFileToDatabase({ url, metadata }: { url: string; metadata: an
       },
     });
 
-    console.log(`✅ File successfully saved for pet ${petIdNumber}. File ID: ${res.id}`);
     return res;
   } catch (err) {
     console.error("❌ Error saving file to database:", {

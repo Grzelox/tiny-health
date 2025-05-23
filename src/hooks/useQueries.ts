@@ -65,7 +65,6 @@ export const useEditPet = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      console.log("variables", variables);
       queryClient.invalidateQueries({ queryKey: ["pets"] });
       if (variables.petUuid) {
         queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
@@ -92,7 +91,6 @@ export const useAddVetVisit = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      console.log("variables useAddVetVisit", variables);
       queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
     },
   });

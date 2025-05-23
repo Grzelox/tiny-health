@@ -13,10 +13,12 @@ interface ImageManagerProps {
 
 export default function ImageManager({ uploadedFiles, petId }: ImageManagerProps) {
   const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const handleDeleteFile = async (fileId: string) => {
     setDeletingFileId(fileId);
+    setError(null);
 
     try {
       const response = await fetch(`/api/v1/files?fileId=${fileId}`, {
@@ -39,7 +41,7 @@ export default function ImageManager({ uploadedFiles, petId }: ImageManagerProps
       }
     } catch (error) {
       console.error("Error deleting file:", error);
-      alert("Błąd podczas usuwania pliku. Spróbuj ponownie.");
+      setError("Błąd podczas usuwania pliku. Spróbuj ponownie.");
     } finally {
       setDeletingFileId(null);
     }
@@ -55,6 +57,12 @@ export default function ImageManager({ uploadedFiles, petId }: ImageManagerProps
         <p className="text-sm text-gray-600 mb-4">
           Kliknij przycisk kosza, aby usunąć zdjęcie z galerii i serwera.
         </p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
 
         <div className="space-y-4">
           {uploadedFiles.map((file, index) => (

@@ -9,7 +9,6 @@ interface PetCardProps {
 }
 
 export default function PetCard({ pet }: PetCardProps) {
-  console.log("Pet data", pet);
   const deletePetMutation = useDeletePet();
   const isDead = pet.isDead;
 

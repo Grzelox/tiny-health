@@ -66,7 +66,6 @@ export async function DELETE(request: Request) {
       try {
         // Delete the file from UploadThing
         await utapi.deleteFiles(fileKey);
-        console.log(`Successfully deleted file from UploadThing: ${fileKey}`);
       } catch (uploadthingError) {
         console.error("Error deleting file from UploadThing:", uploadthingError);
         // Continue with database deletion even if UploadThing deletion fails
