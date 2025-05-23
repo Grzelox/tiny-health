@@ -5,10 +5,10 @@ interface AddVetVisitModalProps {
   isOpen: boolean;
   onClose: () => void;
   petId: number;
-  uuid: string;
+  petUuid: string;
 }
 
-const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({ isOpen, onClose, petId, uuid }) => {
+const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({ isOpen, onClose, petId, petUuid }) => {
   const [description, setDescription] = useState("");
   const [medication, setMedication] = useState("");
   const [date, setDate] = useState("");
@@ -18,7 +18,7 @@ const AddVetVisitModal: React.FC<AddVetVisitModalProps> = ({ isOpen, onClose, pe
   const handleSubmit = () => {
     const newVisit = {
       petId,
-      uuid,
+      petUuid,
       description,
       medication,
       date: new Date(date),

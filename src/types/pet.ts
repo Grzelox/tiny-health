@@ -58,7 +58,7 @@ export interface PetWithShared extends FullPetData {
 export interface VetVisit {
   id: number;
   petId: number;
-  uuid: string;
+  petUuid: string;
   date: Date;
   description: string;
   medication: string;

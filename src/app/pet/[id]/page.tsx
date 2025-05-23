@@ -38,12 +38,11 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
   const vetVisits = petData?.vetVisits ?? [];
   const images = petData?.uploadedFiles ?? [];
   const petId = petData?.id ?? 0;
-  const uuid = petData?.uuid ?? "";
+  const petUuid = petData?.uuid ?? "";
 
   return (
     <PetSummary
       petId={petId}
-      uuid={uuid}
       pet={petData}
       vetVisits={vetVisits}
       images={images}

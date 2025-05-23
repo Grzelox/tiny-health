@@ -11,9 +11,9 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
 
-    const uuid = searchParams.get("uuid");
-    if (!uuid) {
-      return NextResponse.json({ message: "Pet UUID is required" }, { status: 400 });
+    const petUuid = searchParams.get("petUuid");
+    if (!petUuid) {
+      return NextResponse.json({ message: "Pet petUuid is required" }, { status: 400 });
     }
 
     const availableUserIds = await withPrisma(async (prisma) => {
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     const result = await withPrisma(async (prisma) => {
       const pet = await prisma.pet.findFirst({
         where: {
-          uuid: uuid,
+          uuid: petUuid,
           ownerId: {
             in: accessibleOwnerIds,
           },
@@ -112,7 +112,7 @@ export async function PATCH(request: Request) {
     const result = await withPrisma(async (prisma) => {
       const updatedPet = await prisma.pet.update({
         where: {
-          uuid: payload.uuid,
+          id: payload.petId,
         },
         data: {
           ...(payload.name !== undefined && { name: payload.name }),

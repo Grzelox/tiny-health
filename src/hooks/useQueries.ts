@@ -14,11 +14,11 @@ export const usePets = (userId: string) => {
   });
 };
 
-export const usePet = (uuid: string) => {
+export const usePet = (petUuid: string) => {
   return useQuery<PetWithShared>({
-    queryKey: ["pet", uuid],
+    queryKey: ["pet", petUuid],
     queryFn: async () => {
-      const response = await fetch(`/api/v1/pet?uuid=${uuid}`);
+      const response = await fetch(`/api/v1/pet?petUuid=${petUuid}`);
       if (!response.ok) {
         throw new Error("Failed to fetch pet");
       }
@@ -52,7 +52,6 @@ export const useEditPet = () => {
 
   return useMutation({
     mutationFn: async ({ data }: { data: Record<string, any> }) => {
-      console.log("data Input", data);
       const response = await fetch("/api/v1/pet", {
         method: "PATCH",
         headers: {
@@ -68,7 +67,7 @@ export const useEditPet = () => {
     onSuccess: (_, variables) => {
       console.log("variables", variables);
       queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.uuid] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
     },
   });
 };
@@ -92,7 +91,7 @@ export const useAddVetVisit = () => {
     },
     onSuccess: (_, variables) => {
       console.log("variables useAddVetVisit", variables);
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.uuid] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
     },
   });
 };
@@ -114,7 +113,7 @@ export const useEditVetVisit = () => {
       return response.json();
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.uuid] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
     },
   });
 };
@@ -125,11 +124,11 @@ export const useDeleteVetVisit = () => {
   return useMutation({
     mutationFn: async ({
       petId,
-      uuid,
+      petUuid,
       visitId,
     }: {
       petId: number;
-      uuid: string;
+      petUuid: string;
       visitId: number;
     }) => {
       const response = await fetch("/api/v1/visit", {
@@ -146,15 +145,15 @@ export const useDeleteVetVisit = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["pet", variables.uuid],
+        queryKey: ["pet", variables.petUuid],
       });
     },
   });
 };
 
-export const useGetWeightHistory = (petId: number, uuid: string) => {
+export const useGetWeightHistory = (petId: number, petUuid: string) => {
   return useQuery({
-    queryKey: ["weightHistory", uuid],
+    queryKey: ["weightHistory", petUuid],
     queryFn: async () => {
       if (!petId) return [];
       const searchParams = new URLSearchParams();
@@ -171,7 +170,7 @@ export const useAddWeightRecord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ data, uuid }: { data: Omit<WeightRecord, "id">; uuid: string }) => {
+    mutationFn: async ({ data, petUuid }: { data: Omit<WeightRecord, "id">; petUuid: string }) => {
       const response = await fetch("/api/v1/weight", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -182,9 +181,9 @@ export const useAddWeightRecord = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["weightHistory", variables.uuid],
+        queryKey: ["weightHistory", variables.petUuid],
       });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.uuid] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
     },
   });
 };
@@ -193,7 +192,7 @@ export const useDeleteWeightRecord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ petId, id, uuid }: { petId: number; id: string; uuid: string }) => {
+    mutationFn: async ({ petId, id, petUuid }: { petId: number; id: string; petUuid: string }) => {
       const response = await fetch(`/api/v1/weight?id=${id}`, {
         method: "DELETE",
       });
@@ -205,9 +204,9 @@ export const useDeleteWeightRecord = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["weightHistory", variables.uuid],
+        queryKey: ["weightHistory", variables.petUuid],
       });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.uuid] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
     },
   });
 };
@@ -216,7 +215,7 @@ export const useUpdatePetNotes = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, uuid, notes }: { id: number; uuid: string; notes: string }) => {
+    mutationFn: async ({ id, petUuid, notes }: { id: number; petUuid: string; notes: string }) => {
       const response = await fetch(`/api/v1/pet/notes`, {
         method: "PATCH",
         headers: {
@@ -231,7 +230,7 @@ export const useUpdatePetNotes = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["pets"] });
-      queryClient.invalidateQueries({ queryKey: ["pet", variables.uuid] });
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
     },
   });
 };

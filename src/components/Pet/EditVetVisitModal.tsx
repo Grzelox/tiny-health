@@ -8,7 +8,7 @@ interface EditVetVisitModalProps {
   onClose: () => void;
   visits: VetVisit[];
   visitId: number;
-  uuid: string;
+  petUuid: string;
 }
 
 const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
@@ -16,7 +16,7 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
   onClose,
   visits,
   visitId,
-  uuid,
+  petUuid,
 }) => {
   const visit = visits.find((v) => v.id === visitId);
 
@@ -38,7 +38,7 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
     const updatedVisit: VetVisit = {
       id: visitId,
       petId: visit?.petId || 0,
-      uuid: uuid,
+      petUuid: petUuid,
       description: description,
       medication: medication,
       date: new Date(date),

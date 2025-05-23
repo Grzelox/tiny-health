@@ -23,14 +23,13 @@ export default function PetSummary({
   images,
   onRefresh,
 }: PetSummaryProps) {
-  console.log("Pet Summary", pet);
   const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
   const handleEditClick = () => setIsEditPetModalOpen(true);
   return (
     <div className="container mx-auto px-4 py-8">
       <PetInfo petData={pet} onRefresh={onRefresh} />
       <div>
-        <VetVisitList petId={petId} uuid={pet.uuid} vetVisits={vetVisits} />
+        <VetVisitList petId={petId} petUuid={pet.uuid} vetVisits={vetVisits} />
       </div>
       <div>
         <MediaUploader petId={petId} />
