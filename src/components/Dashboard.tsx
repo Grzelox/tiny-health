@@ -75,34 +75,38 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-primary-900">Moje stadko</h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gradient">Moje stadko</h1>
+        <div className="flex gap-2 sm:gap-3">
           <button
             onClick={handleExportData}
             disabled={isExporting}
-            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
           >
-            <span className="w-5 h-5 flex items-center justify-center">
+            <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
               {isExporting ? (
-                <ClipLoader size={16} color="#4F46E5" />
+                <ClipLoader size={14} color="#617544" />
               ) : (
-                <DownloadIcon className="w-5 h-5" />
+                <DownloadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
             </span>
-            <span>{isExporting ? "Przygotowywanie" : "Pobierz dane"}</span>
+            <span className="hidden sm:inline">
+              {isExporting ? "Przygotowywanie" : "Pobierz dane"}
+            </span>
+            <span className="sm:hidden">{isExporting ? "Pobierz..." : "Dane"}</span>
           </button>
           <button
             onClick={() => setIsShareModalOpen(true)}
-            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 px-4 py-2 rounded-lg border border-primary-200 hover:bg-primary-50"
+            className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base"
           >
-            <ShareIcon className="w-5 h-5" />
-            <span>Udostępnij stado</span>
+            <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">Udostępnij stado</span>
+            <span className="sm:hidden">Udostępnij</span>
           </button>
         </div>
       </div>
 
-      <div className="space-y-12">
+      <div className="space-y-16">
         <div>
           <div className={gridClassName}>
             {sortPets(ownedPets).map((pet) => (
@@ -114,7 +118,10 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
         {sharedPets.length > 0 && (
           <div>
-            <h2 className="text-2xl font-semibold text-primary-800 mb-6">Udostępnione</h2>
+            <h2 className="text-2xl font-semibold text-gradient mb-8 flex items-center gap-3">
+              <div className="w-1 h-8 bg-secondary-gradient rounded-full"></div>
+              Udostępnione
+            </h2>
             <div className={gridClassName}>
               {sortPets(sharedPets).map((pet) => (
                 <PetCard key={pet.uuid} pet={pet} />
@@ -137,7 +144,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <LoadingSpinner />
       </div>
     );
@@ -145,8 +152,13 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center">
-        <span className="text-red-400 text-lg">Error loading pets</span>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-600 text-2xl">!</span>
+          </div>
+          <span className="text-red-600 text-lg font-medium">Error loading pets</span>
+        </div>
       </div>
     );
   }
@@ -155,12 +167,14 @@ export default function Dashboard() {
   const sharedPets = pets.filter((pet) => pet.isShared);
 
   return (
-    <div className="min-h-screen">
-      <DashboardContent
-        ownedPets={ownedPets}
-        sharedPets={sharedPets}
-        onOpenModal={() => setIsModalOpen(true)}
-      />
+    <div className="min-h-screen p-6">
+      <div className="max-w-7xl mx-auto">
+        <DashboardContent
+          ownedPets={ownedPets}
+          sharedPets={sharedPets}
+          onOpenModal={() => setIsModalOpen(true)}
+        />
+      </div>
       <AddPetModal user={user} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

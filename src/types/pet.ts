@@ -25,7 +25,7 @@ export interface Pet {
   color: string;
   bornAt: string;
   updatedAt: string;
-  weight: number;
+  weight: number | null;
   isDead: boolean;
   deathDate?: string;
   ownerId: string;
@@ -39,7 +39,7 @@ export interface FullPetData {
   breed: string;
   animalType: AnimalType;
   color: string;
-  weight: number;
+  weight: number | null;
   bornAt: string;
   isDead: boolean;
   deathDate?: string;
@@ -58,7 +58,7 @@ export interface PetWithShared extends FullPetData {
 export interface VetVisit {
   id: number;
   petId: number;
-  uuid: string;
+  petUuid: string;
   date: Date;
   description: string;
   medication: string;
@@ -71,7 +71,10 @@ export interface UploadedImage {
 }
 
 export interface WeightRecord {
-  id: string;
+  id: number;
   petId: number;
   weight: number;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
 }
