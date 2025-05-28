@@ -36,17 +36,17 @@ export default function Header() {
           </SignedIn>
 
           <SignedOut>
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-2 sm:gap-2">
               <SignInButton mode="modal">
-                <button className="btn-secondary px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg">
-                  <span className="hidden sm:inline">Zaloguj się</span>
+                <button className="btn-secondary px-4 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-sm font-medium rounded-lg min-h-[44px] sm:min-h-[40px]">
+                  <span className="hidden sm:inline">Login</span>
                   <span className="sm:hidden">Login</span>
                 </button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <button className="btn-primary px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg">
-                  <span className="hidden sm:inline">Zarejestruj się</span>
-                  <span className="sm:hidden">Rejestr.</span>
+                <button className="btn-primary px-4 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-sm font-medium rounded-lg min-h-[44px] sm:min-h-[40px]">
+                  <span className="hidden sm:inline">Rejestracja</span>
+                  <span className="sm:hidden">Rejestracja</span>
                 </button>
               </SignUpButton>
             </div>
