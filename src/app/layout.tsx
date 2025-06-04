@@ -14,8 +14,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "tiny health - mouse health tracking",
-  description: "track your mouse's health and medical history",
+  title: "tiny health - rodents health tracking",
+  description: "track your rodents' health and medical history",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",

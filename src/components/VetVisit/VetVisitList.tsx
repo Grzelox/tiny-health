@@ -36,7 +36,10 @@ export default function VetVisitList({ petId, petUuid, vetVisits }: VetVisitList
   return (
     <div>
       <h2 className="text-xl font-semibold text-primary-800 mb-4">Historia wizyt</h2>
-      <button onClick={handleAddClick} className="mb-4 bg-primary-600 text-white py-2 px-4 rounded">
+      <button
+        onClick={handleAddClick}
+        className="mb-4 bg-primary-400 hover:bg-primary-500 text-white py-2 px-4 rounded transition-colors duration-300"
+      >
         Dodaj nową wizytę
       </button>
       <div className="space-y-4">

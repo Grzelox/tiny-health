@@ -37,20 +37,20 @@ const config: Config = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "primary-gradient": "linear-gradient(135deg, #7b9256 0%, #4c5b37 100%)",
+        "primary-gradient": "linear-gradient(135deg, #95aa74 0%, #7b9256 100%)",
         "secondary-gradient": "linear-gradient(135deg, #967964 0%, #54433b 100%)",
         "card-gradient":
           "linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(245,247,242,0.8) 100%)",
         "hero-gradient": "linear-gradient(135deg, #f5f7f2 0%, #e6ead9 50%, #d1d9bc 100%)",
       },
       boxShadow: {
-        modern: "0 4px 6px -1px rgba(123, 146, 86, 0.1), 0 2px 4px -1px rgba(123, 146, 86, 0.06)",
+        modern: "0 4px 6px -1px rgba(149, 170, 116, 0.1), 0 2px 4px -1px rgba(149, 170, 116, 0.06)",
         "modern-lg":
-          "0 10px 15px -3px rgba(123, 146, 86, 0.1), 0 4px 6px -2px rgba(123, 146, 86, 0.05)",
+          "0 10px 15px -3px rgba(149, 170, 116, 0.1), 0 4px 6px -2px rgba(149, 170, 116, 0.05)",
         "modern-xl":
-          "0 20px 25px -5px rgba(123, 146, 86, 0.1), 0 10px 10px -5px rgba(123, 146, 86, 0.04)",
-        "inner-soft": "inset 0 1px 2px 0 rgba(123, 146, 86, 0.05)",
-        glow: "0 0 20px rgba(123, 146, 86, 0.15)",
+          "0 20px 25px -5px rgba(149, 170, 116, 0.1), 0 10px 10px -5px rgba(149, 170, 116, 0.04)",
+        "inner-soft": "inset 0 1px 2px 0 rgba(149, 170, 116, 0.05)",
+        glow: "0 0 20px rgba(149, 170, 116, 0.15)",
       },
       backdropBlur: {
         xs: "2px",

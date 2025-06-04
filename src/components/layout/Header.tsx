@@ -16,7 +16,7 @@ export default function Header() {
               className="w-8 h-8 sm:w-12 sm:h-12 transition-transform duration-300 group-hover:scale-110"
             />
           </div>
-          <span className="text-lg sm:text-xl font-bold text-gradient hover:from-primary-700 hover:to-primary-900 transition-all duration-300">
+          <span className="text-lg sm:text-xl font-bold text-gradient hover:from-primary-400 hover:to-primary-600 transition-all duration-300">
             tiny health
           </span>
         </Link>

@@ -135,10 +135,10 @@ export default function WeightTrackerModal({
       >
         {/* Header with gradient decoration */}
         <div className="relative mb-3 sm:mb-4 shrink-0">
-          <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-bl from-primary-200/30 to-transparent rounded-full blur-2xl" />
+          <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-bl from-primary-400/20 to-transparent rounded-full blur-2xl" />
           <div className="relative flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-3 bg-primary-100/80 rounded-xl">
-              <LineChart className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
+            <div className="p-2 sm:p-3 bg-primary-400/20 rounded-xl">
+              <LineChart className="w-5 h-5 sm:w-6 sm:h-6 text-primary-400" />
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-gradient mb-1">Historia wagi</h2>
@@ -147,7 +147,7 @@ export default function WeightTrackerModal({
         </div>
 
         {/* Add new weight section - compressed */}
-        <div className="glass-effect bg-primary-50/50 backdrop-blur-sm p-2 sm:p-3 rounded-lg border border-primary-200/50 mb-3 sm:mb-4 shrink-0">
+        <div className="glass-effect bg-primary-400/10 backdrop-blur-sm p-2 sm:p-3 rounded-lg border border-primary-400/30 mb-3 sm:mb-4 shrink-0">
           <label className="block text-xs font-semibold text-secondary-700 mb-1 sm:mb-2">
             Nowa waga [g]
           </label>

@@ -85,7 +85,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           >
             <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
               {isExporting ? (
-                <ClipLoader size={14} color="#617544" />
+                <ClipLoader size={14} color="#95aa74" />
               ) : (
                 <DownloadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               )}

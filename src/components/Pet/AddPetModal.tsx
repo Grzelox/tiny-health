@@ -215,12 +215,12 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white/95 backdrop-blur-lg border border-white/50 shadow-2xl rounded-2xl p-8 max-w-lg w-full mx-4 relative overflow-hidden animate-slide-up">
         {/* Background decoration */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-primary-gradient opacity-10 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-40 h-40 bg-primary-400 opacity-20 rounded-full blur-3xl" />
 
         {/* Header */}
         <div className="relative flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-primary-gradient rounded-xl shadow-modern">
+            <div className="p-3 bg-primary-400 rounded-xl shadow-modern">
               <Plus className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-gradient">Dodaj nowego gryzonia</h2>
@@ -242,7 +242,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
               name="animalType"
               value={pet.animalType}
               onChange={handleChange}
-              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-primary-200/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 text-primary-800 font-medium"
+              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-primary-400/30 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 font-medium"
             >
               {ANIMAL_TYPES.map((type) => (
                 <option key={type} value={type}>
@@ -261,10 +261,10 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
               placeholder="Wprowadź imię gryzonia"
               value={pet.name}
               onChange={handleChange}
-              className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
+              className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
                 errors.name
                   ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                  : "border-primary-200/50"
+                  : "border-primary-400/30"
               }`}
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -280,10 +280,10 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
                 placeholder="Laboratoryjna"
                 value={pet.breed}
                 onChange={handleChange}
-                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
+                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
                   errors.breed
                     ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                    : "border-primary-200/50"
+                    : "border-primary-400/30"
                 }`}
               />
               {errors.breed && <p className="text-red-500 text-xs mt-1">{errors.breed}</p>}
@@ -296,10 +296,10 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
                 placeholder="np. Czarna"
                 value={pet.color}
                 onChange={handleChange}
-                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
+                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
                   errors.color
                     ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                    : "border-primary-200/50"
+                    : "border-primary-400/30"
                 }`}
               />
               {errors.color && <p className="text-red-500 text-xs mt-1">{errors.color}</p>}
@@ -315,10 +315,10 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
                 name="bornAt"
                 value={formatDateForInput(pet.bornAt)}
                 onChange={handleChange}
-                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 text-primary-800 ${
+                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 ${
                   errors.bornAt
                     ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                    : "border-primary-200/50"
+                    : "border-primary-400/30"
                 }`}
               />
               {errors.bornAt && <p className="text-red-500 text-xs mt-1">{errors.bornAt}</p>}
@@ -333,10 +333,10 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
                 onChange={handleChange}
                 min="0"
                 max="10000"
-                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
+                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
                   errors.weight
                     ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                    : "border-primary-200/50"
+                    : "border-primary-400/30"
                 }`}
               />
               {errors.weight && <p className="text-red-500 text-xs mt-1">{errors.weight}</p>}
@@ -357,7 +357,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
                   onChange={handleChange}
                   className="sr-only peer"
                 />
-                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-400/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-400"></div>
               </label>
             </div>
 
