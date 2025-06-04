@@ -25,7 +25,7 @@ export default function PetCard({ pet }: PetCardProps) {
     >
       {/* Background pattern for living pets */}
       {!isDead && (
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50/30 via-transparent to-secondary-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-400/10 via-transparent to-secondary-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       )}
 
       <div className="p-6 h-full flex flex-col relative z-10">
@@ -67,7 +67,7 @@ export default function PetCard({ pet }: PetCardProps) {
               ${
                 isDead
                   ? "text-gray-700"
-                  : "text-gradient group-hover:from-primary-700 group-hover:to-primary-900"
+                  : "text-gradient group-hover:from-primary-400 group-hover:to-primary-600"
               }
             `}
           >
@@ -92,7 +92,7 @@ export default function PetCard({ pet }: PetCardProps) {
                 ${
                   isDead
                     ? "text-gray-600 hover:text-gray-800"
-                    : "text-primary-600 hover:text-primary-700 group-hover/link:gap-3"
+                    : "text-primary-400 hover:text-primary-500 group-hover/link:gap-3"
                 }
               `}
             >

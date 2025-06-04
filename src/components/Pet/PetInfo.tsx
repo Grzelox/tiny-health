@@ -43,7 +43,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
       <div className="card-modern rounded-2xl p-8 mb-8 relative overflow-hidden">
         {/* Background decoration for living pets */}
         {!petData.isDead && (
-          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary-100/30 to-transparent rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary-400/20 to-transparent rounded-full blur-3xl" />
         )}
 
         <div className="relative">
@@ -87,12 +87,12 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Birth Date */}
-            <div className="glass-effect bg-primary-50/80 backdrop-blur-sm p-6 rounded-xl border border-primary-200/50 hover:shadow-modern-lg transition-all duration-300">
+            <div className="glass-effect bg-primary-400/10 backdrop-blur-sm p-6 rounded-xl border border-primary-400/30 hover:shadow-modern-lg transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
-                <Calendar className="w-6 h-6 text-primary-600" />
+                <Calendar className="w-6 h-6 text-primary-400" />
               </div>
               <p className="text-sm text-secondary-600 mb-1 font-medium">Data urodzenia</p>
-              <p className="font-semibold text-primary-800">
+              <p className="font-semibold text-primary-600">
                 {new Date(petData.bornAt).toLocaleDateString("pl-PL")}
               </p>
             </div>
@@ -124,7 +124,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
                     <div className="p-2 bg-secondary-100/80 rounded-lg group-hover:bg-secondary-200/90 transition-all duration-300">
                       <LineChart className="w-5 h-5 text-secondary-600 group-hover:text-secondary-700 group-hover:scale-110 transition-all duration-300" />
                     </div>
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
                   </div>
                 )}
               </div>
@@ -141,12 +141,12 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
             </div>
 
             {/* Color */}
-            <div className="glass-effect bg-primary-50/80 backdrop-blur-sm p-6 rounded-xl border border-primary-200/50 hover:shadow-modern-lg transition-all duration-300">
+            <div className="glass-effect bg-primary-400/10 backdrop-blur-sm p-6 rounded-xl border border-primary-400/30 hover:shadow-modern-lg transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
-                <PaintRoller className="w-6 h-6 text-primary-600" />
+                <PaintRoller className="w-6 h-6 text-primary-400" />
               </div>
               <p className="text-sm text-secondary-600 mb-1 font-medium">Kolor</p>
-              <p className="font-semibold text-primary-800">{petData.color}</p>
+              <p className="font-semibold text-primary-600">{petData.color}</p>
             </div>
           </div>
         </div>

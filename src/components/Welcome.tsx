@@ -22,10 +22,10 @@ const FeatureCard = ({
   >
     <div className="card-modern p-8 rounded-2xl h-full hover:shadow-modern-xl hover:-translate-y-2 transition-all duration-500">
       <div className="flex flex-col items-center text-center h-full">
-        <div className="p-4 bg-primary-gradient rounded-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-modern">
+        <div className="p-4 bg-primary-400 rounded-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-modern group-hover:bg-primary-500">
           <Icon className="w-8 h-8 text-white" />
         </div>
-        <h3 className="text-xl font-semibold text-gradient mb-4 group-hover:from-primary-700 group-hover:to-primary-900 transition-all duration-300">
+        <h3 className="text-xl font-semibold text-gradient mb-4 group-hover:from-primary-500 group-hover:to-primary-700 transition-all duration-300">
           {title}
         </h3>
         <p className="text-secondary-600 leading-relaxed group-hover:text-secondary-700 transition-colors duration-300">
@@ -136,8 +136,8 @@ export default function Welcome() {
             {/* Logo/Icon */}
             <div className="flex justify-center mb-12">
               <div className="relative">
-                <div className="relative p-6 bg-card-gradient backdrop-blur-sm rounded-3xl shadow-modern-xl border border-white/40">
-                  <RatIcon className="w-16 h-16 text-primary-600" />
+                <div className="relative p-6 bg-card-gradient backdrop-blur-sm rounded-3xl shadow-modern-xl border border-primary-400/20">
+                  <RatIcon className="w-16 h-16 text-primary-400" />
                 </div>
               </div>
             </div>

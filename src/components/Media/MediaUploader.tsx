@@ -41,7 +41,7 @@ export default function MediaUploader({ petId, currentFileCount }: MediaUploader
       <div className="mb-4 p-4 bg-white/70 rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-primary-700">Zdjęcia</h3>
+            <h3 className="text-lg font-semibold text-primary-600">Zdjęcia</h3>
             <p className="text-sm text-secondary-600">
               {currentFileCount} z {MAX_IMAGES_PER_PET} zdjęć
             </p>
@@ -94,11 +94,11 @@ export default function MediaUploader({ petId, currentFileCount }: MediaUploader
           appearance={{
             container:
               "bg-white border-2 border-dashed border-primary-300 rounded-lg p-8 hover:border-primary-400 transition-colors",
-            label: "text-primary-700",
+            label: "text-primary-600",
             allowedContent: "text-secondary-600",
             button:
-              "ut-ready:bg-primary-600 ut-uploading:cursor-not-allowed rounded-lg px-4 py-2 text-white bg-primary-700 transition-colors",
-            uploadIcon: "text-primary-500",
+              "ut-ready:bg-primary-400 ut-uploading:cursor-not-allowed rounded-lg px-4 py-2 text-white bg-primary-500 transition-colors",
+            uploadIcon: "text-primary-400",
           }}
           onUploadBegin={() => {}}
           className="bg-pastel-yellow text-black py-4 rounded-full hover:bg-pastel-yellow-dark transition mt-4"

@@ -22,17 +22,17 @@
   }
 
   .btn-primary {
-    @apply bg-primary-gradient text-white shadow-modern hover:shadow-modern-lg transition-all duration-300;
+    @apply bg-primary-400 hover:bg-primary-500 text-white shadow-modern hover:shadow-modern-lg transition-all duration-300;
   }
 
   .btn-secondary {
-    @apply bg-white/90 backdrop-blur-sm border border-primary-200/50 text-primary-700 hover:bg-primary-50/80 shadow-modern hover:shadow-modern-lg transition-all duration-300;
+    @apply bg-white/90 backdrop-blur-sm border border-primary-400/50 text-primary-600 hover:bg-primary-400/10 hover:border-primary-400 shadow-modern hover:shadow-modern-lg transition-all duration-300;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
   }
 
   .animate-in {
