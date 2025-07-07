@@ -4,11 +4,12 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500 text-white overflow-hidden">
+    <footer className="relative bg-footer-gradient text-white overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-t from-primary-900/50 to-transparent" />
-      <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary-600/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary-400/15 rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 to-transparent" />
+      <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary-600/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary-300/25 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-primary-400/20 rounded-full blur-2xl" />
 
       <div className="relative container mx-auto px-4 py-8 sm:py-12">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-8">

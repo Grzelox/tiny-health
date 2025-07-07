@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50 min-h-screen;
+    @apply bg-gray-50 min-h-screen;
   }
 }
 
@@ -22,17 +22,17 @@
   }
 
   .btn-primary {
-    @apply bg-primary-400 hover:bg-primary-500 text-white shadow-modern hover:shadow-modern-lg transition-all duration-300;
+    @apply bg-primary-500 hover:bg-primary-600 text-white shadow-modern-lg hover:shadow-intense-glow transition-all duration-300;
   }
 
   .btn-secondary {
-    @apply bg-white/90 backdrop-blur-sm border border-primary-400/50 text-primary-600 hover:bg-primary-400/10 hover:border-primary-400 shadow-modern hover:shadow-modern-lg transition-all duration-300;
+    @apply bg-white/95 backdrop-blur-sm border border-primary-500/60 text-primary-700 hover:bg-primary-400/15 hover:border-primary-500 shadow-modern-lg hover:shadow-intense-glow transition-all duration-300;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent;
   }
 
   .animate-in {

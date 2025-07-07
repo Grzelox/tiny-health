@@ -20,7 +20,7 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
+      <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center min-h-[60vh]">
           <LoadingSpinner />
         </div>
@@ -30,7 +30,7 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
+      <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -48,7 +48,7 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
   const images = petData?.uploadedFiles ?? [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       <PetSummary pet={petData} vetVisits={vetVisits} images={images} onRefresh={handleRefresh} />
     </div>
   );

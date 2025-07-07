@@ -233,14 +233,14 @@ export default function WeightTrackerModal({
                       dataKey="weight"
                       stroke="url(#weightGradient)"
                       strokeWidth={2}
-                      dot={{ r: 3, fill: "#16a34a", strokeWidth: 2, stroke: "#ffffff" }}
-                      activeDot={{ r: 5, fill: "#15803d", strokeWidth: 3, stroke: "#ffffff" }}
+                      dot={{ r: 3, fill: "#8a8e75", strokeWidth: 2, stroke: "#ffffff" }}
+                      activeDot={{ r: 5, fill: "#68604d", strokeWidth: 3, stroke: "#ffffff" }}
                       className="sm:stroke-[3] sm:[&>circle]:r-[5] sm:[&>circle:hover]:r-[7]"
                     />
                     <defs>
                       <linearGradient id="weightGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#16a34a" />
-                        <stop offset="100%" stopColor="#22c55e" />
+                        <stop offset="0%" stopColor="#8a8e75" />
+                        <stop offset="100%" stopColor="#bec5a4" />
                       </linearGradient>
                     </defs>
                   </LineChart>
