@@ -20,15 +20,16 @@ const FeatureCard = ({
     transition={{ duration: 0.6, delay }}
     className="group"
   >
-    <div className="card-modern p-8 rounded-2xl h-full hover:shadow-modern-xl hover:-translate-y-2 transition-all duration-500">
+    <div className="card-modern p-8 rounded-2xl h-full hover:shadow-intense-glow hover:-translate-y-3 transition-all duration-500 group-hover:border-primary-400/50">
       <div className="flex flex-col items-center text-center h-full">
-        <div className="p-4 bg-primary-400 rounded-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-modern group-hover:bg-primary-500">
-          <Icon className="w-8 h-8 text-white" />
+        <div className="relative p-4 bg-primary-500 rounded-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-modern-lg group-hover:bg-primary-600 group-hover:shadow-intense-glow">
+          <div className="absolute inset-0 bg-intense-gradient rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
+          <Icon className="w-8 h-8 text-white relative z-10" />
         </div>
-        <h3 className="text-xl font-semibold text-gradient mb-4 group-hover:from-primary-500 group-hover:to-primary-700 transition-all duration-300">
+        <h3 className="text-xl font-semibold text-gradient mb-4 group-hover:from-primary-600 group-hover:to-primary-800 transition-all duration-300">
           {title}
         </h3>
-        <p className="text-secondary-600 leading-relaxed group-hover:text-secondary-700 transition-colors duration-300">
+        <p className="text-secondary-700 leading-relaxed group-hover:text-secondary-800 transition-colors duration-300 font-medium">
           {description}
         </p>
       </div>
@@ -75,7 +76,9 @@ const ImageShowcase = ({
     </div>
     <div className="flex-1 text-center lg:text-left">
       <h3 className="text-3xl lg:text-4xl font-bold text-gradient mb-6">{title}</h3>
-      <p className="text-lg text-secondary-700 leading-relaxed max-w-lg">{description}</p>
+      <p className="text-lg text-secondary-800 leading-relaxed max-w-lg font-medium">
+        {description}
+      </p>
     </div>
   </motion.div>
 );
@@ -123,7 +126,7 @@ export default function Welcome() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="pt-20 pb-32">
         {/* Hero Section */}
         <div className="container mx-auto px-4 text-center mb-32">
@@ -136,8 +139,9 @@ export default function Welcome() {
             {/* Logo/Icon */}
             <div className="flex justify-center mb-12">
               <div className="relative">
-                <div className="relative p-6 bg-card-gradient backdrop-blur-sm rounded-3xl shadow-modern-xl border border-primary-400/20">
-                  <RatIcon className="w-16 h-16 text-primary-400" />
+                <div className="absolute inset-0 bg-intense-gradient rounded-3xl blur-sm opacity-30"></div>
+                <div className="relative p-6 bg-card-gradient backdrop-blur-sm rounded-3xl shadow-intense-glow border border-primary-400/30">
+                  <RatIcon className="w-16 h-16 text-primary-500" />
                 </div>
               </div>
             </div>
@@ -152,7 +156,7 @@ export default function Welcome() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-secondary-600 max-w-4xl mx-auto mb-12 leading-relaxed">
+            <p className="text-xl md:text-2xl text-secondary-700 max-w-4xl mx-auto mb-12 leading-relaxed font-medium">
               Dzięki naszemu narzędziu możesz łatwo rejestrować wizyty u weterynarza, monitorować
               zmiany w wadze i przechowywać wszystkie istotne informacje w jednym miejscu.
               Uwieczniaj wyjątkowe chwile, dodając zdjęcia swoich podopiecznych.
@@ -237,13 +241,14 @@ export default function Welcome() {
           className="container mx-auto px-4 text-center"
         >
           <div className="card-modern p-12 rounded-3xl max-w-4xl mx-auto relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50" />
+            <div className="absolute inset-0 bg-intense-gradient opacity-20" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-100/60 to-secondary-100/60" />
             <div className="relative">
-              <p className="text-xl text-secondary-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xl text-secondary-800 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
                 Dołącz do naszej społeczności i zadbaj o zdrowie swoich małych bohaterów już dziś!
               </p>
               <SignUpButton mode="modal">
-                <button className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-glow">
+                <button className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-intense-glow">
                   Rozpocznij przygodę z serwisem
                 </button>
               </SignUpButton>

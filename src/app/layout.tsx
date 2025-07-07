@@ -29,9 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="pl">
         <body className={roboto.className}>
           <Providers>
-            <div className="min-h-screen flex flex-col bg-primary-50">
+            <div className="min-h-screen flex flex-col">
               <Header />
-              <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
+              <main className="flex-grow">{children}</main>
               <Footer />
             </div>
           </Providers>
