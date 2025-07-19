@@ -1,54 +1,289 @@
 "use client";
 
 import { UploadedImage } from "@/types/pet";
+import { useQueryClient } from "@tanstack/react-query";
+import { Trash2, X } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface GalleryProps {
   uploadedFiles: UploadedImage[];
+  petId: number;
+  petUuid: string;
 }
 
-export default function Gallery({ uploadedFiles }: GalleryProps) {
+export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loadingImages, setLoadingImages] = useState<Set<string>>(new Set());
+  const [modalImageLoading, setModalImageLoading] = useState<boolean>(false);
+  const [focusedImageIndex, setFocusedImageIndex] = useState<number>(-1);
+  const queryClient = useQueryClient();
+  const galleryRef = useRef<HTMLDivElement>(null);
 
-  if (uploadedFiles.length === 0) return null;
+  const handleImageLoad = useCallback((fileId: string) => {
+    setLoadingImages((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(fileId);
+      return newSet;
+    });
+  }, []);
 
-  const handleImageClick = (index: number) => {
+  const handleImageLoadStart = useCallback((fileId: string) => {
+    setLoadingImages((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(fileId);
+      return newSet;
+    });
+  }, []);
+
+  const handleModalImageLoadStart = useCallback(() => {
+    setModalImageLoading(true);
+  }, []);
+
+  const handleModalImageLoad = useCallback(() => {
+    setModalImageLoading(false);
+  }, []);
+
+  const handleDeleteFile = useCallback(
+    async (fileId: string, event?: React.MouseEvent) => {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      setDeletingFileId(fileId);
+      setError(null);
+
+      try {
+        const response = await fetch(`/api/v1/files?fileId=${fileId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to delete file");
+        }
+
+        // Invalidate the specific pet query using UUID (key change!)
+        await queryClient.invalidateQueries({
+          queryKey: ["pet", petUuid],
+        });
+        // Also invalidate the pets list to update any summaries
+        await queryClient.invalidateQueries({
+          queryKey: ["pets"],
+        });
+      } catch (error) {
+        console.error("Error deleting file:", error);
+        setError("Błąd podczas usuwania pliku. Spróbuj ponownie.");
+      } finally {
+        setDeletingFileId(null);
+      }
+    },
+    [queryClient, petUuid],
+  );
+
+  const handleImageClick = useCallback((index: number) => {
     setSelectedImageIndex(index);
-  };
+    setModalImageLoading(true); // Start loading when modal opens
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setSelectedImageIndex(null);
-  };
+    setModalImageLoading(false); // Reset loading state when closing
+  }, []);
 
-  const handleNavigate = (direction: "prev" | "next") => {
-    if (selectedImageIndex === null) return;
-    const newIndex =
-      direction === "prev"
-        ? (selectedImageIndex - 1 + uploadedFiles.length) % uploadedFiles.length
-        : (selectedImageIndex + 1) % uploadedFiles.length;
-    setSelectedImageIndex(newIndex);
-  };
+  const handleNavigate = useCallback(
+    (direction: "prev" | "next") => {
+      if (selectedImageIndex === null) return;
+      setModalImageLoading(true); // Start loading for new image
+      const newIndex =
+        direction === "prev"
+          ? (selectedImageIndex - 1 + uploadedFiles.length) % uploadedFiles.length
+          : (selectedImageIndex + 1) % uploadedFiles.length;
+      setSelectedImageIndex(newIndex);
+    },
+    [selectedImageIndex, uploadedFiles.length],
+  );
+
+  // Keyboard navigation for gallery grid
+  const handleGridKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      const gridCols = {
+        2: 2, // Mobile
+        3: 3, // Tablet
+        4: 4, // Desktop
+      };
+
+      // Use desktop columns as default for keyboard navigation
+      const cols = 4;
+      const totalImages = uploadedFiles.length;
+
+      switch (event.key) {
+        case "ArrowRight":
+          event.preventDefault();
+          setFocusedImageIndex((prev) => (prev < totalImages - 1 ? prev + 1 : prev));
+          break;
+        case "ArrowLeft":
+          event.preventDefault();
+          setFocusedImageIndex((prev) => (prev > 0 ? prev - 1 : prev));
+          break;
+        case "ArrowDown":
+          event.preventDefault();
+          setFocusedImageIndex((prev) => {
+            const newIndex = prev + cols;
+            return newIndex < totalImages ? newIndex : prev;
+          });
+          break;
+        case "ArrowUp":
+          event.preventDefault();
+          setFocusedImageIndex((prev) => {
+            const newIndex = prev - cols;
+            return newIndex >= 0 ? newIndex : prev;
+          });
+          break;
+        case "Enter":
+        case " ":
+          event.preventDefault();
+          if (focusedImageIndex >= 0) {
+            handleImageClick(focusedImageIndex);
+          }
+          break;
+        case "Delete":
+        case "Backspace":
+          event.preventDefault();
+          if (focusedImageIndex >= 0) {
+            const file = uploadedFiles[focusedImageIndex];
+            handleDeleteFile(file.id);
+          }
+          break;
+      }
+    },
+    [focusedImageIndex, uploadedFiles, handleImageClick, handleDeleteFile],
+  );
+
+  // Keyboard navigation for modal
+  const handleModalKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case "Escape":
+          handleCloseModal();
+          break;
+        case "ArrowLeft":
+          event.preventDefault();
+          handleNavigate("prev");
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          handleNavigate("next");
+          break;
+        case "Delete":
+        case "Backspace":
+          event.preventDefault();
+          if (selectedImageIndex !== null) {
+            const file = uploadedFiles[selectedImageIndex];
+            handleDeleteFile(file.id);
+            handleCloseModal();
+          }
+          break;
+      }
+    },
+    [handleCloseModal, handleNavigate, selectedImageIndex, uploadedFiles, handleDeleteFile],
+  );
+
+  // Set up keyboard listeners for modal
+  useEffect(() => {
+    if (selectedImageIndex !== null) {
+      document.addEventListener("keydown", handleModalKeyDown);
+      return () => {
+        document.removeEventListener("keydown", handleModalKeyDown);
+      };
+    }
+  }, [selectedImageIndex, handleModalKeyDown]);
+
+  // Focus management
+  useEffect(() => {
+    if (focusedImageIndex >= 0 && galleryRef.current) {
+      const imageElement = galleryRef.current.children[focusedImageIndex] as HTMLElement;
+      imageElement?.focus();
+    }
+  }, [focusedImageIndex]);
+
+  // Early return after all hooks are defined
+  if (uploadedFiles.length === 0) return null;
 
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-semibold mb-4">Galeria</h2>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
+
       {/* Image Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div
+        ref={galleryRef}
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+        onKeyDown={handleGridKeyDown}
+        role="grid"
+        aria-label="Galeria zdjęć zwierzaka"
+      >
         {uploadedFiles.map((file, index) => (
           <div
             key={file.id}
-            className="relative aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+            className={`relative aspect-square cursor-pointer hover:opacity-90 transition-all duration-200 rounded-lg overflow-hidden group ${
+              focusedImageIndex === index ? "ring-2 ring-blue-500 ring-offset-2" : ""
+            }`}
             onClick={() => handleImageClick(index)}
+            onFocus={() => setFocusedImageIndex(index)}
+            tabIndex={0}
+            role="gridcell"
+            aria-label={`Zdjęcie ${index + 1} z ${uploadedFiles.length}`}
           >
+            {/* Loading Animation */}
+            {loadingImages.has(file.id) && (
+              <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
+                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+
             <Image
               src={file.url}
-              alt={`Pet photo ${index + 1}`}
+              alt={`Zdjęcie zwierzaka ${index + 1}`}
               fill
               sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover rounded-lg"
-              priority={index < 4} // Load first 4 images immediately
+              className="object-cover transition-transform duration-200 group-hover:scale-105"
+              priority={index < 4}
+              onLoadingComplete={() => handleImageLoad(file.id)}
+              onLoadStart={() => handleImageLoadStart(file.id)}
             />
+
+            {/* Delete Button */}
+            <button
+              onClick={(e) => handleDeleteFile(file.id, e)}
+              disabled={deletingFileId === file.id}
+              className={`absolute top-2 right-2 p-1.5 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 ${
+                deletingFileId === file.id
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-600 focus:bg-red-600"
+              } text-white shadow-lg z-20`}
+              title="Usuń zdjęcie"
+              aria-label={`Usuń zdjęcie ${index + 1}`}
+            >
+              {deletingFileId === file.id ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <Trash2 size={16} />
+              )}
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {index + 1}/{uploadedFiles.length}
+            </div>
           </div>
         ))}
       </div>
@@ -58,45 +293,112 @@ export default function Gallery({ uploadedFiles }: GalleryProps) {
         <div
           className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
           onClick={handleCloseModal}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Podgląd zdjęcia"
         >
           <div className="relative w-full h-full flex items-center justify-center p-4">
+            {/* Previous Button */}
             <button
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-4xl z-10"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-4xl z-10 p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
               onClick={(e) => {
                 e.stopPropagation();
                 handleNavigate("prev");
               }}
+              aria-label="Poprzednie zdjęcie"
             >
               ←
             </button>
+
+            {/* Image Container */}
             <div
               className="relative w-full max-w-4xl h-[80vh]"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Modal Loading Animation */}
+              {modalImageLoading && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
+                  <div className="flex flex-col items-center">
+                    <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-white mt-4 text-sm">Ładowanie zdjęcia...</p>
+                  </div>
+                </div>
+              )}
+
               <Image
                 src={uploadedFiles[selectedImageIndex].url}
-                alt={`Pet photo ${selectedImageIndex + 1}`}
+                alt={`Zdjęcie zwierzaka ${selectedImageIndex + 1}`}
                 fill
                 sizes="90vw"
                 className="object-contain"
                 priority
+                onLoadStart={handleModalImageLoadStart}
+                onLoadingComplete={handleModalImageLoad}
+                onError={() => setModalImageLoading(false)}
               />
+
+              {/* Delete Button in Modal */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteFile(uploadedFiles[selectedImageIndex].id);
+                  handleCloseModal();
+                }}
+                disabled={deletingFileId === uploadedFiles[selectedImageIndex].id}
+                className={`absolute top-4 left-4 p-2 rounded-full transition-colors duration-200 ${
+                  deletingFileId === uploadedFiles[selectedImageIndex].id
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-red-500 hover:bg-red-600"
+                } text-white shadow-lg z-20`}
+                title="Usuń zdjęcie"
+                aria-label="Usuń aktualne zdjęcie"
+              >
+                {deletingFileId === uploadedFiles[selectedImageIndex].id ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Trash2 size={20} />
+                )}
+              </button>
             </div>
+
+            {/* Next Button */}
             <button
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-4xl z-10"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-4xl z-10 p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
               onClick={(e) => {
                 e.stopPropagation();
                 handleNavigate("next");
               }}
+              aria-label="Następne zdjęcie"
             >
               →
             </button>
+
+            {/* Close Button */}
             <button
-              className="absolute top-4 right-4 text-white text-3xl"
+              className="absolute top-4 right-4 text-white p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
               onClick={handleCloseModal}
+              aria-label="Zamknij podgląd"
             >
-              ×
+              <X size={24} />
             </button>
+
+            {/* Image Info */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg">
+              <p className="text-sm">
+                {selectedImageIndex + 1} z {uploadedFiles.length}
+              </p>
+              <p className="text-xs text-gray-300">
+                Dodano:{" "}
+                {new Date(uploadedFiles[selectedImageIndex].createdAt).toLocaleDateString("pl-PL")}
+              </p>
+            </div>
+
+            {/* Keyboard Instructions */}
+            <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg text-xs">
+              <p>← → Nawigacja</p>
+              <p>ESC Zamknij</p>
+              <p>DEL Usuń</p>
+            </div>
           </div>
         </div>
       )}

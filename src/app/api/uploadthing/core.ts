@@ -1,12 +1,10 @@
 import { MAX_IMAGES_PER_PET } from "@/utils/file-validation";
+import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
 import type { FileRouter } from "uploadthing/next";
 import { createUploadthing } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
 
 const f = createUploadthing();
 
@@ -31,60 +29,78 @@ export const ourFileRouter = {
       }),
     )
     .middleware(async ({ input }) => {
-      const { userId } = await auth();
-      const petId = input.petId;
+      try {
+        const { userId } = await auth();
+        const petId = input.petId;
 
-      if (!userId) throw new UploadThingError("Unauthorized");
-      if (!petId) throw new UploadThingError("Pet ID is required");
+        if (!userId) {
+          throw new UploadThingError("Unauthorized");
+        }
+        if (!petId) {
+          throw new UploadThingError("Pet ID is required");
+        }
 
-      const petIdNumber = parseInt(petId);
-      if (isNaN(petIdNumber)) {
-        throw new UploadThingError("Invalid Pet ID");
+        const petIdNumber = parseInt(petId);
+        if (isNaN(petIdNumber)) {
+          throw new UploadThingError("Invalid Pet ID");
+        }
+
+        // Validate that user owns the pet using withPrisma
+        const pet = await withPrisma(async (prisma) => {
+          return prisma.pet.findFirst({
+            where: {
+              id: petIdNumber,
+              ownerId: userId,
+            },
+          });
+        });
+
+        if (!pet) {
+          throw new UploadThingError("Pet not found or access denied");
+        }
+
+        // Explicitly count files for this specific pet using withPrisma
+        const currentFileCount = await withPrisma(async (prisma) => {
+          return prisma.file.count({
+            where: {
+              petId: pet.id,
+            },
+          });
+        });
+
+        // Check if adding this file would exceed the limit
+        if (currentFileCount >= MAX_IMAGES_PER_PET) {
+          throw new UploadThingError(
+            `Maksymalna liczba zdjęć na zwierzę to ${MAX_IMAGES_PER_PET}. Aktualnie masz ${currentFileCount} zdjęć.`,
+          );
+        }
+
+        return { userId, petId };
+      } catch (error) {
+        throw error;
       }
-
-      // Validate that user owns the pet
-      const pet = await prisma.pet.findFirst({
-        where: {
-          id: petIdNumber,
-          ownerId: userId,
-        },
-      });
-
-      if (!pet) {
-        throw new UploadThingError("Pet not found or access denied");
-      }
-
-      // Explicitly count files for this specific pet using pet.id
-      const currentFileCount = await prisma.file.count({
-        where: {
-          petId: pet.id,
-        },
-      });
-
-      // Check if adding this file would exceed the limit
-      if (currentFileCount >= MAX_IMAGES_PER_PET) {
-        throw new UploadThingError(
-          `Maksymalna liczba zdjęć na zwierzę to ${MAX_IMAGES_PER_PET}. Aktualnie masz ${currentFileCount} zdjęć.`,
-        );
-      }
-
-      return { userId, petId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        await saveFileToDatabase({ url: file.url, metadata });
+        const result = await saveFileToDatabase({ url: file.url, metadata });
+
+        return {
+          uploadedBy: metadata.userId,
+          petId: metadata.petId,
+          shouldInvalidateQueries: true,
+          fileId: result.id,
+        };
       } catch (error) {
         console.error("Failed to save file to database:", error);
         // Don't throw here as it would break the upload flow
         // Just log the error so the upload can complete
+        return {
+          uploadedBy: metadata.userId,
+          petId: metadata.petId,
+          shouldInvalidateQueries: true,
+          error: "Failed to save to database",
+        };
       }
-
-      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return {
-        uploadedBy: metadata.userId,
-        petId: metadata.petId,
-        shouldInvalidateQueries: true,
-      };
     }),
 } satisfies FileRouter;
 
@@ -106,20 +122,22 @@ async function saveFileToDatabase({ url, metadata }: { url: string; metadata: an
       throw new Error(`Invalid Pet ID: ${metadata.petId}`);
     }
 
-    // Create the file record - let Prisma handle createdAt automatically
-    const res = await prisma.file.create({
-      data: {
-        petId: petIdNumber,
-        url: url,
-      },
+    // Create the file record using withPrisma for consistent connection management
+    const res = await withPrisma(async (prisma) => {
+      const result = await prisma.file.create({
+        data: {
+          petId: petIdNumber,
+          url: url,
+        },
+      });
+      return result;
     });
 
     return res;
   } catch (err) {
-    console.error("❌ Error saving file to database:", {
+    console.error("Error saving file to database:", {
       error: err,
       message: err instanceof Error ? err.message : "Unknown error",
-      stack: err instanceof Error ? err.stack : undefined,
       url,
       metadata,
     });
