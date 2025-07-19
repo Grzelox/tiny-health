@@ -7,70 +7,46 @@ import React, { useEffect } from "react";
 
 interface MediaUploaderProps {
   petId: number;
+  petUuid: string;
   currentFileCount: number;
 }
 
-export default function MediaUploader({ petId, currentFileCount }: MediaUploaderProps) {
+export default function MediaUploader({ petId, petUuid, currentFileCount }: MediaUploaderProps) {
   const queryClient = useQueryClient();
   const validation = validateImageCount(currentFileCount);
 
-  const { startUpload } = useUploadThing("imageUploader", {
-    /**
-     * @see https://docs.uploadthing.com/api-reference/react#useuploadthing
-     */
-    onBeforeUploadBegin: (files) => {
-      return files;
-    },
-    onUploadBegin: (name) => {
-      // Upload started
-    },
-    onClientUploadComplete: (res) => {
-      queryClient.invalidateQueries({
-        queryKey: ["pets"],
-      });
-      if (typeof window !== "undefined") {
-        window.location.reload();
-      }
-    },
-    onUploadProgress(p) {},
-  });
+  const handleUploadComplete = async (res: any) => {
+    // Invalidate the specific pet query using UUID (this is the key change!)
+    await queryClient.invalidateQueries({
+      queryKey: ["pet", petUuid],
+    });
+    // Also invalidate the pets list to update any summaries
+    await queryClient.invalidateQueries({
+      queryKey: ["pets"],
+    });
+  };
 
   return (
     <div className="bg-pastel-green p-6 rounded-lg shadow-md">
-      {/* File Count Info */}
-      <div className="mb-4 p-4 bg-white/70 rounded-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-primary-600">Zdjęcia</h3>
-            <p className="text-sm text-secondary-600">
-              {currentFileCount} z {MAX_IMAGES_PER_PET} zdjęć
-            </p>
-          </div>
-          <div className="text-right">
-            <div className="text-sm text-secondary-600">Pozostało: {validation.remaining}</div>
-            <div className="text-xs text-secondary-500">Max rozmiar: 32MB</div>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full transition-all duration-300 ${
-              currentFileCount >= MAX_IMAGES_PER_PET
-                ? "bg-red-500"
-                : currentFileCount >= MAX_IMAGES_PER_PET * 0.8
-                  ? "bg-yellow-500"
-                  : "bg-green-500"
-            }`}
-            style={{ width: `${Math.min((currentFileCount / MAX_IMAGES_PER_PET) * 100, 100)}%` }}
-          />
-        </div>
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-primary-600 mb-2">Dodaj zdjęcia</h3>
+        <p className="text-sm text-secondary-600">
+          Maksymalnie {MAX_IMAGES_PER_PET} zdjęć na zwierzaka. Maksymalny rozmiar pliku: 32MB.
+        </p>
       </div>
 
       {/* Warning if near or at limit */}
       {!validation.isValid && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg">
-          <p className="text-red-700 text-sm font-medium">⚠️ {validation.message}</p>
+        <div className="mb-4 p-4 bg-red-100 border border-red-300 rounded-lg">
+          <div className="flex items-center gap-3">
+            <div className="text-red-500 text-2xl">⚠️</div>
+            <div>
+              <p className="text-red-700 text-sm font-medium">{validation.message}</p>
+              <p className="text-red-600 text-xs mt-1">
+                Usuń niektóre zdjęcia z galerii, aby móc dodać nowe.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -83,32 +59,38 @@ export default function MediaUploader({ petId, currentFileCount }: MediaUploader
           endpoint="imageUploader"
           // @ts-expect-error - The input prop is required by the server but not recognized by TypeScript
           input={{ petId: petId.toString() }}
-          onClientUploadComplete={(res) => {
-            queryClient.invalidateQueries({
-              queryKey: ["pets"],
-            });
-            if (typeof window !== "undefined") {
-              window.location.reload();
+          onClientUploadComplete={handleUploadComplete}
+          onBeforeUploadBegin={(files) => {
+            // Validation before upload
+            const newValidation = validateImageCount(currentFileCount, files.length);
+            if (!newValidation.isValid) {
+              alert(newValidation.message);
+              return [];
             }
+            return files;
           }}
           appearance={{
             container:
               "bg-white border-2 border-dashed border-primary-300 rounded-lg p-8 hover:border-primary-400 transition-colors",
-            label: "text-primary-600",
+            label: "text-primary-600 text-lg font-medium",
             allowedContent: "text-secondary-600",
             button:
-              "ut-ready:bg-primary-400 ut-uploading:cursor-not-allowed rounded-lg px-4 py-2 text-white bg-primary-500 transition-colors",
+              "ut-ready:bg-primary-400 ut-uploading:cursor-not-allowed rounded-lg px-6 py-3 text-white bg-primary-500 hover:bg-primary-600 transition-colors font-medium",
             uploadIcon: "text-primary-400",
           }}
-          onUploadBegin={() => {}}
-          className="bg-pastel-yellow text-black py-4 rounded-full hover:bg-pastel-yellow-dark transition mt-4"
+          className="w-full"
         />
       ) : (
-        <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
           <div className="text-gray-500">
-            <div className="text-4xl mb-2">📸</div>
-            <p className="font-medium">Osiągnięto maksymalną liczbę zdjęć</p>
-            <p className="text-sm">Usuń niektóre zdjęcia, aby dodać nowe</p>
+            <div className="text-4xl mb-3">📸</div>
+            <p className="font-medium text-lg mb-2">Osiągnięto maksymalną liczbę zdjęć</p>
+            <p className="text-sm text-gray-600">
+              Masz już {currentFileCount} z {MAX_IMAGES_PER_PET} dozwolonych zdjęć
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              Usuń niektóre zdjęcia z galerii, aby dodać nowe
+            </p>
           </div>
         </div>
       )}

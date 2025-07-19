@@ -6,7 +6,7 @@ export const { GET, POST } = createRouteHandler({
   router: ourFileRouter,
   config: {
     logLevel: "Error",
-    isDev: false,
+    isDev: process.env.NODE_ENV === "development",
     // handleDaemonPromise: "await",
   },
 });

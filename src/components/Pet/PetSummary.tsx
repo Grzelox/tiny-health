@@ -1,10 +1,8 @@
 "use client";
 
 import { FullPetData, UploadedImage, VetVisit } from "@/types/pet";
-import { useState } from "react";
 
 import Gallery from "../Media/Gallery";
-import ImageManager from "../Media/ImageManager";
 import MediaUploader from "../Media/MediaUploader";
 import VetVisitList from "../VetVisit/VetVisitList";
 import PetInfo from "./PetInfo";
@@ -17,9 +15,6 @@ interface PetSummaryProps {
 }
 
 export default function PetSummary({ pet, vetVisits, images, onRefresh }: PetSummaryProps) {
-  const [isEditPetModalOpen, setIsEditPetModalOpen] = useState(false);
-  const handleEditClick = () => setIsEditPetModalOpen(true);
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Pet Information Section */}
@@ -36,17 +31,12 @@ export default function PetSummary({ pet, vetVisits, images, onRefresh }: PetSum
 
         {/* Media Upload Section */}
         <section className="animate-in">
-          <MediaUploader petId={pet.id} currentFileCount={images.length} />
+          <MediaUploader petId={pet.id} petUuid={pet.uuid} currentFileCount={images.length} />
         </section>
 
         {/* Gallery Section */}
         <section className="animate-in">
-          <Gallery uploadedFiles={images} />
-        </section>
-
-        {/* Image Management Section */}
-        <section className="animate-in">
-          <ImageManager uploadedFiles={images} petId={pet.id} />
+          <Gallery uploadedFiles={images} petId={pet.id} petUuid={pet.uuid} />
         </section>
       </div>
     </div>
