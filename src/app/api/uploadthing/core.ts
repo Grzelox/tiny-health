@@ -45,14 +45,38 @@ export const ourFileRouter = {
           throw new UploadThingError("Invalid Pet ID");
         }
 
-        // Validate that user owns the pet using withPrisma
+        // Check if user has access to the pet (either as owner or through sharing)
         const pet = await withPrisma(async (prisma) => {
-          return prisma.pet.findFirst({
+          // First check direct ownership
+          let pet = await prisma.pet.findFirst({
             where: {
               id: petIdNumber,
               ownerId: userId,
             },
           });
+
+          // If not owner, check for shared access
+          if (!pet) {
+            pet = await prisma.pet.findFirst({
+              where: {
+                id: petIdNumber,
+                ownerId: {
+                  in: (
+                    await prisma.userShare.findMany({
+                      where: {
+                        sharedWith: userId,
+                      },
+                      select: {
+                        ownerId: true,
+                      },
+                    })
+                  ).map((share) => share.ownerId),
+                },
+              },
+            });
+          }
+
+          return pet;
         });
 
         if (!pet) {
@@ -80,7 +104,7 @@ export const ourFileRouter = {
         throw error;
       }
     })
-    .onUploadComplete(async ({ metadata, file }) => {
+    .onUploadComplete(async ({ file, metadata }) => {
       try {
         const result = await saveFileToDatabase({ url: file.url, metadata });
 
