@@ -99,14 +99,21 @@ export const ourFileRouter = {
           );
         }
 
-        return { userId, petId };
+        const meta = { userId, petId };
+        return meta;
       } catch (error) {
         throw error;
       }
     })
     .onUploadComplete(async ({ file, metadata }) => {
       try {
-        const result = await saveFileToDatabase({ url: file.url, metadata });
+        const fileUrls = file as unknown as { ufsUrl?: string; url?: string };
+        const selectedUrl: string | undefined = fileUrls.ufsUrl ?? fileUrls.url;
+        if (!selectedUrl) {
+          throw new Error("UploadThing file object does not include a URL");
+        }
+        // optional warn removed for prod
+        const result = await saveFileToDatabase({ url: selectedUrl, metadata });
 
         return {
           uploadedBy: metadata.userId,
@@ -115,7 +122,6 @@ export const ourFileRouter = {
           fileId: result.id,
         };
       } catch (error) {
-        console.error("Failed to save file to database:", error);
         // Don't throw here as it would break the upload flow
         // Just log the error so the upload can complete
         return {
