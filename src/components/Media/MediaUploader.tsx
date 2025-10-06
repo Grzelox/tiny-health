@@ -1,9 +1,9 @@
 "use client";
 
 import { MAX_IMAGES_PER_PET, validateImageCount } from "@/utils/file-validation";
-import { UploadDropzone, useUploadThing } from "@/utils/uploadthing";
+import { UploadDropzone } from "@/utils/uploadthing";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React from "react";
 
 interface MediaUploaderProps {
   petId: number;
@@ -60,6 +60,9 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
           // @ts-expect-error - The input prop is required by the server but not recognized by TypeScript
           input={{ petId: petId.toString() }}
           onClientUploadComplete={handleUploadComplete}
+          onUploadError={(err) => {
+            alert(`Upload error: ${err?.message ?? "Unknown error"}`);
+          }}
           onBeforeUploadBegin={(files) => {
             // Validation before upload
             const newValidation = validateImageCount(currentFileCount, files.length);
