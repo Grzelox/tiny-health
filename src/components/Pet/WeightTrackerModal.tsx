@@ -3,7 +3,7 @@
 import LoadingSpinner from "@/components/Animations/LoadingSpinner";
 import { useAddWeightRecord, useDeleteWeightRecord, useGetWeightHistory } from "@/hooks/useQueries";
 import { Loader2, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -28,7 +28,7 @@ export default function WeightTrackerModal({
   petId,
   currentWeight,
   uuid,
-}: WeightTrackerModalProps): JSX.Element {
+}: WeightTrackerModalProps): ReactElement | null {
   const [newWeight, setNewWeight] = useState<string>(currentWeight?.toString() ?? "");
   const { data: weightHistory, isLoading } = useGetWeightHistory(petId, uuid);
   const addWeightMutation = useAddWeightRecord();

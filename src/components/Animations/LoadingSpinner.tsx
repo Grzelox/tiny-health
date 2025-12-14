@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { SyncLoader } from "react-spinners";
 
 interface LoadingSpinnerProps {
@@ -10,7 +11,7 @@ export default function LoadingSpinner({
   size = 15,
   color = "#3F6F5E", // Default to primary-500
   loading = true,
-}: LoadingSpinnerProps): JSX.Element | null {
+}: LoadingSpinnerProps): ReactElement | null {
   if (!loading) return null;
 
   return (
