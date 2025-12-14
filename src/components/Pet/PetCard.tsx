@@ -51,7 +51,7 @@ export default function PetCard({ pet }: PetCardProps) {
                 ${
                   isDead
                     ? "text-gray-600 hover:bg-gray-300/50"
-                    : "text-red-500 hover:text-red-600 hover:bg-red-50/80 backdrop-blur-xs"
+                    : "text-danger-600 hover:text-danger-700 hover:bg-danger-50/80 backdrop-blur-xs"
                 }
               `}
             >

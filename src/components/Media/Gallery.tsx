@@ -218,8 +218,8 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
       <h2 className="text-2xl font-semibold mb-4">Galeria</h2>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-800">{error}</p>
+        <div className="mb-4 p-3 bg-danger-50 border border-danger-200 rounded-lg">
+          <p className="text-sm text-danger-800">{error}</p>
         </div>
       )}
 
@@ -235,7 +235,9 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
           <div
             key={file.id}
             className={`relative aspect-square cursor-pointer hover:opacity-90 transition-all duration-200 rounded-lg overflow-hidden group ${
-              focusedImageIndex === index ? "ring-2 ring-blue-500 ring-offset-2" : ""
+              focusedImageIndex === index
+                ? "ring-2 ring-primary-500 ring-offset-2 ring-offset-background"
+                : ""
             }`}
             onClick={() => handleImageClick(index)}
             onFocus={() => setFocusedImageIndex(index)}
@@ -246,7 +248,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
             {/* Loading Animation */}
             {loadingImages.has(file.id) && (
               <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
-                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
 
@@ -268,7 +270,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
               className={`absolute top-2 right-2 p-1.5 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 ${
                 deletingFileId === file.id
                   ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-red-500 hover:bg-red-600 focus:bg-red-600"
+                  : "bg-danger-500 hover:bg-danger-600 focus:bg-danger-600"
               } text-white shadow-lg z-20`}
               title="Usuń zdjęcie"
               aria-label={`Usuń zdjęcie ${index + 1}`}
@@ -348,7 +350,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                 className={`absolute top-4 left-4 p-2 rounded-full transition-colors duration-200 ${
                   deletingFileId === uploadedFiles[selectedImageIndex].id
                     ? "bg-gray-500 cursor-not-allowed"
-                    : "bg-red-500 hover:bg-red-600"
+                    : "bg-danger-500 hover:bg-danger-600"
                 } text-white shadow-lg z-20`}
                 title="Usuń zdjęcie"
                 aria-label="Usuń aktualne zdjęcie"

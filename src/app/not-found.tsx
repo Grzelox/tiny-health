@@ -21,7 +21,7 @@ export default function NotFound() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative p-6 bg-card-gradient backdrop-blur-sm rounded-3xl shadow-modern-xl border border-white/40"
+                className="relative p-6 bg-card-gradient backdrop-blur-sm rounded-3xl shadow-modern-xl border border-border/80"
               >
                 <AlertTriangle className="w-16 h-16 text-primary-600" />
               </motion.div>

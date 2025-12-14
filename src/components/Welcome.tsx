@@ -126,7 +126,7 @@ export default function Welcome() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <div className="pt-20 pb-32">
         {/* Hero Section */}
         <div className="container mx-auto px-4 text-center mb-32">

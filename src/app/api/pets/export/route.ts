@@ -168,7 +168,7 @@ export async function GET(request: Request) {
     zip.file("vet_visits.csv", vetVisitsCSV);
     zip.file("weight_records.csv", weightRecordsCSV);
 
-    const zipContent = await zip.generateAsync({ type: "uint8array" });
+    const zipContent: ArrayBuffer = await zip.generateAsync({ type: "arraybuffer" });
 
     const exportDate = new Date().toISOString().split("T")[0];
     const filename = `pets-export-${exportDate}.zip`;

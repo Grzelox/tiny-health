@@ -196,7 +196,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white/95 backdrop-blur-lg border border-white/50 shadow-2xl rounded-2xl p-8 max-w-lg w-full mx-4 relative overflow-hidden animate-slide-up">
+      <div className="bg-surface/95 backdrop-blur-lg border border-border/80 shadow-2xl rounded-2xl p-8 max-w-lg w-full mx-4 relative overflow-hidden animate-slide-up">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-40 h-40 bg-secondary-gradient opacity-10 rounded-full blur-3xl" />
 
@@ -224,7 +224,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             <select
               value={animalType}
               onChange={(e) => setAnimalType(e.target.value as AnimalType)}
-              className="w-full p-4 bg-white/80 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 font-medium"
+              className="w-full p-4 bg-background/70 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 font-medium"
             >
               {ANIMAL_TYPES.map((type) => (
                 <option key={type} value={type}>
@@ -245,13 +245,13 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                 setName(e.target.value);
                 clearError("name");
               }}
-              className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
+              className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
                 errors.name
-                  ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                  ? "border-danger-400 focus:ring-danger-500 focus:border-danger-500"
                   : "border-secondary-200/50"
               }`}
             />
-            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+            {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name}</p>}
           </div>
 
           {/* Grid for Breed and Color */}
@@ -266,13 +266,13 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                   setBreed(e.target.value);
                   clearError("breed");
                 }}
-                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
+                className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
                   errors.breed
-                    ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                    ? "border-danger-400 focus:ring-danger-500 focus:border-danger-500"
                     : "border-secondary-200/50"
                 }`}
               />
-              {errors.breed && <p className="text-red-500 text-xs mt-1">{errors.breed}</p>}
+              {errors.breed && <p className="text-danger-500 text-xs mt-1">{errors.breed}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-secondary-700">Umaszczenie</label>
@@ -284,13 +284,13 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                   setColor(e.target.value);
                   clearError("color");
                 }}
-                className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
+                className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 placeholder-secondary-400 ${
                   errors.color
-                    ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                    ? "border-danger-400 focus:ring-danger-500 focus:border-danger-500"
                     : "border-secondary-200/50"
                 }`}
               />
-              {errors.color && <p className="text-red-500 text-xs mt-1">{errors.color}</p>}
+              {errors.color && <p className="text-danger-500 text-xs mt-1">{errors.color}</p>}
             </div>
           </div>
 
@@ -304,17 +304,17 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                 setBirthday(e.target.value);
                 clearError("birthDate");
               }}
-              className={`w-full p-4 bg-white/80 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 ${
+              className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 ${
                 errors.birthDate
-                  ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                  ? "border-danger-400 focus:ring-danger-500 focus:border-danger-500"
                   : "border-secondary-200/50"
               }`}
             />
-            {errors.birthDate && <p className="text-red-500 text-xs mt-1">{errors.birthDate}</p>}
+            {errors.birthDate && <p className="text-danger-500 text-xs mt-1">{errors.birthDate}</p>}
           </div>
 
           {/* Death Status */}
-          <div className="bg-gray-50/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-4">
+          <div className="bg-background/60 backdrop-blur-sm border border-border/70 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <label className="text-sm font-semibold text-secondary-700">
                 Czy zwierzak zmarł?
@@ -346,14 +346,14 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
                     setDeathDate(e.target.value);
                     clearError("deathDate");
                   }}
-                  className={`w-full p-3 bg-white/80 border rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all duration-300 text-gray-700 ${
+                  className={`w-full p-3 bg-background/70 border rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all duration-300 text-gray-700 ${
                     errors.deathDate
-                      ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                      ? "border-danger-400 focus:ring-danger-500 focus:border-danger-500"
                       : "border-gray-300/50"
                   }`}
                 />
                 {errors.deathDate && (
-                  <p className="text-red-500 text-xs mt-1">{errors.deathDate}</p>
+                  <p className="text-danger-500 text-xs mt-1">{errors.deathDate}</p>
                 )}
               </div>
             )}

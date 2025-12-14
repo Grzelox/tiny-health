@@ -50,39 +50,36 @@ const EditVetVisitModal: React.FC<EditVetVisitModalProps> = ({
   if (!isOpen || !visit) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-surface/95 backdrop-blur-lg border border-border/80 shadow-2xl rounded-2xl p-8 max-w-md w-full mx-4 relative animate-slide-up">
         <h2 className="text-2xl font-bold text-primary-800 mb-6">Edytuj wizytę</h2>
         <div className="space-y-4">
           <textarea
             placeholder="Opis"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full p-3 bg-background/70 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             rows={5}
           />
           <textarea
             placeholder="Leki"
             value={medication}
             onChange={(e) => setMedication(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full p-3 bg-background/70 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             rows={2}
           />
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full p-3 bg-background/70 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
         </div>
         <div className="mt-6 flex justify-end space-x-4">
-          <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">
+          <button onClick={onClose} className="btn-secondary px-4 py-2 rounded-lg">
             Zamknij
           </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-          >
+          <button onClick={handleSubmit} className="btn-primary px-4 py-2 rounded-lg">
             Edytuj wizytę
           </button>
         </div>

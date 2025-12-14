@@ -85,7 +85,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           >
             <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
               {isExporting ? (
-                <ClipLoader size={14} color="#8a8e75" />
+                <ClipLoader size={14} color="#3F6F5E" />
               ) : (
                 <DownloadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
@@ -154,10 +154,10 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-red-600 text-2xl">!</span>
+          <div className="w-16 h-16 bg-gradient-to-br from-danger-100 to-danger-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-danger-600 text-2xl">!</span>
           </div>
-          <span className="text-red-600 text-lg font-medium">Error loading pets</span>
+          <span className="text-danger-600 text-lg font-medium">Error loading pets</span>
         </div>
       </div>
     );

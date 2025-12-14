@@ -38,7 +38,7 @@ export default function Footer() {
             <div className="glass-effect bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 w-full max-w-sm lg:w-auto">
               <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 text-primary-100">
-                  <Heart className="w-4 h-4 text-red-300" />
+                  <Heart className="w-4 h-4 text-danger-300" />
                   <span className="text-xs sm:text-sm font-medium">Created with love by</span>
                 </div>
                 <Link

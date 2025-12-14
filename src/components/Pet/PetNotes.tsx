@@ -35,13 +35,13 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-8 mb-8 relative">
+    <div className="card-modern rounded-2xl p-8 mb-8 relative overflow-hidden">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-primary-800">Notatki</h2>
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="text-gray-600 hover:text-gray-800"
+            className="text-secondary-600 hover:text-secondary-800 transition-colors duration-200"
             aria-label="Edit notes"
           >
             <EditIcon className="w-5 h-5" />
@@ -55,20 +55,20 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Dodaj notatki o swoim pupilu..."
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[150px]"
+            className="w-full p-3 bg-background/70 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[150px]"
             disabled={isPending}
           />
           <div className="flex justify-end space-x-2">
             <button
               onClick={handleCancel}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              className="btn-secondary px-4 py-2 rounded-lg"
               disabled={isPending}
             >
               Anuluj
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:bg-gray-400"
+              className="btn-primary px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isPending}
             >
               {isPending ? "Zapisywanie..." : "Zapisz"}
@@ -80,7 +80,9 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
           {petData.notes ? (
             <p className="whitespace-pre-wrap">{petData.notes}</p>
           ) : (
-            <p className="text-gray-400 italic">Brak notatek. Kliknij ikonę edycji, aby dodać.</p>
+            <p className="text-secondary-400 italic">
+              Brak notatek. Kliknij ikonę edycji, aby dodać.
+            </p>
           )}
         </div>
       )}

@@ -7,7 +7,7 @@ export default function SignInPage() {
         appearance={{
           elements: {
             rootBox: "mx-auto",
-            card: "bg-white shadow-xl",
+            card: "bg-surface border border-border shadow-modern-xl",
           },
         }}
       />
