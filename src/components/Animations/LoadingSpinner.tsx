@@ -8,7 +8,7 @@ interface LoadingSpinnerProps {
 
 export default function LoadingSpinner({
   size = 15,
-  color = "#8a8e75", // Default to primary-500
+  color = "#3F6F5E", // Default to primary-500
   loading = true,
 }: LoadingSpinnerProps): JSX.Element | null {
   if (!loading) return null;

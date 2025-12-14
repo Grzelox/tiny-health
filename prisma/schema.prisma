@@ -24,7 +24,7 @@ model Pet {
   breed     String
   animalType String    @default("Mysz")
   bornAt    DateTime
-  weight    Int
+  weight    Int?
   color     String
   notes     String?    @db.Text
   ownerId   String

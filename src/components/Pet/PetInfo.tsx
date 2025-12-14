@@ -57,7 +57,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
               <p className={`text-lg ${petData.isDead ? "text-gray-600" : "text-secondary-600"}`}>
                 {petData.animalType} • {petData.breed} • {petData.color}
                 {petData.isDead && (
-                  <span className="ml-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                  <span className="ml-2 px-3 py-1 bg-danger-100 text-danger-700 rounded-full text-sm font-medium">
                     Zmarła
                   </span>
                 )}

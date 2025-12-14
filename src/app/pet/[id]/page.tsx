@@ -20,7 +20,7 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="flex items-center justify-center min-h-[60vh]">
           <LoadingSpinner />
         </div>
@@ -30,13 +30,13 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-red-600 text-2xl">!</span>
+            <div className="w-16 h-16 bg-gradient-to-br from-danger-100 to-danger-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-danger-600 text-2xl">!</span>
             </div>
-            <span className="text-red-600 text-lg font-medium">Error loading pet data</span>
+            <span className="text-danger-600 text-lg font-medium">Error loading pet data</span>
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
   const images = petData?.uploadedFiles ?? [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <PetSummary pet={petData} vetVisits={vetVisits} images={images} onRefresh={handleRefresh} />
     </div>
   );

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="glass-effect border-b border-white/30 sticky top-0 z-50">
+    <header className="glass-effect border-b border-border/70 sticky top-0 z-50">
       <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-1 sm:gap-2 group">
           <div className="relative">

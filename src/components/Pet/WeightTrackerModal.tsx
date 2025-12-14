@@ -130,7 +130,7 @@ export default function WeightTrackerModal({
       }}
     >
       <div
-        className="card-modern glass-effect bg-white/95 backdrop-blur-xl rounded-2xl p-3 sm:p-4 max-w-md sm:max-w-4xl lg:max-w-6xl xl:max-w-7xl w-full mx-2 sm:mx-4 relative overflow-hidden h-[85vh] sm:h-[90vh] flex flex-col animate-in"
+        className="card-modern glass-effect bg-surface/95 backdrop-blur-xl rounded-2xl p-3 sm:p-4 max-w-md sm:max-w-4xl lg:max-w-6xl xl:max-w-7xl w-full mx-2 sm:mx-4 relative overflow-hidden h-[85vh] sm:h-[90vh] flex flex-col animate-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with gradient decoration */}
@@ -159,7 +159,7 @@ export default function WeightTrackerModal({
               onChange={(e) => setNewWeight(e.target.value)}
               min="1"
               max="10000"
-              className="flex-1 p-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white/90 backdrop-blur-sm transition-all duration-200 text-gray-900 placeholder-gray-500 text-sm"
+              className="flex-1 p-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-background/70 backdrop-blur-sm transition-all duration-200 text-secondary-900 placeholder-secondary-500 text-sm"
             />
             <button
               onClick={handleAddWeight}
@@ -182,35 +182,35 @@ export default function WeightTrackerModal({
         {/* Content area with proper scrolling - fixed height for optimal viewing */}
         <div className="flex-1 min-h-0 overflow-hidden" style={{ minHeight: "500px" }}>
           {isLoading ? (
-            <div className="h-full flex items-center justify-center glass-effect bg-white/50 backdrop-blur-sm rounded-xl border border-gray-200/50">
+            <div className="h-full flex items-center justify-center glass-effect bg-background/50 backdrop-blur-sm rounded-xl border border-border/70">
               <LoadingSpinner />
             </div>
           ) : weightHistory && weightHistory.length > 0 ? (
             <div className="h-full flex flex-col gap-3 sm:gap-4">
               {/* Chart section - optimal height for visibility */}
-              <div className="glass-effect bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl p-2 sm:p-3 shrink-0 h-[180px] sm:h-[220px]">
+              <div className="glass-effect bg-background/60 backdrop-blur-sm border border-border/70 rounded-xl p-2 sm:p-3 shrink-0 h-[180px] sm:h-[220px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weightHistory} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                     <CartesianGrid
                       strokeDasharray="3 3"
                       horizontal={true}
                       vertical={false}
-                      stroke="#e2e8f0"
+                      stroke="#D9E2D8"
                     />
                     <XAxis
                       dataKey="createdAt"
                       tickFormatter={formatDate}
-                      tick={{ fontSize: 10, fill: "#64748b" }}
-                      stroke="#94a3b8"
+                      tick={{ fontSize: 10, fill: "#5B6B63" }}
+                      stroke="#94A39B"
                       interval="preserveStartEnd"
                       className="sm:text-xs"
                     />
                     <YAxis
                       domain={[0, "auto"]}
-                      tick={{ fontSize: 10, fill: "#64748b" }}
+                      tick={{ fontSize: 10, fill: "#5B6B63" }}
                       tickCount={5}
                       allowDecimals={false}
-                      stroke="#94a3b8"
+                      stroke="#94A39B"
                       width={30}
                       className="sm:text-xs sm:w-10"
                     />
@@ -218,8 +218,8 @@ export default function WeightTrackerModal({
                       labelFormatter={formatDate}
                       formatter={(value) => [`${value} g`, "Waga"]}
                       contentStyle={{
-                        backgroundColor: "rgba(255, 255, 255, 0.95)",
-                        border: "1px solid #e2e8f0",
+                        backgroundColor: "rgba(251, 250, 246, 0.97)",
+                        border: "1px solid #D9E2D8",
                         borderRadius: "12px",
                         padding: "8px",
                         boxShadow:
@@ -233,14 +233,14 @@ export default function WeightTrackerModal({
                       dataKey="weight"
                       stroke="url(#weightGradient)"
                       strokeWidth={2}
-                      dot={{ r: 3, fill: "#8a8e75", strokeWidth: 2, stroke: "#ffffff" }}
-                      activeDot={{ r: 5, fill: "#68604d", strokeWidth: 3, stroke: "#ffffff" }}
+                      dot={{ r: 3, fill: "#3F6F5E", strokeWidth: 2, stroke: "#FBFAF6" }}
+                      activeDot={{ r: 5, fill: "#355E50", strokeWidth: 3, stroke: "#FBFAF6" }}
                       className="sm:stroke-[3] sm:[&>circle]:r-[5] sm:[&>circle:hover]:r-[7]"
                     />
                     <defs>
                       <linearGradient id="weightGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#8a8e75" />
-                        <stop offset="100%" stopColor="#bec5a4" />
+                        <stop offset="0%" stopColor="#3F6F5E" />
+                        <stop offset="100%" stopColor="#98BFAF" />
                       </linearGradient>
                     </defs>
                   </LineChart>
@@ -249,7 +249,7 @@ export default function WeightTrackerModal({
 
               {/* History table section - guaranteed height for at least 3 records */}
               <div
-                className="glass-effect bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl p-3 sm:p-4 flex-1 min-h-0 flex flex-col"
+                className="glass-effect bg-background/60 backdrop-blur-sm border border-border/70 rounded-xl p-3 sm:p-4 flex-1 min-h-0 flex flex-col"
                 style={{ minHeight: "240px" }}
               >
                 {/* Scrollable content container */}
@@ -257,7 +257,7 @@ export default function WeightTrackerModal({
                   {/* Desktop table view */}
                   <div className="hidden sm:block absolute inset-0">
                     <div
-                      className="h-full overflow-y-auto overflow-x-hidden rounded-lg border border-gray-200/30"
+                      className="h-full overflow-y-auto overflow-x-hidden rounded-lg border border-border/50"
                       style={{
                         scrollbarWidth: "thin",
                         scrollbarColor: "#cbd5e1 #f1f5f9",
@@ -299,11 +299,14 @@ export default function WeightTrackerModal({
                                   <button
                                     onClick={() => handleDeleteWeight(petId, record.id)}
                                     disabled={deletingId === record.id.toString()}
-                                    className="text-gray-400 hover:text-red-500 transition-all duration-200 inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed group"
+                                    className="text-secondary-400 hover:text-danger-600 transition-all duration-200 inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-danger-50 disabled:opacity-50 disabled:cursor-not-allowed group"
                                     title="Usuń pomiar"
                                   >
                                     {deletingId === record.id.toString() ? (
-                                      <Loader2 size={14} className="animate-spin text-gray-400" />
+                                      <Loader2
+                                        size={14}
+                                        className="animate-spin text-secondary-400"
+                                      />
                                     ) : (
                                       <Trash2
                                         size={14}
@@ -339,7 +342,7 @@ export default function WeightTrackerModal({
                           .map((record) => (
                             <div
                               key={record.id}
-                              className={`bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-lg p-3 transition-all duration-200 ${
+                              className={`bg-background/70 backdrop-blur-sm border border-border/70 rounded-lg p-3 transition-all duration-200 ${
                                 deletingId === record.id.toString() ? "opacity-50" : "opacity-100"
                               }`}
                             >
@@ -355,11 +358,14 @@ export default function WeightTrackerModal({
                                 <button
                                   onClick={() => handleDeleteWeight(petId, record.id)}
                                   disabled={deletingId === record.id.toString()}
-                                  className="text-gray-400 hover:text-red-500 transition-all duration-200 inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed ml-2 shrink-0"
+                                  className="text-secondary-400 hover:text-danger-600 transition-all duration-200 inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-danger-50 disabled:opacity-50 disabled:cursor-not-allowed ml-2 shrink-0"
                                   title="Usuń pomiar"
                                 >
                                   {deletingId === record.id.toString() ? (
-                                    <Loader2 size={16} className="animate-spin text-gray-400" />
+                                    <Loader2
+                                      size={16}
+                                      className="animate-spin text-secondary-400"
+                                    />
                                   ) : (
                                     <Trash2 size={16} />
                                   )}
@@ -374,10 +380,10 @@ export default function WeightTrackerModal({
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center glass-effect bg-white/50 backdrop-blur-sm rounded-xl border border-gray-200/50 text-secondary-600 p-4">
+            <div className="h-full flex flex-col items-center justify-center glass-effect bg-background/50 backdrop-blur-sm rounded-xl border border-border/70 text-secondary-600 p-4">
               <LineChart className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mb-3 sm:mb-4" />
               <p className="text-base sm:text-lg font-medium text-center">Brak historii wagi</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-2 text-center px-2">
+              <p className="text-xs sm:text-sm text-secondary-500 mt-2 text-center px-2">
                 Dodaj pierwszy pomiar, aby rozpocząć śledzenie
               </p>
             </div>
@@ -385,7 +391,7 @@ export default function WeightTrackerModal({
         </div>
 
         {/* Footer */}
-        <div className="mt-4 sm:mt-6 flex justify-end border-t border-gray-200/50 pt-3 sm:pt-4 shrink-0">
+        <div className="mt-4 sm:mt-6 flex justify-end border-t border-border/70 pt-3 sm:pt-4 shrink-0">
           <button
             onClick={onClose}
             className="btn-secondary px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 text-sm sm:text-base"

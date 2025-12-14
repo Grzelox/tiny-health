@@ -2,6 +2,29 @@ import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+interface CreatePetPayload {
+  readonly name: string;
+  readonly breed: string;
+  readonly bornAt: string;
+  readonly weight?: unknown;
+  readonly color: string;
+  readonly ownerId: string;
+  readonly notes?: string;
+  readonly isDead?: boolean;
+  readonly deathDate?: string;
+  readonly animalType?: string;
+}
+
+const MAX_PET_WEIGHT_GRAMS = 10000;
+
+const parseOptionalWeight = (weight: unknown): number | null => {
+  if (weight === null || weight === undefined || weight === "") return null;
+  const weightNumber: number = typeof weight === "number" ? weight : Number(weight);
+  if (!Number.isFinite(weightNumber)) return null;
+  if (weightNumber <= 0 || weightNumber > MAX_PET_WEIGHT_GRAMS) return null;
+  return Math.round(weightNumber);
+};
+
 export async function GET(request: Request) {
   try {
     const { userId } = await auth();
@@ -62,31 +85,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, breed, bornAt, weight, color, ownerId, notes, isDead, deathDate, animalType } =
-    await request.json();
+  const payload = (await request.json()) as CreatePetPayload;
+  const parsedWeight: number | null = parseOptionalWeight(payload.weight);
   try {
     const result = await withPrisma(async (prisma) => {
       const newPet = await prisma.pet.create({
         data: {
-          name,
-          breed,
-          bornAt,
-          weight,
-          color,
-          ownerId,
-          notes,
-          isDead: isDead || false,
-          deathDate,
-          animalType,
+          name: payload.name,
+          breed: payload.breed,
+          bornAt: payload.bornAt,
+          color: payload.color,
+          ownerId: payload.ownerId,
+          notes: payload.notes,
+          isDead: payload.isDead || false,
+          deathDate: payload.deathDate,
+          animalType: payload.animalType,
           updatedAt: new Date().toISOString(),
+          ...(parsedWeight !== null ? { weight: parsedWeight } : {}),
         },
       });
 
-      if (weight) {
+      if (parsedWeight !== null) {
         await prisma.weight.create({
           data: {
             petId: newPet.id,
-            weight: Number(weight),
+            weight: parsedWeight,
             createdAt: new Date(),
           },
         });
