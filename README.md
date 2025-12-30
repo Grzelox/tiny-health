@@ -1,89 +1,49 @@
-# 🐁 Tiny Health
+# Tiny Health
 
 <div align="center">
-  <img src="public/example1.webp" alt="Tiny Health Dashboard" width="800"/>
-  <img src="public/example2.webp" alt="Tiny Health Features" width="800"/>
+  <img src="public/landing.png" alt="Tiny Health dashboard" width="800"/>
+  <img src="public/dashboard.png" alt="Tiny Health features" width="800"/>
 </div>
 
 ## About
 
-Tiny Health is a personal project born from the need to better manage and track the health of pet mice. As a mice owner, I wanted a centralized solution to:
+Tiny Health is a small web app for tracking pet health records (visits, notes, weight, and media) in one place.
 
-- Track individual mice health records
-- Store veterinary visit history
-- Manage medical records
-- Organize mice photos
+## Quickstart
 
-This project also served as a learning ground to deepen my understanding of modern web technologies, particularly Next.js, React, and React Query.
-
-## 🚀 Tech Stack
-
-- **Frontend Framework**: Next.js 14 with App Router
-- **UI/Styling**: React, Tailwind CSS
-- **State Management**: React Query
-- **Database**: Supabase
-- **Authentication**: Clerk with Google Sign-in
-- **Hosting**: Vercel
-- **ORM**: Prisma
-
-## 🛠️ Getting Started
-
-### Prerequisites
-
-- Node.js (v18 or higher)
-- npm or yarn
-- Supabase account
-- Clerk account
-
-### Installation
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/tiny-health.git
-cd tiny-health
-```
-
-2. Install dependencies
+### Run locally
 
 ```bash
 npm install
-# or
-yarn install
-```
-
-3. Set up environment variables
-
-```bash
 cp .env.example .env.local
-```
 
-Fill in your Supabase and Clerk credentials in `.env.local`
+# Generate Prisma client
+npm run generate
 
-4. Set up the database
+# Apply migrations to your database
+npx prisma migrate dev
 
-```bash
-npx prisma migrate dev --name init
-```
-
-5. Start the development server
-
-```bash
+# Start the dev server
 npm run dev
-# or
-yarn dev
 ```
 
-The application will be available at `http://localhost:3000`
+Set the required environment variables in `.env.local` (database, Clerk, UploadThing).
 
-## 💅 Development
+App runs at `http://localhost:3000`.
 
-### Code Formatting
+### Build
 
 ```bash
-npx prettier --write "**/*.ts"
+npm run build
+npm run start
 ```
 
-<div align="center">
-  Made with ❤️ for our tiny friends 🐁
-</div>
+## Architecture
+
+- **Framework**: Next.js App Router (`src/app`) with server and client components.
+- **API**: Route handlers under `src/app/api` (including versioned endpoints under `src/app/api/v1`).
+- **UI**: Reusable React components in `src/components` (Tailwind CSS styles in `src/app/globals.css`).
+- **Data access**: Prisma schema in `prisma/schema.prisma`, Prisma client in `src/utils/prisma.ts`.
+- **Auth**: Clerk integration (middleware and provider wiring in `src/middleware.ts` and `src/app/providers.tsx`).
+- **Client data fetching**: React Query hooks and helpers in `src/hooks`.
+- **Uploads/media**: UploadThing integration in `src/app/api/uploadthing` and `src/utils/uploadthing.ts`.
