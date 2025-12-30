@@ -56,6 +56,12 @@ const config = {
         port: "",
         pathname: "/**",
       },
+      {
+        hostname: "*.ufs.sh",
+        protocol: "https",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
