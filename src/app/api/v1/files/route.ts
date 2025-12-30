@@ -1,3 +1,4 @@
+import { getPetAccess, hasWriteAccess } from "@/utils/pet-access";
 import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -20,7 +21,6 @@ export async function DELETE(request: Request) {
     }
 
     const result = await withPrisma(async (prisma) => {
-      // First, verify that the user owns the pet that this file belongs to
       const file = await prisma.file.findFirst({
         where: {
           id: fileId,
@@ -31,58 +31,40 @@ export async function DELETE(request: Request) {
       });
 
       if (!file) {
-        return NextResponse.json({ message: "File not found" }, { status: 404 });
+        return { status: 404 as const, body: { message: "File not found" } };
       }
 
-      // Check if user owns the pet or has shared access
-      const hasAccess = file.pet.ownerId === userId;
-
-      if (!hasAccess) {
-        // Check if user has shared access
-        const sharedAccess = await prisma.userShare.findFirst({
-          where: {
-            ownerId: file.pet.ownerId,
-            sharedWith: userId,
-          },
-        });
-
-        if (!sharedAccess) {
-          return NextResponse.json({ message: "Access denied" }, { status: 403 });
-        }
+      const access = await getPetAccess(prisma, { id: file.petId }, userId);
+      if (!access.pet || !hasWriteAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
       }
 
-      // Extract file key from UploadThing URL
-      // URL format: https://<APP_ID>.ufs.sh/f/<FILE_KEY> or https://utfs.io/f/<FILE_KEY>
       let fileKey: string;
       try {
         const url = new URL(file.url);
         const pathParts = url.pathname.split("/");
-        fileKey = pathParts[pathParts.length - 1]; // Get the last part which should be the file key
+        fileKey = pathParts[pathParts.length - 1];
       } catch (error) {
         console.error("Error parsing file URL:", error);
-        return NextResponse.json({ message: "Invalid file URL" }, { status: 400 });
+        return { status: 400 as const, body: { message: "Invalid file URL" } };
       }
 
       try {
-        // Delete the file from UploadThing
         await utapi.deleteFiles(fileKey);
       } catch (uploadthingError) {
         console.error("Error deleting file from UploadThing:", uploadthingError);
-        // Continue with database deletion even if UploadThing deletion fails
-        // to prevent orphaned database records
       }
 
-      // Delete the file from the database
       await prisma.file.delete({
         where: {
           id: fileId,
         },
       });
 
-      return { success: true, message: "File deleted successfully" };
+      return { status: 200 as const, body: { success: true, message: "File deleted successfully" } };
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     console.error("Error deleting file:", error);
     return NextResponse.json({ message: "Error deleting file" }, { status: 500 });

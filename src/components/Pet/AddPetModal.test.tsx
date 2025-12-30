@@ -133,7 +133,6 @@ describe("AddPetModal Component", () => {
       bornAt: expect.any(String), // ISO string format
       weight: null,
       isDead: false,
-      ownerId: "mock-user-id",
       deathDate: undefined,
     });
 

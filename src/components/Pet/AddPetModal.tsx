@@ -194,7 +194,6 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     try {
       await addPetMutation.mutateAsync({
         ...pet,
-        ownerId: user.id,
         // Don't send deathDate if isDead is false
         ...(pet.isDead ? {} : { deathDate: undefined }),
       });

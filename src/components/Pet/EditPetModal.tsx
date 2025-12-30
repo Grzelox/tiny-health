@@ -38,7 +38,6 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
   const [color, setColor] = useState("");
   const [isDead, setIsDead] = useState(false);
   const [deathDate, setDeathDate] = useState("");
-  const [ownerId, setOwnerId] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<ValidationErrors>({});
 

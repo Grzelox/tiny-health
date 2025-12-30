@@ -43,9 +43,9 @@ export default function PetCard({ pet }: PetCardProps) {
             {pet.animalType}
             {pet.breed ? ` | ${pet.breed}` : ""}
           </span>
-          {!pet.isShared && (
+          {!pet.isShared ? (
             <button
-              onClick={() => deletePetMutation.mutate({ petId: pet.id, ownerId: pet.ownerId })}
+              onClick={() => deletePetMutation.mutate({ petId: pet.id })}
               className={`
                 p-2 rounded-full transition-all duration-300 hover:scale-110
                 ${
@@ -57,6 +57,8 @@ export default function PetCard({ pet }: PetCardProps) {
             >
               <Trash2Icon className="w-5 h-5" />
             </button>
+          ) : (
+            <span className="text-xs text-secondary-600 font-medium">Tylko właściciel może usunąć zwierzaka</span>
           )}
         </div>
 
