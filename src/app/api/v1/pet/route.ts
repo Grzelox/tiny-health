@@ -1,3 +1,4 @@
+import { getPetAccess, hasReadAccess, hasWriteAccess } from "@/utils/pet-access";
 import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -8,7 +9,6 @@ interface CreatePetPayload {
   readonly bornAt: string;
   readonly weight?: unknown;
   readonly color: string;
-  readonly ownerId: string;
   readonly notes?: string;
   readonly isDead?: boolean;
   readonly deathDate?: string;
@@ -33,34 +33,22 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-
     const petUuid = searchParams.get("petUuid");
     if (!petUuid) {
       return NextResponse.json({ message: "Pet petUuid is required" }, { status: 400 });
     }
 
-    const availableUserIds = await withPrisma(async (prisma) => {
-      return prisma.userShare.findMany({
-        where: {
-          sharedWith: userId,
-        },
-        select: {
-          ownerId: true,
-        },
-      });
-    });
-
-    const accessibleOwnerIds = availableUserIds.map((share) => share.ownerId);
-    accessibleOwnerIds.push(userId);
-
     const result = await withPrisma(async (prisma) => {
+      const access = await getPetAccess(prisma, { uuid: petUuid }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!hasReadAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
+      }
+
       const pet = await prisma.pet.findFirst({
-        where: {
-          uuid: petUuid,
-          ownerId: {
-            in: accessibleOwnerIds,
-          },
-        },
+        where: { id: access.pet.id },
         include: {
           vetVisits: true,
           uploadedFiles: true,
@@ -68,11 +56,13 @@ export async function GET(request: Request) {
       });
 
       if (!pet) {
-        return NextResponse.json({ message: "Pet not found" }, { status: 404 });
+        return { status: 404 as const, body: { message: "Pet not found" } };
       }
-      return pet;
+
+      return { status: 200 as const, body: pet };
     });
-    return NextResponse.json(result);
+
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     return NextResponse.json({ message: "Error fetching pet data" }, { status: 500 });
   }
@@ -95,12 +85,12 @@ export async function POST(request: Request) {
           breed: payload.breed,
           bornAt: payload.bornAt,
           color: payload.color,
-          ownerId: payload.ownerId,
+          ownerId: userId,
           notes: payload.notes,
           isDead: payload.isDead || false,
           deathDate: payload.deathDate,
           animalType: payload.animalType,
-          updatedAt: new Date().toISOString(),
+          updatedAt: new Date(),
           ...(parsedWeight !== null ? { weight: parsedWeight } : {}),
         },
       });
@@ -130,12 +120,25 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const payload = await request.json();
+  const petId = Number(payload.petId);
+
+  if (!petId) {
+    return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
+  }
 
   try {
     const result = await withPrisma(async (prisma) => {
+      const access = await getPetAccess(prisma, { id: petId }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!hasWriteAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
+      }
+
       const updatedPet = await prisma.pet.update({
         where: {
-          id: payload.petId,
+          id: petId,
         },
         data: {
           ...(payload.name !== undefined && { name: payload.name }),
@@ -149,9 +152,10 @@ export async function PATCH(request: Request) {
         },
       });
 
-      return updatedPet;
+      return { status: 200 as const, body: updatedPet };
     });
-    return NextResponse.json(result, { status: 200 });
+
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     return NextResponse.json({ error: "Error updating pet record" }, { status: 500 });
   }
@@ -172,15 +176,12 @@ export async function DELETE(request: Request) {
     }
 
     const result = await withPrisma(async (prisma) => {
-      const pet = await prisma.pet.findFirst({
-        where: {
-          id: petId,
-          ownerId: userId,
-        },
-      });
-
-      if (!pet) {
-        return NextResponse.json({ message: "Pet not found" }, { status: 404 });
+      const access = await getPetAccess(prisma, { id: petId }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!access.isOwner) {
+        return { status: 403 as const, body: { message: "Only owner can delete pet" } };
       }
 
       await prisma.pet.delete({
@@ -189,10 +190,10 @@ export async function DELETE(request: Request) {
         },
       });
 
-      return { success: true };
+      return { status: 200 as const, body: { success: true } };
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     return NextResponse.json({ message: "Error deleting pet" }, { status: 500 });
   }

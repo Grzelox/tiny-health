@@ -1,3 +1,4 @@
+import { getPetAccess, hasReadAccess, hasWriteAccess } from "@/utils/pet-access";
 import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -17,43 +18,27 @@ export async function GET(request: Request) {
     }
 
     const result = await withPrisma(async (prisma) => {
-      // Verify pet exists and user has access (owner or shared)
-      const pet = await prisma.pet.findFirst({
-        where: {
-          id: petId,
-          OR: [
-            { ownerId: userId },
-            {
-              ownerId: {
-                in: (
-                  await prisma.userShare.findMany({
-                    where: { sharedWith: userId },
-                    select: { ownerId: true },
-                  })
-                ).map((share) => share.ownerId),
-              },
-            },
-          ],
-        },
-      });
-
-      if (!pet) {
-        return NextResponse.json({ message: "Pet not found or access denied" }, { status: 404 });
+      const access = await getPetAccess(prisma, { id: petId }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!hasReadAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
       }
 
       const weights = await prisma.weight.findMany({
         where: {
-          petId: pet.id,
+          petId: access.pet.id,
         },
         orderBy: {
           createdAt: "asc",
         },
       });
 
-      return weights;
+      return { status: 200 as const, body: weights };
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     console.error("Error fetching weight records:", error);
     return NextResponse.json({ message: "Error fetching weight records" }, { status: 500 });
@@ -69,7 +54,6 @@ export async function POST(request: Request) {
 
     const { weight, petId } = await request.json();
 
-    // Enhanced validation
     if (!weight || !petId) {
       return NextResponse.json({ message: "Weight and petId are required" }, { status: 400 });
     }
@@ -96,16 +80,12 @@ export async function POST(request: Request) {
     }
 
     const result = await withPrisma(async (prisma) => {
-      // Verify pet exists and user has access (only owners can add weight records)
-      const pet = await prisma.pet.findFirst({
-        where: {
-          id: petIdValue,
-          ownerId: userId,
-        },
-      });
-
-      if (!pet) {
-        return NextResponse.json({ message: "Pet not found or access denied" }, { status: 404 });
+      const access = await getPetAccess(prisma, { id: petIdValue }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!hasWriteAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
       }
 
       const weightRecord = await prisma.weight.create({
@@ -124,10 +104,10 @@ export async function POST(request: Request) {
         },
       });
 
-      return weightRecord;
+      return { status: 201 as const, body: weightRecord };
     });
 
-    return NextResponse.json(result, { status: 201 });
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     console.error("Error adding weight record:", error);
     return NextResponse.json({ message: "Error adding weight record" }, { status: 500 });
@@ -158,25 +138,27 @@ export async function DELETE(request: Request) {
         where: { id: weightId },
         include: {
           pet: {
-            select: { id: true, ownerId: true },
+            select: { id: true },
           },
         },
       });
 
       if (!weightRecord) {
-        return NextResponse.json({ message: "Weight record not found" }, { status: 404 });
+        return { status: 404 as const, body: { message: "Weight record not found" } };
       }
 
-      // Verify ownership - only pet owners can delete weight records
-      if (weightRecord.pet.ownerId !== userId) {
-        return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      const access = await getPetAccess(prisma, { id: weightRecord.petId }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!hasWriteAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
       }
 
       await prisma.weight.delete({
         where: { id: weightId },
       });
 
-      // Update pet's current weight to the latest remaining weight record
       const latestWeight = await prisma.weight.findFirst({
         where: { petId: weightRecord.petId },
         orderBy: { createdAt: "desc" },
@@ -190,10 +172,10 @@ export async function DELETE(request: Request) {
         },
       });
 
-      return { success: true, petId: weightRecord.petId };
+      return { status: 200 as const, body: { success: true, petId: weightRecord.petId } };
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     console.error("Error deleting weight record:", error);
     return NextResponse.json({ message: "Error deleting weight record" }, { status: 500 });

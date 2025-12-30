@@ -339,28 +339,6 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                 onError={() => setModalImageLoading(false)}
               />
 
-              {/* Delete Button in Modal */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteFile(uploadedFiles[selectedImageIndex].id);
-                  handleCloseModal();
-                }}
-                disabled={deletingFileId === uploadedFiles[selectedImageIndex].id}
-                className={`absolute top-4 left-4 p-2 rounded-full transition-colors duration-200 ${
-                  deletingFileId === uploadedFiles[selectedImageIndex].id
-                    ? "bg-gray-500 cursor-not-allowed"
-                    : "bg-danger-500 hover:bg-danger-600"
-                } text-white shadow-lg z-20`}
-                title="Usuń zdjęcie"
-                aria-label="Usuń aktualne zdjęcie"
-              >
-                {deletingFileId === uploadedFiles[selectedImageIndex].id ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <Trash2 size={20} />
-                )}
-              </button>
             </div>
 
             {/* Next Button */}
@@ -375,14 +353,41 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
               →
             </button>
 
-            {/* Close Button */}
-            <button
-              className="absolute top-4 right-4 text-white p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
-              onClick={handleCloseModal}
-              aria-label="Zamknij podgląd"
-            >
-              <X size={24} />
-            </button>
+            {/* Top-right Controls */}
+            <div className="absolute top-4 right-4 z-20 flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteFile(uploadedFiles[selectedImageIndex].id);
+                  handleCloseModal();
+                }}
+                disabled={deletingFileId === uploadedFiles[selectedImageIndex].id}
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  deletingFileId === uploadedFiles[selectedImageIndex].id
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-danger-500 hover:bg-danger-600"
+                } text-white shadow-lg`}
+                title="Usuń zdjęcie"
+                aria-label="Usuń aktualne zdjęcie"
+              >
+                {deletingFileId === uploadedFiles[selectedImageIndex].id ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Trash2 size={20} />
+                )}
+              </button>
+
+              <button
+                className="text-white p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCloseModal();
+                }}
+                aria-label="Zamknij podgląd"
+              >
+                <X size={24} />
+              </button>
+            </div>
 
             {/* Image Info */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg">

@@ -1,3 +1,4 @@
+import { getPetAccess, hasWriteAccess } from "@/utils/pet-access";
 import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -9,29 +10,30 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const {id, notes } = await request.json();
+  const { id, notes } = await request.json();
 
   if (!id) {
     return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
   }
 
+  const petId = Number(id);
+  if (!petId) {
+    return NextResponse.json({ message: "Pet ID is required" }, { status: 400 });
+  }
+
   try {
     const result = await withPrisma(async (prisma) => {
-      const pet = await prisma.pet.findFirst({
-        where: {
-          id: id,
-          ownerId: userId,
-        },
-      });
-
-      if (!pet) {
-        return NextResponse.json({ message: "Pet not found" }, { status: 404 });
+      const access = await getPetAccess(prisma, { id: petId }, userId);
+      if (!access.pet) {
+        return { status: 404 as const, body: { message: "Pet not found" } };
+      }
+      if (!hasWriteAccess(access)) {
+        return { status: 403 as const, body: { message: "Access denied" } };
       }
 
-      // Update only the notes field
       const updatedPet = await prisma.pet.update({
         where: {
-          id: id,
+          id: petId,
         },
         data: {
           notes,
@@ -39,10 +41,10 @@ export async function PATCH(request: Request) {
         },
       });
 
-      return updatedPet;
+      return { status: 200 as const, body: updatedPet };
     });
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(result.body, { status: result.status });
   } catch (error) {
     return NextResponse.json({ error: "Error updating pet notes" }, { status: 500 });
   }

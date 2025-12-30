@@ -31,7 +31,7 @@ export const useAddPet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (petData: Omit<Pet, "id" | "updatedAt">) => {
+    mutationFn: async (petData: Omit<Pet, "id" | "updatedAt" | "ownerId">) => {
       const response = await fetch("/api/v1/pet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,8 +41,8 @@ export const useAddPet = () => {
       const data = await response.json();
       return { data };
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pets", variables.ownerId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
   });
 };
@@ -300,8 +300,8 @@ export const useDeletePet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ petId, ownerId }: { petId: number; ownerId: string }) => {
-      const response = await fetch(`/api/v1/pet?petId=${petId}&ownerId=${ownerId}`, {
+    mutationFn: async ({ petId }: { petId: number }) => {
+      const response = await fetch(`/api/v1/pet?petId=${petId}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -309,8 +309,8 @@ export const useDeletePet = () => {
       }
       return response.json();
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["pets", variables.ownerId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
   });
 };

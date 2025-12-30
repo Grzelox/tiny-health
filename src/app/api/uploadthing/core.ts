@@ -1,4 +1,5 @@
 import { MAX_IMAGES_PER_PET } from "@/utils/file-validation";
+import { getPetAccess, hasWriteAccess } from "@/utils/pet-access";
 import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import type { FileRouter } from "uploadthing/next";
@@ -45,38 +46,12 @@ export const ourFileRouter = {
           throw new UploadThingError("Invalid Pet ID");
         }
 
-        // Check if user has access to the pet (either as owner or through sharing)
         const pet = await withPrisma(async (prisma) => {
-          // First check direct ownership
-          let pet = await prisma.pet.findFirst({
-            where: {
-              id: petIdNumber,
-              ownerId: userId,
-            },
-          });
-
-          // If not owner, check for shared access
-          if (!pet) {
-            pet = await prisma.pet.findFirst({
-              where: {
-                id: petIdNumber,
-                ownerId: {
-                  in: (
-                    await prisma.userShare.findMany({
-                      where: {
-                        sharedWith: userId,
-                      },
-                      select: {
-                        ownerId: true,
-                      },
-                    })
-                  ).map((share) => share.ownerId),
-                },
-              },
-            });
+          const access = await getPetAccess(prisma, { id: petIdNumber }, userId);
+          if (!access.pet || !hasWriteAccess(access)) {
+            return null;
           }
-
-          return pet;
+          return access.pet;
         });
 
         if (!pet) {
