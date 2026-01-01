@@ -36,6 +36,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
   };
 
   const hasDeathDate = petData.isDead && petData.deathDate;
+  const hasColor = !!petData.color?.trim();
 
   return (
     <div className="animate-in">
@@ -55,7 +56,10 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
                 {petData.name}
               </h1>
               <p className={`text-lg ${petData.isDead ? "text-gray-600" : "text-secondary-600"}`}>
-                {petData.animalType} • {petData.breed} • {petData.color}
+                {[petData.animalType, petData.breed, hasColor ? petData.color : ""]
+                  .map((part) => part?.trim())
+                  .filter(Boolean)
+                  .join(" • ")}
                 {petData.isDead && (
                   <span className="ml-2 px-3 py-1 bg-danger-100 text-danger-700 rounded-full text-sm font-medium">
                     Zmarła
@@ -134,13 +138,15 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
             </div>
 
             {/* Color */}
-            <div className="glass-effect bg-primary-400/10 backdrop-blur-sm p-6 rounded-xl border border-primary-400/30 hover:shadow-modern-lg transition-all duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <PaintRoller className="w-6 h-6 text-primary-400" />
+            {hasColor && (
+              <div className="glass-effect bg-primary-400/10 backdrop-blur-sm p-6 rounded-xl border border-primary-400/30 hover:shadow-modern-lg transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <PaintRoller className="w-6 h-6 text-primary-400" />
+                </div>
+                <p className="text-sm text-secondary-600 mb-1 font-medium">Kolor</p>
+                <p className="font-semibold text-primary-600">{petData.color}</p>
               </div>
-              <p className="text-sm text-secondary-600 mb-1 font-medium">Kolor</p>
-              <p className="font-semibold text-primary-600">{petData.color}</p>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,36 +1,63 @@
 /**
  * @jest-environment jsdom
  */
-import { Pet } from "@/types/pet";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { FullPetData } from "@/types/pet";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 
 import PetInfo from "./PetInfo";
 
-const mockPetData: Pet = {
-  id: "1",
+jest.mock("./EditPetModal", () => () => null);
+jest.mock("./PetNotes", () => () => null);
+jest.mock("./WeightTrackerModal", () => () => null);
+
+const mockPetData: FullPetData = {
+  id: 1,
+  uuid: "pet-uuid",
   name: "Fluffy",
   breed: "Persian",
-  weight: 5000,
-  birthDate: "2020-01-01",
+  animalType: "Kot",
   color: "White",
+  weight: 5000,
+  bornAt: new Date("2020-01-01").toISOString(),
   isDead: false,
-  updatedAt: "2023-01-01",
+  ownerId: "owner-id",
+  createdAt: new Date("2020-01-01").toISOString(),
+  updatedAt: new Date("2023-01-01").toISOString(),
+  uploadedFiles: [],
+  vetVisits: [],
 };
 
 describe("PetInfo Component", () => {
-  it("renders pet information correctly", () => {
-    render(<PetInfo petData={mockPetData} onEditClick={jest.fn()} />);
+  it("renders color card when color is provided", () => {
+    render(<PetInfo petData={mockPetData} onRefresh={jest.fn().mockResolvedValue(undefined)} />);
     expect(screen.getByText("Fluffy")).toBeInTheDocument();
-    expect(screen.getByText("Persian")).toBeInTheDocument();
-    expect(screen.getByText("5000")).toBeInTheDocument();
-    expect(screen.getByText("White")).toBeInTheDocument();
+    expect(screen.getByText(/Persian/)).toBeInTheDocument();
+    expect(screen.getByText("Kolor")).toBeInTheDocument();
+    expect(screen.getAllByText(/White/).length).toBeGreaterThan(0);
   });
 
-  it("calls onEditClick when edit button is clicked", () => {
-    const onEditClick = jest.fn();
-    render(<PetInfo petData={mockPetData} onEditClick={onEditClick} />);
-    fireEvent.click(screen.getByRole("button"));
-    expect(onEditClick).toHaveBeenCalledTimes(1);
+  it("hides color card when color is missing", () => {
+    render(
+      <PetInfo
+        petData={{
+          ...mockPetData,
+          color: "",
+        }}
+        onRefresh={jest.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    expect(screen.queryByText("Kolor")).not.toBeInTheDocument();
+  });
+
+  it("calls onRefresh when refresh button is clicked", async () => {
+    const onRefresh = jest.fn().mockResolvedValue(undefined);
+    render(<PetInfo petData={mockPetData} onRefresh={onRefresh} />);
+
+    const [refreshButton] = screen.getAllByRole("button");
+    fireEvent.click(refreshButton);
+
+    await waitFor(() => expect(onRefresh).toHaveBeenCalledTimes(1));
   });
 });

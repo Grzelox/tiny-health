@@ -82,7 +82,7 @@ export default function PetCard({ pet }: PetCardProps) {
           `}
           >
             {pet.animalType}
-            {pet.breed ? ` - ${pet.breed}` : ""}
+            {pet.breed ? ` • ${pet.breed}` : ""}
           </p>
         </div>
 

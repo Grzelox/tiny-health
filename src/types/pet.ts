@@ -1,12 +1,6 @@
-export type AnimalType =
-  | "Mysz"
-  | "Szczur"
-  | "Myszoskoczek"
-  | "Fretka"
-  | "Świnka Morska"
-  | "Chomik"
-  | "Szynszyla"
-  | "Królik";
+// Stored in DB as a free-form string.
+// UI components may offer presets, but custom values are allowed.
+export type AnimalType = string;
 
 export interface Pets {
   id: string;
