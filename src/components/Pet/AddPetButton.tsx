@@ -29,7 +29,7 @@ const AddPetButton = ({ onClick }: AddPetButtonProps) => {
           <Plus className="w-8 h-8 transition-transform duration-300 group-hover:rotate-90" />
         </div>
         <span className="text-lg font-medium transition-all duration-300 group-hover:scale-105">
-          Dodaj gryzonia
+          Dodaj zwierzaka
         </span>
       </div>
     </button>

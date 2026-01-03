@@ -1,3 +1,8 @@
+import {
+  ANIMAL_TYPE_OTHER,
+  ANIMAL_TYPE_OTHER_GROUP_OPTIONS,
+  ANIMAL_TYPE_RODENT_OPTIONS,
+} from "@/constants/animalTypes";
 import { useAddPet } from "@/hooks/useQueries";
 import { AnimalType, Pet } from "@/types/pet";
 import { Plus, X } from "lucide-react";
@@ -16,18 +21,9 @@ interface ValidationErrors {
   weight?: string;
   bornAt?: string;
   deathDate?: string;
+  customAnimalType?: string;
 }
 
-const ANIMAL_TYPES: AnimalType[] = [
-  "Mysz",
-  "Szczur",
-  "Myszoskoczek",
-  "Fretka",
-  "Świnka Morska",
-  "Chomik",
-  "Szynszyla",
-  "Królik",
-];
 
 const MAX_STRING_LENGTH = 300;
 
@@ -44,6 +40,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     deathDate: "",
   });
 
+  const [customAnimalType, setCustomAnimalType] = useState("");
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   // Validation function
@@ -85,6 +82,15 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
       }
     }
 
+    // Custom animal type validation
+    if (pet.animalType === ANIMAL_TYPE_OTHER) {
+      if (!customAnimalType.trim()) {
+        newErrors.customAnimalType = "Podaj rodzaj zwierzaka";
+      } else if (customAnimalType.length > MAX_STRING_LENGTH) {
+        newErrors.customAnimalType = `Rodzaj nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      }
+    }
+
     // Death date validation
     if (pet.isDead) {
       if (!pet.deathDate) {
@@ -109,7 +115,17 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
   // Run validation whenever pet data changes
   useEffect(() => {
     validateForm();
-  }, [pet.name, pet.breed, pet.color, pet.weight, pet.bornAt, pet.deathDate, pet.isDead]);
+  }, [
+    pet.name,
+    pet.breed,
+    pet.color,
+    pet.weight,
+    pet.bornAt,
+    pet.deathDate,
+    pet.isDead,
+    pet.animalType,
+    customAnimalType,
+  ]);
 
   // Reset form function
   const resetForm = () => {
@@ -123,6 +139,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
       isDead: false,
       deathDate: "",
     });
+    setCustomAnimalType("");
     setErrors({});
   };
 
@@ -178,6 +195,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
         ...prev,
         [name]: value,
       }));
+
+      if (name === "animalType" && value !== ANIMAL_TYPE_OTHER) {
+        setCustomAnimalType("");
+        setErrors((prev) => ({ ...prev, customAnimalType: undefined }));
+      }
     }
   };
 
@@ -192,8 +214,12 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
     }
 
     try {
+      const animalTypeToSend: AnimalType =
+        pet.animalType === ANIMAL_TYPE_OTHER ? customAnimalType.trim() : pet.animalType;
+
       await addPetMutation.mutateAsync({
         ...pet,
+        animalType: animalTypeToSend,
         // Don't send deathDate if isDead is false
         ...(pet.isDead ? {} : { deathDate: undefined }),
       });
@@ -222,7 +248,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
             <div className="p-3 bg-primary-400 rounded-xl shadow-modern">
               <Plus className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gradient">Dodaj nowego gryzonia</h2>
+            <h2 className="text-3xl font-bold text-gradient">Dodaj nowego zwierzaka</h2>
           </div>
           <button
             onClick={onClose}
@@ -243,13 +269,48 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
               onChange={handleChange}
               className="w-full p-4 bg-background/70 backdrop-blur-sm border border-primary-400/30 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 font-medium"
             >
-              {ANIMAL_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
+              <optgroup label="Gryzonie">
+                {ANIMAL_TYPE_RODENT_OPTIONS.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Inne">
+                {ANIMAL_TYPE_OTHER_GROUP_OPTIONS.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </div>
+
+          {pet.animalType === ANIMAL_TYPE_OTHER && (
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-secondary-700">Inny rodzaj *</label>
+              <input
+                type="text"
+                name="customAnimalType"
+                placeholder="np. Jeż"
+                value={customAnimalType}
+                onChange={(e) => {
+                  setCustomAnimalType(e.target.value);
+                  if (errors.customAnimalType) {
+                    setErrors((prev) => ({ ...prev, customAnimalType: undefined }));
+                  }
+                }}
+                className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
+                  errors.customAnimalType
+                    ? "border-danger-400 focus:ring-danger-500 focus:border-danger-500"
+                    : "border-primary-400/30"
+                }`}
+              />
+              {errors.customAnimalType && (
+                <p className="text-danger-500 text-xs mt-1">{errors.customAnimalType}</p>
+              )}
+            </div>
+          )}
 
           {/* Name */}
           <div className="space-y-2">
