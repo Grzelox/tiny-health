@@ -1,4 +1,10 @@
-import { ANIMAL_TYPE_OPTIONS, ANIMAL_TYPE_OTHER, AnimalTypeOption } from "@/constants/animalTypes";
+import {
+  ANIMAL_TYPE_OPTIONS,
+  ANIMAL_TYPE_OTHER,
+  ANIMAL_TYPE_OTHER_GROUP_OPTIONS,
+  ANIMAL_TYPE_RODENT_OPTIONS,
+  AnimalTypeOption,
+} from "@/constants/animalTypes";
 import { useEditPet } from "@/hooks/useQueries";
 import { FullPetData } from "@/types/pet";
 import { Edit, X } from "lucide-react";
@@ -252,11 +258,20 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
               }}
               className="w-full p-4 bg-background/70 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 font-medium"
             >
-              {ANIMAL_TYPE_OPTIONS.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
+              <optgroup label="Gryzonie">
+                {ANIMAL_TYPE_RODENT_OPTIONS.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Inne">
+                {ANIMAL_TYPE_OTHER_GROUP_OPTIONS.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </div>
 
