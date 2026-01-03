@@ -2,6 +2,7 @@
 
 import AddPetButton from "@/components/Pet/AddPetButton";
 import PetCard from "@/components/Pet/PetCard";
+import { ANIMAL_TYPE_RODENT_OPTIONS } from "@/constants/animalTypes";
 import { usePets } from "@/hooks/useQueries";
 import { PetWithShared, Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
@@ -20,6 +21,26 @@ interface DashboardContentProps {
   onOpenModal: () => void;
 }
 
+const RODENT_TYPE_SET = new Set<string>(ANIMAL_TYPE_RODENT_OPTIONS as readonly string[]);
+
+const splitPetsByCategory = (pets: PetWithShared[]) => {
+  const rodents: PetWithShared[] = [];
+  const others: PetWithShared[] = [];
+
+  for (const pet of pets) {
+    if (RODENT_TYPE_SET.has(pet.animalType)) {
+      rodents.push(pet);
+    } else {
+      others.push(pet);
+    }
+  }
+
+  return {
+    rodents: sortPets(rodents),
+    others: sortPets(others),
+  };
+};
+
 const DashboardContent: React.FC<DashboardContentProps> = ({
   ownedPets,
   sharedPets,
@@ -28,6 +49,12 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const gridClassName = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+
+  const { rodents: ownedRodents, others: ownedOthers } = splitPetsByCategory(ownedPets);
+  const { rodents: sharedRodents, others: sharedOthers } = splitPetsByCategory(sharedPets);
+
+  const showOwnedSubheadings = ownedRodents.length > 0 && ownedOthers.length > 0;
+  const showSharedSubheadings = sharedRodents.length > 0 && sharedOthers.length > 0;
 
   const handleExportData = async () => {
     setIsExporting(true);
@@ -108,12 +135,41 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
       <div className="space-y-16">
         <div>
-          <div className={gridClassName}>
-            {sortPets(ownedPets).map((pet) => (
-              <PetCard key={pet.uuid} pet={pet} />
-            ))}
-            <AddPetButton onClick={onOpenModal} />
-          </div>
+          {ownedPets.length === 0 ? (
+            <div className={gridClassName}>
+              <AddPetButton onClick={onOpenModal} />
+            </div>
+          ) : (
+            <div className="space-y-10">
+              {ownedRodents.length > 0 && (
+                <div>
+                  {showOwnedSubheadings && (
+                    <h2 className="text-xl font-semibold text-gradient mb-6">Gryzonie</h2>
+                  )}
+                  <div className={gridClassName}>
+                    {ownedRodents.map((pet) => (
+                      <PetCard key={pet.uuid} pet={pet} />
+                    ))}
+                    <AddPetButton onClick={onOpenModal} />
+                  </div>
+                </div>
+              )}
+
+              {ownedOthers.length > 0 && (
+                <div>
+                  {showOwnedSubheadings && (
+                    <h2 className="text-xl font-semibold text-gradient mb-6">Inne</h2>
+                  )}
+                  <div className={gridClassName}>
+                    {ownedOthers.map((pet) => (
+                      <PetCard key={pet.uuid} pet={pet} />
+                    ))}
+                    {ownedRodents.length === 0 && <AddPetButton onClick={onOpenModal} />}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {sharedPets.length > 0 && (
@@ -122,11 +178,38 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               <div className="w-1 h-8 bg-secondary-gradient rounded-full"></div>
               Udostępnione
             </h2>
-            <div className={gridClassName}>
-              {sortPets(sharedPets).map((pet) => (
-                <PetCard key={pet.uuid} pet={pet} />
-              ))}
-            </div>
+
+            {showSharedSubheadings ? (
+              <div className="space-y-10">
+                {sharedRodents.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-secondary-700 mb-4">Gryzonie</h3>
+                    <div className={gridClassName}>
+                      {sharedRodents.map((pet) => (
+                        <PetCard key={pet.uuid} pet={pet} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {sharedOthers.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-secondary-700 mb-4">Inne</h3>
+                    <div className={gridClassName}>
+                      {sharedOthers.map((pet) => (
+                        <PetCard key={pet.uuid} pet={pet} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className={gridClassName}>
+                {sortPets(sharedPets).map((pet) => (
+                  <PetCard key={pet.uuid} pet={pet} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
