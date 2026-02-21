@@ -1,7 +1,6 @@
 "use client";
 
-import { MAX_IMAGES_PER_PET, validateImageCount } from "@/utils/file-validation";
-import { UploadDropzone } from "@/utils/uploadthing";
+import { MAX_IMAGES_PER_PET, validateFileSize, validateImageCount } from "@/utils/file-validation";
 import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
@@ -13,6 +12,9 @@ interface MediaUploaderProps {
 
 export default function MediaUploader({ petId, petUuid, currentFileCount }: MediaUploaderProps) {
   const queryClient = useQueryClient();
+  const [isUploading, setIsUploading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const validation = validateImageCount(currentFileCount);
 
   const handleUploadComplete = async (_res: unknown): Promise<void> => {
@@ -24,6 +26,103 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
     await queryClient.invalidateQueries({
       queryKey: ["pets"],
     });
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const countValidation = validateImageCount(currentFileCount, 1);
+    if (!countValidation.isValid) {
+      setError(countValidation.message);
+      return;
+    }
+
+    const sizeValidation = validateFileSize(file.size);
+    if (!sizeValidation.isValid) {
+      setError(sizeValidation.message);
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const uploadResponse = await fetch("/api/v1/uploads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          petId,
+          filename: file.name,
+          contentType: file.type || "application/octet-stream",
+        }),
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.message || "Nie udało się przygotować uploadu");
+      }
+
+      const { uploadUrl, publicUrl, key } = (await uploadResponse.json()) as {
+        uploadUrl: string;
+        publicUrl: string;
+        key: string;
+      };
+
+      const uploadToSpaces = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+        },
+        body: file,
+      });
+
+      if (!uploadToSpaces.ok) {
+        throw new Error("Nie udało się przesłać pliku do Spaces");
+      }
+
+      const finalizeResponse = await fetch("/api/v1/files", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          petId,
+          url: publicUrl,
+          storageKey: key,
+        }),
+      });
+
+      if (!finalizeResponse.ok) {
+        const errorData = await finalizeResponse.json();
+        throw new Error(errorData.message || "Nie udało się zapisać pliku");
+      }
+
+      await handleUploadComplete(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Nieznany błąd";
+      setError(message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await handleFileUpload(file);
+    event.target.value = "";
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (isUploading) return;
+    const file = event.dataTransfer.files?.[0];
+    if (!file) return;
+    await handleFileUpload(file);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   return (
@@ -52,37 +151,35 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
 
       {/* Upload Area */}
       {validation.isValid ? (
-        <UploadDropzone
-          /**
-           * @see https://docs.uploadthing.com/api-reference/react#uploaddropzone
-           */
-          endpoint="imageUploader"
-          // @ts-expect-error - The input prop is required by the server but not recognized by TypeScript
-          input={{ petId: petId.toString() }}
-          onClientUploadComplete={handleUploadComplete}
-          onUploadError={(err) => {
-            alert(`Upload error: ${err?.message ?? "Unknown error"}`);
-          }}
-          onBeforeUploadBegin={(files) => {
-            // Validation before upload
-            const newValidation = validateImageCount(currentFileCount, files.length);
-            if (!newValidation.isValid) {
-              alert(newValidation.message);
-              return [];
-            }
-            return files;
-          }}
-          appearance={{
-            container:
-              "bg-background/70 backdrop-blur-sm border-2 border-dashed border-primary-300/60 rounded-xl p-8 hover:border-primary-400 transition-colors",
-            label: "text-primary-600 text-lg font-medium",
-            allowedContent: "text-secondary-600",
-            button:
-              "ut-ready:bg-primary-500 ut-uploading:cursor-not-allowed rounded-lg px-6 py-3 text-white bg-primary-500 hover:bg-primary-600 transition-colors font-medium",
-            uploadIcon: "text-primary-400",
-          }}
-          className="w-full"
-        />
+        <div
+          className="bg-background/70 backdrop-blur-sm border-2 border-dashed border-primary-300/60 rounded-xl p-8 hover:border-primary-400 transition-colors"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
+          <div className="flex flex-col items-center text-center gap-3">
+            <div>
+              <p className="text-primary-600 text-lg font-medium">Przeciągnij zdjęcie tutaj</p>
+              <p className="text-secondary-600 text-sm">lub wybierz plik z dysku</p>
+            </div>
+            <button
+              type="button"
+              className="rounded-lg px-6 py-3 text-white bg-primary-500 hover:bg-primary-600 transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+            >
+              {isUploading ? "Wysyłanie..." : "Wybierz plik"}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+              disabled={isUploading}
+            />
+            {error && <p className="text-danger-600 text-sm">{error}</p>}
+          </div>
+        </div>
       ) : (
         <div className="bg-background/60 border-2 border-dashed border-border rounded-xl p-8 text-center">
           <div className="text-secondary-500">

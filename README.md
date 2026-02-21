@@ -27,7 +27,7 @@ npx prisma migrate dev
 npm run dev
 ```
 
-Set the required environment variables in `.env.local` (database, Clerk, UploadThing).
+Set the required environment variables in `.env.local` (database, Clerk, Spaces).
 
 App runs at `http://localhost:3000`.
 
@@ -46,4 +46,4 @@ npm run start
 - **Data access**: Prisma schema in `prisma/schema.prisma`, Prisma client in `src/utils/prisma.ts`.
 - **Auth**: Clerk integration (middleware and provider wiring in `src/middleware.ts` and `src/app/providers.tsx`).
 - **Client data fetching**: React Query hooks and helpers in `src/hooks`.
-- **Uploads/media**: UploadThing integration in `src/app/api/uploadthing` and `src/utils/uploadthing.ts`.
+- **Uploads/media**: S3-compatible uploads via DigitalOcean Spaces (API routes under `src/app/api/v1`).
