@@ -7,12 +7,14 @@ const isPublicRoute = createRouteMatcher([
   "/_next(.*)", // Next.js system files
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+const proxy = clerkMiddleware(async (auth, req) => {
   // If it's not a public route, protect it
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
 });
+
+export default proxy;
 
 export const config = {
   matcher: [
