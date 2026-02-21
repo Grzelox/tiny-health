@@ -5,7 +5,6 @@ const isPublicRoute = createRouteMatcher([
   "/", // Landing page
   "/favicon.ico", // Browser favicon
   "/_next(.*)", // Next.js system files
-  "/api/uploadthing", // UploadThing API routes should remain public
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

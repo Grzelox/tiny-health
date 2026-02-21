@@ -1,4 +1,5 @@
 import { withPrisma } from "@/utils/prisma";
+import { getSignedGetUrl } from "@/utils/spaces";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -58,9 +59,23 @@ export async function GET(request: Request) {
         },
       });
 
+      const signPetFiles = async <T extends { uploadedFiles: any[] }>(pet: T) => {
+        const signedFiles = await Promise.all(
+          pet.uploadedFiles.map(async (file) => {
+            if (file.storageProvider === "spaces" && file.storageKey) {
+              const signedUrl = await getSignedGetUrl(file.storageKey);
+              return { ...file, url: signedUrl };
+            }
+            return file;
+          }),
+        );
+
+        return { ...pet, uploadedFiles: signedFiles };
+      };
+
       const pets = [
-        ...ownedPets.map((pet) => ({ ...pet, isShared: false })),
-        ...sharedPets.map((pet) => ({ ...pet, isShared: true })),
+        ...(await Promise.all(ownedPets.map((pet) => signPetFiles({ ...pet, isShared: false })))),
+        ...(await Promise.all(sharedPets.map((pet) => signPetFiles({ ...pet, isShared: true })))),
       ];
 
       return pets.sort((a, b) => {
