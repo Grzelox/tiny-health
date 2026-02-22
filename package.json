@@ -4,13 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run dev",
+    "build": "npm run build",
     "start": "next start",
     "lint": "next lint",
     "generate": "prisma generate",
     "test": "jest",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
+  },
+  "engines": {
+    "node": "25.x"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.995.0",
