@@ -8,7 +8,7 @@ import { PetWithShared, Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
 import { ShareIcon } from "lucide-react";
 import { DownloadIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 import LoadingSpinner from "./Animations/LoadingSpinner";
@@ -23,7 +23,39 @@ interface DashboardContentProps {
 
 const RODENT_TYPE_SET = new Set<string>(ANIMAL_TYPE_RODENT_OPTIONS as readonly string[]);
 
-const splitPetsByCategory = (pets: PetWithShared[]) => {
+type PetSortOption = "createdAt" | "name" | "updatedAt";
+
+const sortPets = (pets: PetWithShared[], sortOption: PetSortOption): PetWithShared[] => {
+  const withDeadLast = [...pets].sort((a, b) => {
+    if (a.isDead === b.isDead) return 0;
+    return a.isDead ? 1 : -1;
+  });
+
+  const compareByOption = (a: PetWithShared, b: PetWithShared) => {
+    if (a.isDead && b.isDead) {
+      const aDeathDate = a.deathDate ? new Date(a.deathDate).getTime() : 0;
+      const bDeathDate = b.deathDate ? new Date(b.deathDate).getTime() : 0;
+      return bDeathDate - aDeathDate;
+    }
+
+    if (sortOption === "name") {
+      return a.name.localeCompare(b.name, "pl");
+    }
+
+    if (sortOption === "createdAt") {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  };
+
+  const alivePets = withDeadLast.filter((pet) => !pet.isDead).sort(compareByOption);
+  const deadPets = withDeadLast.filter((pet) => pet.isDead).sort(compareByOption);
+
+  return [...alivePets, ...deadPets];
+};
+
+const splitPetsByCategory = (pets: PetWithShared[], sortOption: PetSortOption) => {
   const rodents: PetWithShared[] = [];
   const others: PetWithShared[] = [];
 
@@ -36,8 +68,8 @@ const splitPetsByCategory = (pets: PetWithShared[]) => {
   }
 
   return {
-    rodents: sortPets(rodents),
-    others: sortPets(others),
+    rodents: sortPets(rodents, sortOption),
+    others: sortPets(others, sortOption),
   };
 };
 
@@ -48,10 +80,17 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [sortOption, setSortOption] = useState<PetSortOption>("createdAt");
   const gridClassName = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
 
-  const { rodents: ownedRodents, others: ownedOthers } = splitPetsByCategory(ownedPets);
-  const { rodents: sharedRodents, others: sharedOthers } = splitPetsByCategory(sharedPets);
+  const { rodents: ownedRodents, others: ownedOthers } = useMemo(
+    () => splitPetsByCategory(ownedPets, sortOption),
+    [ownedPets, sortOption],
+  );
+  const { rodents: sharedRodents, others: sharedOthers } = useMemo(
+    () => splitPetsByCategory(sharedPets, sortOption),
+    [sharedPets, sortOption],
+  );
 
   const showOwnedSubheadings = ownedRodents.length > 0 && ownedOthers.length > 0;
   const showSharedSubheadings = sharedRodents.length > 0 && sharedOthers.length > 0;
@@ -102,34 +141,60 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gradient">Moje stadko</h1>
-        <div className="flex gap-2 sm:gap-3">
-          <button
-            onClick={handleExportData}
-            disabled={isExporting}
-            className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-          >
-            <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
-              {isExporting ? (
-                <ClipLoader size={14} color="#3F6F5E" />
-              ) : (
-                <DownloadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-              )}
-            </span>
-            <span className="hidden sm:inline">
-              {isExporting ? "Przygotowywanie" : "Pobierz dane"}
-            </span>
-            <span className="sm:hidden">{isExporting ? "Pobierz..." : "Dane"}</span>
-          </button>
-          <button
-            onClick={() => setIsShareModalOpen(true)}
-            className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base"
-          >
-            <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="hidden sm:inline">Udostępnij stado</span>
-            <span className="sm:hidden">Udostępnij</span>
-          </button>
+      <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gradient">Moje stadko</h1>
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-secondary-700">Sortowanie:</span>
+              <div className="relative">
+                <select
+                  value={sortOption}
+                  onChange={(event) => setSortOption(event.target.value as PetSortOption)}
+                  className="appearance-none bg-white/80 border border-secondary-200 text-secondary-700 text-sm sm:text-base px-3 sm:px-4 py-2 rounded-lg pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200"
+                >
+                  <option value="createdAt">Data dodania</option>
+                  <option value="name">Alfabetycznie</option>
+                  <option value="updatedAt">Ostatnia edycja</option>
+                </select>
+                <svg
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-500 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex gap-2 sm:gap-3">
+              <button
+                onClick={handleExportData}
+                disabled={isExporting}
+                className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              >
+                <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                  {isExporting ? (
+                    <ClipLoader size={14} color="#3F6F5E" />
+                  ) : (
+                    <DownloadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  )}
+                </span>
+                <span className="hidden sm:inline">
+                  {isExporting ? "Przygotowywanie" : "Pobierz dane"}
+                </span>
+                <span className="sm:hidden">{isExporting ? "Pobierz..." : "Dane"}</span>
+              </button>
+              <button
+                onClick={() => setIsShareModalOpen(true)}
+                className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base"
+              >
+                <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Udostępnij stado</span>
+                <span className="sm:hidden">Udostępnij</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -205,7 +270,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               </div>
             ) : (
               <div className={gridClassName}>
-                {sortPets(sharedPets).map((pet) => (
+                {sortPets(sharedPets, sortOption).map((pet) => (
                   <PetCard key={pet.uuid} pet={pet} />
                 ))}
               </div>
@@ -262,12 +327,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-const sortPets = (pets: PetWithShared[]): PetWithShared[] => {
-  return [...pets].sort((a, b) => {
-    if (a.isDead === b.isDead) {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-    }
-    return a.isDead ? 1 : -1;
-  });
-};
