@@ -4,24 +4,6 @@ const spacesHostname = spacesPublicBaseUrl ? new URL(spacesPublicBaseUrl).hostna
 
 const remotePatterns = [
   {
-    hostname: "utfs.io",
-    protocol: "https",
-    port: "",
-    pathname: "/**",
-  },
-  {
-    hostname: "utfs.io",
-    protocol: "http",
-    port: "",
-    pathname: "/**",
-  },
-  {
-    hostname: "*.ufs.sh",
-    protocol: "https",
-    port: "",
-    pathname: "/**",
-  },
-  {
     hostname: "*.digitaloceanspaces.com",
     protocol: "https",
     port: "",

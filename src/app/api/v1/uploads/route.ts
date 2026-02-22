@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     const config = getSpacesConfig();
     const client = createSpacesClient();
     const extension = sanitizeExtension(body.filename);
-    const objectKey = `pets/${userId}/${crypto.randomUUID()}${extension}`;
+    const objectKey = `pets/${userId}/${pet.id}/${crypto.randomUUID()}${extension}`;
 
     const command = new PutObjectCommand({
       Bucket: config.bucket,
