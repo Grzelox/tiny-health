@@ -2,11 +2,13 @@ import { PrismaClient } from "@prisma/client";
 import { createPool } from "generic-pool";
 
 const MAX_CLIENTS = Number(process.env.MAX_DB_POOLING_SIZE) || 20;
+const NODE_ENV = process.env.NODE_ENV ?? "production";
+const isDevelopment = NODE_ENV === "development";
 
 const factory = {
   create: async () => {
     const client = new PrismaClient({
-      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+      log: isDevelopment ? ["error", "warn"] : ["error"],
     });
     await client.$connect();
     return client;
@@ -35,7 +37,7 @@ export async function withPrisma<T>(callback: (prisma: PrismaClient) => Promise<
 }
 
 export const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  log: isDevelopment ? ["error", "warn"] : ["error"],
 });
 
 // Handle cleanup on application shutdown
