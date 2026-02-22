@@ -1,68 +1,34 @@
 /** @type {import('next').NextConfig} */
+const spacesPublicBaseUrl = process.env.SPACES_PUBLIC_BASE_URL;
+const spacesHostname = spacesPublicBaseUrl ? new URL(spacesPublicBaseUrl).hostname : null;
+
+const remotePatterns = [
+  {
+    hostname: "*.digitaloceanspaces.com",
+    protocol: "https",
+    port: "",
+    pathname: "/**",
+  },
+  {
+    hostname: "*.cdn.digitaloceanspaces.com",
+    protocol: "https",
+    port: "",
+    pathname: "/**",
+  },
+];
+
+if (spacesHostname) {
+  remotePatterns.unshift({
+    hostname: spacesHostname,
+    protocol: "https",
+    port: "",
+    pathname: "/**",
+  });
+}
+
 const config = {
   images: {
-    remotePatterns: [
-      {
-        hostname: "utfs.io",
-        protocol: "https",
-        port: "",
-        pathname: "/a/p3mwzgl9zz/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "https",
-        port: "",
-        pathname: "/a/p3mwzgl9zz/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "https",
-        port: "",
-        pathname: "/a/q86ithk76j/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "https",
-        port: "",
-        pathname: "/f/oEkYyJhdXFG3jWYhT7nuId3PJiVFUHlpB1SKXAwZtf4b978x/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "http",
-        port: "",
-        pathname: "/a/p3mwzgl9zz/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "http",
-        port: "",
-        pathname: "/a/q86ithk76j/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "http",
-        port: "",
-        pathname: "/f/oEkYyJhdXFG3jWYhT7nuId3PJiVFUHlpB1SKXAwZtf4b978x/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "https",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        hostname: "utfs.io",
-        protocol: "http",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        hostname: "*.ufs.sh",
-        protocol: "https",
-        port: "",
-        pathname: "/**",
-      },
-    ],
+    remotePatterns,
   },
 };
 

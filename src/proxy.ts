@@ -5,15 +5,16 @@ const isPublicRoute = createRouteMatcher([
   "/", // Landing page
   "/favicon.ico", // Browser favicon
   "/_next(.*)", // Next.js system files
-  "/api/uploadthing", // UploadThing API routes should remain public
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+const proxy = clerkMiddleware(async (auth, req) => {
   // If it's not a public route, protect it
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
 });
+
+export default proxy;
 
 export const config = {
   matcher: [

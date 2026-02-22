@@ -23,11 +23,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider localization={plPL}>
-      <html lang="pl">
-        <body className={roboto.className}>
+    <html lang="pl">
+      <body className={roboto.className}>
+        <ClerkProvider localization={plPL}>
           <Providers>
             <div className="min-h-screen flex flex-col">
               <Header />
@@ -35,8 +37,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Footer />
             </div>
           </Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

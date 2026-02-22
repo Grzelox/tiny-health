@@ -1,4 +1,5 @@
 import { getPetAccess, hasReadAccess, hasWriteAccess } from "@/utils/pet-access";
+import { getSignedGetUrl } from "@/utils/spaces";
 import { withPrisma } from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -59,7 +60,17 @@ export async function GET(request: Request) {
         return { status: 404 as const, body: { message: "Pet not found" } };
       }
 
-      return { status: 200 as const, body: pet };
+      const signedFiles = await Promise.all(
+        pet.uploadedFiles.map(async (file) => {
+          if (file.storageProvider === "spaces" && file.storageKey) {
+            const signedUrl = await getSignedGetUrl(file.storageKey);
+            return { ...file, url: signedUrl };
+          }
+          return file;
+        }),
+      );
+
+      return { status: 200 as const, body: { ...pet, uploadedFiles: signedFiles } };
     });
 
     return NextResponse.json(result.body, { status: result.status });
