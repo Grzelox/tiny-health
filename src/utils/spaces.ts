@@ -48,6 +48,18 @@ export const createSpacesClient = () => {
   });
 };
 
+// The Spaces client is stateless and configured purely from env vars, so we can
+// safely reuse a single instance instead of constructing a new one for every
+// signed-URL request (which happens once per uploaded file on list/detail loads).
+let cachedSpacesClient: S3Client | null = null;
+
+const getSpacesClient = (): S3Client => {
+  if (!cachedSpacesClient) {
+    cachedSpacesClient = createSpacesClient();
+  }
+  return cachedSpacesClient;
+};
+
 export const buildPublicUrl = (key: string, baseUrl?: string) => {
   const resolvedBaseUrl = baseUrl ?? getSpacesConfig().publicBaseUrl;
   return `${resolvedBaseUrl.replace(/\/$/, "")}/${key}`;
@@ -55,7 +67,7 @@ export const buildPublicUrl = (key: string, baseUrl?: string) => {
 
 export const getSignedGetUrl = async (key: string, expiresInSeconds: number = 60 * 60 * 24) => {
   const config = getSpacesConfig();
-  const client = createSpacesClient();
+  const client = getSpacesClient();
   const command = new GetObjectCommand({
     Bucket: config.bucket,
     Key: key,

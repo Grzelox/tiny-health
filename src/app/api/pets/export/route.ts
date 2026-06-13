@@ -140,10 +140,12 @@ export async function GET(request: Request) {
       animalType: pet.animalType || "",
     }));
 
+    const petNameById = new Map(data.pets.map((pet) => [pet.id, pet.name]));
+
     const vetVisitsData = data.vetVisits.map((visit) => ({
       id: visit.id,
       petId: visit.petId,
-      petName: data.pets.find((p) => p.id === visit.petId)?.name || "Unknown Pet",
+      petName: petNameById.get(visit.petId) || "Unknown Pet",
       date: visit.date ? new Date(visit.date).toLocaleDateString() : "",
       description: visit.description || "",
       medication: visit.medication || "",
@@ -152,7 +154,7 @@ export async function GET(request: Request) {
     const weightRecordsData = data.weightRecords.map((record) => ({
       id: record.id,
       petId: record.petId,
-      petName: data.pets.find((p) => p.id === record.petId)?.name || "Unknown Pet",
+      petName: petNameById.get(record.petId) || "Unknown Pet",
       date: record.date ? new Date(record.date).toLocaleDateString() : "",
       weight: record.weight,
       createdAt: new Date(record.createdAt).toLocaleString(),
