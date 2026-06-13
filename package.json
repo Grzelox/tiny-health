@@ -10,6 +10,9 @@
     "lint": "next lint",
     "generate": "prisma generate",
     "test": "jest",
+    "db:docker:up": "docker compose up -d --wait postgres && npm run generate && prisma migrate deploy && node prisma/local-seed.mjs",
+    "db:docker:down": "docker compose down",
+    "db:docker:reset": "docker compose down -v && npm run db:docker:up",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "engines": {

@@ -58,19 +58,31 @@ warm, not clinical.
 
 ```bash
 npm install
-cp .env.example .env.local
+cp .env.example .env
 
-# Generate the Prisma client
-npm run generate
-
-# Apply migrations to your database
-npx prisma migrate dev
+# Start local Postgres, apply migrations, and seed sample data
+npm run db:docker:up
 
 # Start the dev server
 npm run dev
 ```
 
-Fill in the required environment variables in `.env.local` before starting —
+The Docker setup creates two local PostgreSQL databases on first startup:
+
+- `tiny_health` for the app
+- `tiny_health_shadow` for Prisma's shadow database
+
+`npm run db:docker:up` waits for Postgres, runs `prisma migrate deploy`, regenerates the Prisma client, and inserts a small sample dataset for local testing.
+
+If you want the seeded pets to appear for your own Clerk account, set `LOCAL_SEED_OWNER_ID` in `.env` to your Clerk user ID before running the seed.
+
+If you want a clean reseed, run:
+
+```bash
+npm run db:docker:reset
+```
+
+Fill in the required environment variables in `.env` before starting —
 see [Environment variables](#environment-variables) below.
 
 The app runs at `http://localhost:3000`.
@@ -92,17 +104,21 @@ npm run start
 | `npm run lint` | Lint with ESLint |
 | `npm run test` | Run the Jest test suite |
 | `npm run generate` | Regenerate the Prisma client |
+| `npm run db:docker:up` | Start local Postgres, migrate, and seed |
+| `npm run db:docker:down` | Stop the local Postgres container |
+| `npm run db:docker:reset` | Recreate and reseed the local databases |
 
 > **Node version:** 22.x — `npm` is the package manager in use (`package-lock.json` is committed).
 
 ## Environment variables
 
-Set these in `.env.local` (see `.env.example` as a starting point):
+Set these in `.env` (see `.env.example` as a starting point):
 
 | Variable | Purpose |
 | --- | --- |
 | `DATABASE_URL`, `DIRECT_URL`, `SHADOW_DATABASE_URL` | PostgreSQL connections for Prisma |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` | Clerk authentication |
+| `LOCAL_SEED_OWNER_ID`, `LOCAL_SEED_SHARED_WITH` | Optional owner/share IDs for local sample data |
 | `SPACES_ENDPOINT`, `SPACES_REGION`, `SPACES_BUCKET` | DigitalOcean Spaces bucket |
 | `SPACES_ACCESS_KEY_ID`, `SPACES_SECRET_ACCESS_KEY` | Spaces credentials |
 | `SPACES_PUBLIC_BASE_URL` | Public base URL for media |
