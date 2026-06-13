@@ -43,6 +43,8 @@ export interface FullPetData {
   updatedAt: string;
   uploadedFiles: UploadedImage[];
   vetVisits: VetVisit[];
+  medications: Medication[];
+  vaccinations: Vaccination[];
 }
 
 export interface PetWithShared extends FullPetData {
@@ -56,6 +58,31 @@ export interface VetVisit {
   date: Date;
   description: string;
   medication: string;
+}
+
+export interface Medication {
+  id: number;
+  petId: number;
+  petUuid?: string;
+  vetVisitId?: number | null;
+  name: string;
+  dosage: string;
+  frequency: string;
+  route?: string | null;
+  startDate: string;
+  endDate?: string | null;
+  isActive: boolean;
+  notes?: string | null;
+}
+
+export interface Vaccination {
+  id: number;
+  petId: number;
+  petUuid?: string;
+  vaccineName: string;
+  administeredDate: string;
+  nextDueDate?: string | null;
+  notes?: string | null;
 }
 
 export interface UploadedImage {
