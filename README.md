@@ -44,6 +44,6 @@ npm run start
 - **API**: Route handlers under `src/app/api` (including versioned endpoints under `src/app/api/v1`).
 - **UI**: Reusable React components in `src/components` (Tailwind CSS styles in `src/app/globals.css`).
 - **Data access**: Prisma schema in `prisma/schema.prisma`, Prisma client in `src/utils/prisma.ts`.
-- **Auth**: Clerk integration (middleware and provider wiring in `src/middleware.ts` and `src/app/providers.tsx`).
+- **Auth**: Clerk integration (route protection in `src/proxy.ts` and provider wiring in `src/app/providers.tsx`).
 - **Client data fetching**: React Query hooks and helpers in `src/hooks`.
 - **Uploads/media**: S3-compatible uploads via DigitalOcean Spaces (API routes under `src/app/api/v1`).
