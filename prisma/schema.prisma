@@ -36,6 +36,8 @@ model Pet {
   vetVisits VetVisit[]
   weights   Weight[]
   uploadedFiles File[]
+  medications   Medication[]
+  vaccinations  Vaccination[]
 
   @@index([ownerId])
 }
@@ -60,6 +62,44 @@ model VetVisit {
   medication  String
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  medications Medication[]
+}
+
+model Medication {
+  id         Int       @id @default(autoincrement())
+  petId      Int
+  vetVisitId Int?
+  name       String
+  dosage     String
+  frequency  String
+  route      String?
+  startDate  DateTime
+  endDate    DateTime?
+  isActive   Boolean   @default(true)
+  notes      String?   @db.Text
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  pet      Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+  vetVisit VetVisit? @relation(fields: [vetVisitId], references: [id], onDelete: SetNull)
+
+  @@index([petId])
+  @@index([vetVisitId])
+}
+
+model Vaccination {
+  id               Int       @id @default(autoincrement())
+  petId            Int
+  vaccineName      String
+  administeredDate DateTime
+  nextDueDate      DateTime?
+  notes            String?   @db.Text
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId])
 }
 
 model File {
