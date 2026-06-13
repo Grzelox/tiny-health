@@ -107,7 +107,7 @@ const SelectField: React.FC<SelectFieldProps> = ({ value, onChange, options, ari
       value={value}
       onChange={(event) => onChange(event.target.value)}
       aria-label={ariaLabel}
-      className="appearance-none bg-white/80 border border-secondary-200 text-secondary-700 text-sm sm:text-base px-3 sm:px-4 py-2 rounded-lg pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200"
+      className="appearance-none bg-white/80 border border-secondary-200 text-secondary-700 text-sm sm:text-base pl-3 sm:pl-4 pr-10 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200"
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
