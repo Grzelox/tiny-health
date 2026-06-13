@@ -3,7 +3,7 @@
 import LoadingSpinner from "@/components/Animations/LoadingSpinner";
 import { useAddWeightRecord, useDeleteWeightRecord, useGetWeightHistory } from "@/hooks/useQueries";
 import { Loader2, Trash2 } from "lucide-react";
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -21,6 +21,52 @@ interface WeightTrackerModalProps {
   currentWeight: number | null;
   uuid: string;
 }
+
+// Hoisted to module scope so they keep a stable identity across renders and
+// don't cause recharts to re-render from new prop references each time.
+const CHART_TOOLTIP_CONTENT_STYLE = {
+  backgroundColor: "rgba(251, 250, 246, 0.97)",
+  border: "1px solid #D9E2D8",
+  borderRadius: "12px",
+  padding: "8px",
+  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+  backdropFilter: "blur(8px)",
+  fontSize: "12px",
+} as const;
+
+const formatDate = (dateString: string): string => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "Nieprawidłowa data";
+    }
+    return date.toLocaleDateString("pl-PL", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  } catch (error) {
+    return "Nieprawidłowa data";
+  }
+};
+
+const formatDateTime = (dateString: string): string => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "Nieprawidłowa data";
+    }
+    return date.toLocaleDateString("pl-PL", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch (error) {
+    return "Nieprawidłowa data";
+  }
+};
 
 export default function WeightTrackerModal({
   isOpen,
@@ -83,39 +129,14 @@ export default function WeightTrackerModal({
     );
   };
 
-  const formatDate = (dateString: string): string => {
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        return "Nieprawidłowa data";
-      }
-      return date.toLocaleDateString("pl-PL", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    } catch (error) {
-      return "Nieprawidłowa data";
-    }
-  };
-
-  const formatDateTime = (dateString: string): string => {
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        return "Nieprawidłowa data";
-      }
-      return date.toLocaleDateString("pl-PL", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (error) {
-      return "Nieprawidłowa data";
-    }
-  };
+  // Sort once per data change instead of twice (desktop + mobile) on every render.
+  const sortedWeightHistory = useMemo(
+    () =>
+      (weightHistory ?? [])
+        .slice()
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [weightHistory],
+  );
 
   if (!isOpen) return null;
 
@@ -217,16 +238,7 @@ export default function WeightTrackerModal({
                     <Tooltip
                       labelFormatter={formatDate}
                       formatter={(value) => [`${value} g`, "Waga"]}
-                      contentStyle={{
-                        backgroundColor: "rgba(251, 250, 246, 0.97)",
-                        border: "1px solid #D9E2D8",
-                        borderRadius: "12px",
-                        padding: "8px",
-                        boxShadow:
-                          "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-                        backdropFilter: "blur(8px)",
-                        fontSize: "12px",
-                      }}
+                      contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
                     />
                     <Line
                       type="monotone"
@@ -276,13 +288,7 @@ export default function WeightTrackerModal({
                           </tr>
                         </thead>
                         <tbody>
-                          {weightHistory
-                            .slice()
-                            .sort(
-                              (a, b) =>
-                                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-                            )
-                            .map((record) => (
+                          {sortedWeightHistory.map((record) => (
                               <tr
                                 key={record.id}
                                 className={`border-b border-gray-100 last:border-b-0 transition-all duration-200 hover:bg-primary-50/30 ${
@@ -333,13 +339,7 @@ export default function WeightTrackerModal({
                       }}
                     >
                       <div className="space-y-2 p-1">
-                        {weightHistory
-                          .slice()
-                          .sort(
-                            (a, b) =>
-                              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-                          )
-                          .map((record) => (
+                        {sortedWeightHistory.map((record) => (
                             <div
                               key={record.id}
                               className={`bg-background/70 backdrop-blur-sm border border-border/70 rounded-lg p-3 transition-all duration-200 ${
