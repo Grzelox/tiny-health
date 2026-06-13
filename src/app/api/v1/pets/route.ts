@@ -4,7 +4,6 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  // TODO: Clean up get action and not take weight
   const { userId } = await auth();
 
   if (!userId) {
@@ -19,12 +18,6 @@ export async function GET(request: Request) {
         },
         include: {
           vetVisits: true,
-          weights: {
-            orderBy: {
-              date: "desc",
-            },
-            take: 1,
-          },
           uploadedFiles: true,
         },
       });
@@ -49,12 +42,6 @@ export async function GET(request: Request) {
         },
         include: {
           vetVisits: true,
-          weights: {
-            orderBy: {
-              date: "desc",
-            },
-            take: 1,
-          },
           uploadedFiles: true,
         },
       });

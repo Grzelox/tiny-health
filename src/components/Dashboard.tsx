@@ -133,6 +133,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<PetSortOption>("createdAt");
   const [searchQuery, setSearchQuery] = useState("");
   const [animalTypeFilter, setAnimalTypeFilter] = useState("all");
@@ -188,6 +189,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
   const handleExportData = async () => {
     setIsExporting(true);
+    setExportError(null);
     try {
       const response = await fetch("/api/pets/export");
 
@@ -216,7 +218,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      //TOOD: display error messasge to end user
+      setExportError("Nie udało się pobrać danych. Spróbuj ponownie.");
     } finally {
       setIsExporting(false);
     }
@@ -280,6 +282,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             </div>
           </div>
         </div>
+
+        {exportError && <p className="text-danger-600 text-sm">{exportError}</p>}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
           <div className="relative flex-1 sm:max-w-xs">
@@ -458,7 +462,7 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUser();
   const userId = user?.id;
-  const { data: pets = [], isLoading, error } = usePets(userId);
+  const { data: pets = [], isLoading, error, refetch } = usePets(userId);
 
   if (isLoading) {
     return (
@@ -475,7 +479,12 @@ export default function Dashboard() {
           <div className="w-16 h-16 bg-gradient-to-br from-danger-100 to-danger-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-danger-600 text-2xl">!</span>
           </div>
-          <span className="text-danger-600 text-lg font-medium">Error loading pets</span>
+          <p className="text-danger-600 text-lg font-medium mb-4">
+            Nie udało się wczytać zwierzaków
+          </p>
+          <button onClick={() => refetch()} className="btn-secondary px-4 py-2 rounded-lg text-sm">
+            Spróbuj ponownie
+          </button>
         </div>
       </div>
     );
