@@ -466,7 +466,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                Dodaj gryzonia
+                Dodaj
               </>
             )}
           </button>

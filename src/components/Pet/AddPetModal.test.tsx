@@ -81,7 +81,7 @@ describe("AddPetModal Component", () => {
 
   it("disables submit button when required fields are empty", () => {
     renderComponent(true);
-    const submitButton = screen.getByText("Dodaj gryzonia");
+    const submitButton = screen.getByText("Dodaj");
     expect(submitButton).toBeDisabled();
   });
 
@@ -99,7 +99,7 @@ describe("AddPetModal Component", () => {
       target: { name: "bornAt", value: "2024-01-01" },
     });
 
-    const submitButton = screen.getByText("Dodaj gryzonia");
+    const submitButton = screen.getByText("Dodaj");
     expect(submitButton).not.toBeDisabled();
   });
 
@@ -123,7 +123,7 @@ describe("AddPetModal Component", () => {
     });
 
     // Submit the form
-    fireEvent.click(screen.getByText("Dodaj gryzonia"));
+    fireEvent.click(screen.getByText("Dodaj"));
 
     await waitFor(() =>
       expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -180,7 +180,7 @@ describe("AddPetModal Component", () => {
     });
 
     // Submit the form
-    fireEvent.click(screen.getByText("Dodaj gryzonia"));
+    fireEvent.click(screen.getByText("Dodaj"));
 
     await waitFor(() =>
       expect(mockMutateAsync).toHaveBeenCalledWith(
@@ -208,7 +208,7 @@ describe("AddPetModal Component", () => {
     });
 
     // Submit the form
-    fireEvent.click(screen.getByText("Dodaj gryzonia"));
+    fireEvent.click(screen.getByText("Dodaj"));
 
     await waitFor(() =>
       expect(consoleErrorSpy).toHaveBeenCalledWith("Error adding pet:", expect.any(Error)),
