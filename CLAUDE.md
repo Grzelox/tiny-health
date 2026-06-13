@@ -48,6 +48,8 @@ Useful scripts:
 
 - GitHub repository: `https://github.com/Grzelox/tiny-health`
 - Primary branch: `main`
+- When working on an issue, create a branch from `main`.
+- Name the branch with the issue ID.
 - Changes must go through a Pull Request before merging to `main`.
 - Treat `main` as production-connected.
 - The app is deployed on DigitalOcean.
