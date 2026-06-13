@@ -20,6 +20,7 @@ interface DashboardContentProps {
   sharedPets: PetWithShared[];
   onOpenModal: () => void;
   firstName?: string | null;
+  hasNoPets: boolean;
 }
 
 const RODENT_TYPE_SET = new Set<string>(ANIMAL_TYPE_RODENT_OPTIONS as readonly string[]);
@@ -133,6 +134,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   sharedPets,
   onOpenModal,
   firstName,
+  hasNoPets,
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -225,7 +227,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     }
   };
 
-  if (ownedPets.length === 0 && sharedPets.length === 0) {
+  if (hasNoPets) {
     return <OnboardingEmptyState onAddPet={onOpenModal} firstName={firstName} />;
   }
 
@@ -482,6 +484,7 @@ export default function Dashboard() {
 
   const ownedPets = pets.filter((pet) => !pet.isShared);
   const sharedPets = pets.filter((pet) => pet.isShared);
+  const hasNoPets = ownedPets.length === 0 && sharedPets.length === 0;
 
   return (
     <div className="min-h-screen p-6">
@@ -491,13 +494,14 @@ export default function Dashboard() {
           sharedPets={sharedPets}
           onOpenModal={() => setIsModalOpen(true)}
           firstName={user?.firstName}
+          hasNoPets={hasNoPets}
         />
       </div>
       <AddPetModal
         user={user}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        isFirstPet={ownedPets.length === 0 && sharedPets.length === 0}
+        isFirstPet={hasNoPets}
       />
     </div>
   );
