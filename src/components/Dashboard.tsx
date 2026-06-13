@@ -462,7 +462,7 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUser();
   const userId = user?.id;
-  const { data: pets = [], isLoading, error, refetch } = usePets(userId);
+  const { data: pets = [], isLoading, isFetching, error, refetch } = usePets(userId);
 
   if (isLoading) {
     return (
@@ -482,8 +482,13 @@ export default function Dashboard() {
           <p className="text-danger-600 text-lg font-medium mb-4">
             Nie udało się wczytać zwierzaków
           </p>
-          <button onClick={() => refetch()} className="btn-secondary px-4 py-2 rounded-lg text-sm">
-            Spróbuj ponownie
+          <button
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="btn-secondary px-4 py-2 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+          >
+            {isFetching && <ClipLoader size={14} color="#3F6F5E" />}
+            {isFetching ? "Ponawianie..." : "Spróbuj ponownie"}
           </button>
         </div>
       </div>
