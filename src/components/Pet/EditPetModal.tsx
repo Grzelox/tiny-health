@@ -8,6 +8,7 @@ import {
 import { useEditPet } from "@/hooks/useQueries";
 import { FullPetData } from "@/types/pet";
 import { Edit, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 
 interface EditPetModalProps {
@@ -29,6 +30,7 @@ interface ValidationErrors {
 const MAX_STRING_LENGTH = 300;
 
 const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => {
+  const t = useTranslations("EditPetModal");
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [animalTypeSelection, setAnimalTypeSelection] = useState<AnimalTypeOption>(
@@ -107,54 +109,54 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
     // Name validation
     if (!name.trim()) {
-      newErrors.name = "Imię jest wymagane";
+      newErrors.name = t("errorNameRequired");
     } else if (name.length > MAX_STRING_LENGTH) {
-      newErrors.name = `Imię nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      newErrors.name = t("errorNameTooLong", { max: MAX_STRING_LENGTH });
     }
 
     // Breed validation
     if (breed && breed.length > MAX_STRING_LENGTH) {
-      newErrors.breed = `Rasa nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      newErrors.breed = t("errorBreedTooLong", { max: MAX_STRING_LENGTH });
     }
 
     // Color validation
     if (color && color.length > MAX_STRING_LENGTH) {
-      newErrors.color = `Umaszczenie nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      newErrors.color = t("errorColorTooLong", { max: MAX_STRING_LENGTH });
     }
 
     // Custom animal type validation
     if (animalTypeSelection === ANIMAL_TYPE_OTHER) {
       if (!customAnimalType.trim()) {
-        newErrors.customAnimalType = "Podaj rodzaj zwierzaka";
+        newErrors.customAnimalType = t("errorCustomTypeRequired");
       } else if (customAnimalType.length > MAX_STRING_LENGTH) {
-        newErrors.customAnimalType = `Rodzaj nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+        newErrors.customAnimalType = t("errorCustomTypeTooLong", { max: MAX_STRING_LENGTH });
       }
     }
 
     // Birth date validation
     if (!birthDate) {
-      newErrors.birthDate = "Data urodzenia jest wymagana";
+      newErrors.birthDate = t("errorBirthDateRequired");
     } else {
       const birth = new Date(birthDate);
       const today = new Date();
       if (birth > today) {
-        newErrors.birthDate = "Data urodzenia nie może być z przyszłości";
+        newErrors.birthDate = t("errorBirthDateFuture");
       }
     }
 
     // Death date validation
     if (isDead) {
       if (!deathDate) {
-        newErrors.deathDate = "Data śmierci jest wymagana";
+        newErrors.deathDate = t("errorDeathDateRequired");
       } else {
         const death = new Date(deathDate);
         const birth = new Date(birthDate);
         const today = new Date();
 
         if (death > today) {
-          newErrors.deathDate = "Data śmierci nie może być z przyszłości";
+          newErrors.deathDate = t("errorDeathDateFuture");
         } else if (birthDate && death < birth) {
-          newErrors.deathDate = "Data śmierci nie może być wcześniejsza niż data urodzenia";
+          newErrors.deathDate = t("errorDeathDateBeforeBirth");
         }
       }
     }
@@ -231,7 +233,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             <div className="p-3 bg-secondary-gradient rounded-xl shadow-modern">
               <Edit className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gradient">Edytuj gryzonia</h2>
+            <h2 className="text-3xl font-bold text-gradient">{t("title")}</h2>
           </div>
           <button
             onClick={onClose}
@@ -245,7 +247,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
         <div className="space-y-6 relative">
           {/* Animal Type */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Rodzaj *</label>
+            <label className="text-sm font-semibold text-secondary-700">{t("labelType")}</label>
             <select
               value={animalTypeSelection}
               onChange={(e) => {
@@ -258,14 +260,14 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
               }}
               className="w-full p-4 bg-background/70 backdrop-blur-sm border border-secondary-200/50 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 transition-all duration-300 text-secondary-800 font-medium"
             >
-              <optgroup label="Gryzonie">
+              <optgroup label={t("optgroupRodents")}>
                 {ANIMAL_TYPE_RODENT_OPTIONS.map((type) => (
                   <option key={type} value={type}>
                     {type}
                   </option>
                 ))}
               </optgroup>
-              <optgroup label="Inne">
+              <optgroup label={t("optgroupOther")}>
                 {ANIMAL_TYPE_OTHER_GROUP_OPTIONS.map((type) => (
                   <option key={type} value={type}>
                     {type}
@@ -277,10 +279,12 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
           {animalTypeSelection === ANIMAL_TYPE_OTHER && (
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Inny rodzaj *</label>
+              <label className="text-sm font-semibold text-secondary-700">
+                {t("labelCustomType")}
+              </label>
               <input
                 type="text"
-                placeholder="np. Jeż"
+                placeholder={t("placeholderCustomType")}
                 value={customAnimalType}
                 onChange={(e) => {
                   setCustomAnimalType(e.target.value);
@@ -300,10 +304,10 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
           {/* Name */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Imię *</label>
+            <label className="text-sm font-semibold text-secondary-700">{t("labelName")}</label>
             <input
               type="text"
-              placeholder="Wprowadź imię gryzonia"
+              placeholder={t("placeholderName")}
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -321,10 +325,10 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
           {/* Grid for Breed and Color */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Rasa</label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelBreed")}</label>
               <input
                 type="text"
-                placeholder="Laboratoryjna"
+                placeholder={t("placeholderBreed")}
                 value={breed}
                 onChange={(e) => {
                   setBreed(e.target.value);
@@ -339,10 +343,10 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
               {errors.breed && <p className="text-danger-500 text-xs mt-1">{errors.breed}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Umaszczenie</label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelColor")}</label>
               <input
                 type="text"
-                placeholder="np. Czarna"
+                placeholder={t("placeholderColor")}
                 value={color}
                 onChange={(e) => {
                   setColor(e.target.value);
@@ -360,7 +364,9 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
           {/* Birth Date */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Data urodzenia *</label>
+            <label className="text-sm font-semibold text-secondary-700">
+              {t("labelBirthDate")}
+            </label>
             <input
               type="date"
               value={birthDate}
@@ -380,9 +386,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
           {/* Death Status */}
           <div className="bg-background/60 backdrop-blur-sm border border-border/70 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-secondary-700">
-                Czy zwierzak zmarł?
-              </label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelIsDead")}</label>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -402,7 +406,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
 
             {isDead && (
               <div className="mt-4 space-y-2">
-                <label className="text-sm font-semibold text-gray-600">Data śmierci</label>
+                <label className="text-sm font-semibold text-gray-600">{t("labelDeathDate")}</label>
                 <input
                   type="date"
                   value={deathDate}
@@ -430,7 +434,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             onClick={onClose}
             className="btn-secondary px-6 py-3 rounded-xl font-medium transition-all duration-300"
           >
-            Anuluj
+            {t("cancel")}
           </button>
           <button
             onClick={handleSubmit}
@@ -440,12 +444,12 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ isOpen, onClose, pet }) => 
             {isPending ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Zapisuję...
+                {t("submitting")}
               </>
             ) : (
               <>
                 <Edit className="w-4 h-4" />
-                Zapisz zmiany
+                {t("submit")}
               </>
             )}
           </button>

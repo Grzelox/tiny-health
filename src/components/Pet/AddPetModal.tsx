@@ -6,6 +6,7 @@ import {
 import { useAddPet } from "@/hooks/useQueries";
 import { AnimalType, Pet } from "@/types/pet";
 import { Plus, Sparkles, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 
 interface AddPetModalProps {
@@ -29,6 +30,7 @@ interface ValidationErrors {
 const MAX_STRING_LENGTH = 300;
 
 const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirstPet = false }) => {
+  const t = useTranslations("AddPetModal");
   const addPetMutation = useAddPet();
   const [pet, setPet] = useState<Omit<Pet, "id" | "updatedAt" | "ownerId">>({
     name: "",
@@ -50,61 +52,61 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
 
     // Name validation
     if (!pet.name.trim()) {
-      newErrors.name = "Imię jest wymagane";
+      newErrors.name = t("errorNameRequired");
     } else if (pet.name.length > MAX_STRING_LENGTH) {
-      newErrors.name = `Imię nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      newErrors.name = t("errorNameTooLong", { max: MAX_STRING_LENGTH });
     }
 
     // Breed validation
     if (pet.breed && pet.breed.length > MAX_STRING_LENGTH) {
-      newErrors.breed = `Rasa nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      newErrors.breed = t("errorBreedTooLong", { max: MAX_STRING_LENGTH });
     }
 
     // Color validation
     if (pet.color && pet.color.length > MAX_STRING_LENGTH) {
-      newErrors.color = `Umaszczenie nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+      newErrors.color = t("errorColorTooLong", { max: MAX_STRING_LENGTH });
     }
 
     // Weight validation (now optional)
     if (pet.weight !== null && pet.weight < 0) {
-      newErrors.weight = "Waga nie może być ujemna";
+      newErrors.weight = t("errorWeightNegative");
     } else if (pet.weight !== null && pet.weight > 10000) {
-      newErrors.weight = "Waga wydaje się zbyt duża";
+      newErrors.weight = t("errorWeightTooLarge");
     }
 
     // Birth date validation
     if (!pet.bornAt) {
-      newErrors.bornAt = "Data urodzenia jest wymagana";
+      newErrors.bornAt = t("errorBirthDateRequired");
     } else {
       const birthDate = new Date(pet.bornAt);
       const today = new Date();
       if (birthDate > today) {
-        newErrors.bornAt = "Data urodzenia nie może być z przyszłości";
+        newErrors.bornAt = t("errorBirthDateFuture");
       }
     }
 
     // Custom animal type validation
     if (pet.animalType === ANIMAL_TYPE_OTHER) {
       if (!customAnimalType.trim()) {
-        newErrors.customAnimalType = "Podaj rodzaj zwierzaka";
+        newErrors.customAnimalType = t("errorCustomTypeRequired");
       } else if (customAnimalType.length > MAX_STRING_LENGTH) {
-        newErrors.customAnimalType = `Rodzaj nie może przekraczać ${MAX_STRING_LENGTH} znaków`;
+        newErrors.customAnimalType = t("errorCustomTypeTooLong", { max: MAX_STRING_LENGTH });
       }
     }
 
     // Death date validation
     if (pet.isDead) {
       if (!pet.deathDate) {
-        newErrors.deathDate = "Data śmierci jest wymagana";
+        newErrors.deathDate = t("errorDeathDateRequired");
       } else {
         const deathDate = new Date(pet.deathDate);
         const birthDate = new Date(pet.bornAt);
         const today = new Date();
 
         if (deathDate > today) {
-          newErrors.deathDate = "Data śmierci nie może być z przyszłości";
+          newErrors.deathDate = t("errorDeathDateFuture");
         } else if (pet.bornAt && deathDate < birthDate) {
-          newErrors.deathDate = "Data śmierci nie może być wcześniejsza niż data urodzenia";
+          newErrors.deathDate = t("errorDeathDateBeforeBirth");
         }
       }
     }
@@ -249,7 +251,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
             <div className="p-3 bg-primary-400 rounded-xl shadow-modern">
               <Plus className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gradient">Dodaj nowego zwierzaka</h2>
+            <h2 className="text-3xl font-bold text-gradient">{t("title")}</h2>
           </div>
           <button
             onClick={onClose}
@@ -264,30 +266,27 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
           {isFirstPet && (
             <div className="flex items-start gap-3 rounded-xl border border-primary-400/30 bg-primary-50/70 p-4">
               <Sparkles className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-500" />
-              <p className="text-sm text-secondary-700">
-                To Twój pierwszy zwierzak! Uzupełnij imię i datę urodzenia, a podając wagę od razu
-                zapiszemy pierwszy pomiar do historii.
-              </p>
+              <p className="text-sm text-secondary-700">{t("firstPetHint")}</p>
             </div>
           )}
 
           {/* Animal Type */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Rodzaj *</label>
+            <label className="text-sm font-semibold text-secondary-700">{t("labelType")}</label>
             <select
               name="animalType"
               value={pet.animalType}
               onChange={handleChange}
               className="w-full p-4 bg-background/70 backdrop-blur-sm border border-primary-400/30 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 font-medium"
             >
-              <optgroup label="Gryzonie">
+              <optgroup label={t("optgroupRodents")}>
                 {ANIMAL_TYPE_RODENT_OPTIONS.map((type) => (
                   <option key={type} value={type}>
                     {type}
                   </option>
                 ))}
               </optgroup>
-              <optgroup label="Inne">
+              <optgroup label={t("optgroupOther")}>
                 {ANIMAL_TYPE_OTHER_GROUP_OPTIONS.map((type) => (
                   <option key={type} value={type}>
                     {type}
@@ -299,11 +298,13 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
 
           {pet.animalType === ANIMAL_TYPE_OTHER && (
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Inny rodzaj *</label>
+              <label className="text-sm font-semibold text-secondary-700">
+                {t("labelCustomType")}
+              </label>
               <input
                 type="text"
                 name="customAnimalType"
-                placeholder="np. Jeż"
+                placeholder={t("placeholderCustomType")}
                 value={customAnimalType}
                 onChange={(e) => {
                   setCustomAnimalType(e.target.value);
@@ -325,11 +326,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
 
           {/* Name */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-secondary-700">Imię *</label>
+            <label className="text-sm font-semibold text-secondary-700">{t("labelName")}</label>
             <input
               type="text"
               name="name"
-              placeholder="Wprowadź imię gryzonia"
+              placeholder={t("placeholderName")}
               value={pet.name}
               onChange={handleChange}
               className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
@@ -344,11 +345,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
           {/* Grid for Breed and Color */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Rasa</label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelBreed")}</label>
               <input
                 type="text"
                 name="breed"
-                placeholder="Laboratoryjna"
+                placeholder={t("placeholderBreed")}
                 value={pet.breed}
                 onChange={handleChange}
                 className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
@@ -360,11 +361,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
               {errors.breed && <p className="text-danger-500 text-xs mt-1">{errors.breed}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Umaszczenie</label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelColor")}</label>
               <input
                 type="text"
                 name="color"
-                placeholder="np. Czarna"
+                placeholder={t("placeholderColor")}
                 value={pet.color}
                 onChange={handleChange}
                 className={`w-full p-4 bg-background/70 backdrop-blur-sm border rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-300 text-primary-800 placeholder-secondary-400 ${
@@ -380,7 +381,9 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
           {/* Grid for Birth Date and Weight */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Data urodzenia *</label>
+              <label className="text-sm font-semibold text-secondary-700">
+                {t("labelBirthDate")}
+              </label>
               <input
                 type="date"
                 name="bornAt"
@@ -395,11 +398,11 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
               {errors.bornAt && <p className="text-danger-500 text-xs mt-1">{errors.bornAt}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-secondary-700">Waga (g)</label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelWeight")}</label>
               <input
                 type="number"
                 name="weight"
-                placeholder="30"
+                placeholder={t("placeholderWeight")}
                 value={pet.weight === null ? "" : pet.weight.toString()}
                 onChange={handleChange}
                 min="0"
@@ -417,9 +420,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
           {/* Death Status */}
           <div className="bg-background/60 backdrop-blur-sm border border-border/70 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-secondary-700">
-                Czy zwierzak zmarł?
-              </label>
+              <label className="text-sm font-semibold text-secondary-700">{t("labelIsDead")}</label>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -434,7 +435,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
 
             {pet.isDead && (
               <div className="mt-4 space-y-2">
-                <label className="text-sm font-semibold text-gray-600">Data śmierci</label>
+                <label className="text-sm font-semibold text-gray-600">{t("labelDeathDate")}</label>
                 <input
                   type="date"
                   name="deathDate"
@@ -460,7 +461,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
             onClick={onClose}
             className="btn-secondary px-6 py-3 rounded-xl font-medium transition-all duration-300"
           >
-            Anuluj
+            {t("cancel")}
           </button>
           <button
             onClick={handleSubmit}
@@ -472,12 +473,12 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirs
             {addPetMutation.isPending ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Dodaję...
+                {t("submitting")}
               </>
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                Dodaj
+                {t("submit")}
               </>
             )}
           </button>

@@ -1,4 +1,5 @@
 import { Camera, PawPrint, Plus, Scale, Stethoscope } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 interface OnboardingEmptyStateProps {
@@ -6,26 +7,30 @@ interface OnboardingEmptyStateProps {
   firstName?: string | null;
 }
 
-const FEATURES = [
-  {
-    icon: Scale,
-    title: "Śledź wagę",
-    description: "Zapisuj kolejne pomiary i obserwuj zmiany na czytelnym wykresie.",
-  },
-  {
-    icon: Stethoscope,
-    title: "Wizyty u weterynarza",
-    description: "Notuj wizyty oraz podawane leki, aby nic Ci nie umknęło.",
-  },
-  {
-    icon: Camera,
-    title: "Zdjęcia",
-    description: "Dodawaj zdjęcia swojego pupila i twórz jego małe archiwum.",
-  },
-];
+const FEATURE_ICONS = [Scale, Stethoscope, Camera];
 
 const OnboardingEmptyState: React.FC<OnboardingEmptyStateProps> = ({ onAddPet, firstName }) => {
-  const greeting = firstName ? `Witaj, ${firstName}!` : "Witaj w Tiny Health!";
+  const t = useTranslations("Onboarding");
+
+  const greeting = firstName ? t("greeting", { name: firstName }) : t("greetingFallback");
+
+  const features = [
+    {
+      icon: FEATURE_ICONS[0],
+      title: t("feature1Title"),
+      description: t("feature1Description"),
+    },
+    {
+      icon: FEATURE_ICONS[1],
+      title: t("feature2Title"),
+      description: t("feature2Description"),
+    },
+    {
+      icon: FEATURE_ICONS[2],
+      title: t("feature3Title"),
+      description: t("feature3Description"),
+    },
+  ];
 
   return (
     <div className="animate-in mx-auto max-w-3xl">
@@ -40,12 +45,11 @@ const OnboardingEmptyState: React.FC<OnboardingEmptyStateProps> = ({ onAddPet, f
 
           <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-3">{greeting}</h1>
           <p className="mx-auto max-w-xl text-secondary-600 mb-8">
-            Nie masz jeszcze żadnych zwierzaków. Dodaj swojego pierwszego pupila, a my pomożemy Ci
-            zadbać o jego zdrowie — krok po kroku.
+            {t("description")}
           </p>
 
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, title, description }) => (
+            {features.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
                 className="glass-effect rounded-xl p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-modern-lg"
@@ -64,7 +68,7 @@ const OnboardingEmptyState: React.FC<OnboardingEmptyStateProps> = ({ onAddPet, f
             className="btn-primary mx-auto flex items-center gap-2 rounded-xl px-6 py-3 text-base font-medium"
           >
             <Plus className="h-5 w-5" />
-            Dodaj pierwszego zwierzaka
+            {t("addFirstPet")}
           </button>
         </div>
       </div>

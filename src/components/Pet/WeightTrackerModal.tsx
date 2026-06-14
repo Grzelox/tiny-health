@@ -3,6 +3,7 @@
 import LoadingSpinner from "@/components/Animations/LoadingSpinner";
 import { useAddWeightRecord, useDeleteWeightRecord, useGetWeightHistory } from "@/hooks/useQueries";
 import { Loader2, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { type ReactElement, useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -34,11 +35,11 @@ const CHART_TOOLTIP_CONTENT_STYLE = {
   fontSize: "12px",
 } as const;
 
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString: string, invalidLabel: string): string => {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return "Nieprawidłowa data";
+      return invalidLabel;
     }
     return date.toLocaleDateString("pl-PL", {
       year: "numeric",
@@ -46,15 +47,15 @@ const formatDate = (dateString: string): string => {
       day: "2-digit",
     });
   } catch (error) {
-    return "Nieprawidłowa data";
+    return invalidLabel;
   }
 };
 
-const formatDateTime = (dateString: string): string => {
+const formatDateTime = (dateString: string, invalidLabel: string): string => {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return "Nieprawidłowa data";
+      return invalidLabel;
     }
     return date.toLocaleDateString("pl-PL", {
       year: "numeric",
@@ -64,7 +65,7 @@ const formatDateTime = (dateString: string): string => {
       minute: "2-digit",
     });
   } catch (error) {
-    return "Nieprawidłowa data";
+    return invalidLabel;
   }
 };
 
@@ -75,8 +76,14 @@ export default function WeightTrackerModal({
   currentWeight,
   uuid,
 }: WeightTrackerModalProps): ReactElement | null {
+  const t = useTranslations("WeightTracker");
   const [newWeight, setNewWeight] = useState<string>(currentWeight?.toString() ?? "");
   const { data: weightHistory, isLoading } = useGetWeightHistory(petId, uuid);
+
+  const formatDateLabel = (dateString: string): string =>
+    formatDate(dateString, t("invalidDate"));
+  const formatDateTimeLabel = (dateString: string): string =>
+    formatDateTime(dateString, t("invalidDate"));
   const addWeightMutation = useAddWeightRecord();
   const deleteWeightMutation = useDeleteWeightRecord();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -162,7 +169,7 @@ export default function WeightTrackerModal({
               <LineChart className="w-5 h-5 sm:w-6 sm:h-6 text-primary-400" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gradient mb-1">Historia wagi</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gradient mb-1">{t("title")}</h2>
             </div>
           </div>
         </div>
@@ -170,12 +177,12 @@ export default function WeightTrackerModal({
         {/* Add new weight section - compressed */}
         <div className="glass-effect bg-primary-400/10 backdrop-blur-sm p-2 sm:p-3 rounded-lg border border-primary-400/30 mb-3 sm:mb-4 shrink-0">
           <label className="block text-xs font-semibold text-secondary-700 mb-1 sm:mb-2">
-            Nowa waga [g]
+            {t("newWeightLabel")}
           </label>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <input
               type="number"
-              placeholder="Waga w gramach"
+              placeholder={t("weightPlaceholder")}
               value={newWeight}
               onChange={(e) => setNewWeight(e.target.value)}
               min="1"
@@ -190,11 +197,11 @@ export default function WeightTrackerModal({
               {addWeightMutation.isPending ? (
                 <div className="flex items-center gap-2 justify-center">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline">Dodawanie...</span>
-                  <span className="sm:hidden">...</span>
+                  <span className="hidden sm:inline">{t("adding")}</span>
+                  <span className="sm:hidden">{t("addingShort")}</span>
                 </div>
               ) : (
-                "Dodaj"
+                t("add")
               )}
             </button>
           </div>
@@ -220,7 +227,7 @@ export default function WeightTrackerModal({
                     />
                     <XAxis
                       dataKey="createdAt"
-                      tickFormatter={formatDate}
+                      tickFormatter={formatDateLabel}
                       tick={{ fontSize: 10, fill: "#5B6B63" }}
                       stroke="#94A39B"
                       interval="preserveStartEnd"
@@ -236,8 +243,8 @@ export default function WeightTrackerModal({
                       className="sm:text-xs sm:w-10"
                     />
                     <Tooltip
-                      labelFormatter={formatDate}
-                      formatter={(value) => [`${value} g`, "Waga"]}
+                      labelFormatter={formatDateLabel}
+                      formatter={(value) => [`${value} g`, t("chartWeightLabel")]}
                       contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
                     />
                     <Line
@@ -279,10 +286,10 @@ export default function WeightTrackerModal({
                         <thead className="sticky top-0 bg-primary-50/95 backdrop-blur-sm z-10 border-b border-primary-200/50">
                           <tr>
                             <th className="text-left py-3 px-4 font-semibold text-secondary-700">
-                              Data
+                              {t("tableDate")}
                             </th>
                             <th className="text-right py-3 px-4 font-semibold text-secondary-700">
-                              Waga [g]
+                              {t("tableWeight")}
                             </th>
                             <th className="w-12 py-3 px-4"></th>
                           </tr>
@@ -296,7 +303,7 @@ export default function WeightTrackerModal({
                                 }`}
                               >
                                 <td className="py-3 px-4 text-secondary-700">
-                                  {formatDateTime(record.createdAt)}
+                                  {formatDateTimeLabel(record.createdAt)}
                                 </td>
                                 <td className="text-right py-3 px-4 font-medium text-secondary-800">
                                   {record.weight}
@@ -306,7 +313,7 @@ export default function WeightTrackerModal({
                                     onClick={() => handleDeleteWeight(petId, record.id)}
                                     disabled={deletingId === record.id.toString()}
                                     className="text-secondary-400 hover:text-danger-600 transition-all duration-200 inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-danger-50 disabled:opacity-50 disabled:cursor-not-allowed group"
-                                    title="Usuń pomiar"
+                                    title={t("deleteMeasurement")}
                                   >
                                     {deletingId === record.id.toString() ? (
                                       <Loader2
@@ -349,7 +356,7 @@ export default function WeightTrackerModal({
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                   <div className="text-xs text-secondary-600 mb-1">
-                                    {formatDateTime(record.createdAt)}
+                                    {formatDateTimeLabel(record.createdAt)}
                                   </div>
                                   <div className="font-semibold text-secondary-800">
                                     {record.weight} g
@@ -359,7 +366,7 @@ export default function WeightTrackerModal({
                                   onClick={() => handleDeleteWeight(petId, record.id)}
                                   disabled={deletingId === record.id.toString()}
                                   className="text-secondary-400 hover:text-danger-600 transition-all duration-200 inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-danger-50 disabled:opacity-50 disabled:cursor-not-allowed ml-2 shrink-0"
-                                  title="Usuń pomiar"
+                                  title={t("deleteMeasurement")}
                                 >
                                   {deletingId === record.id.toString() ? (
                                     <Loader2
@@ -382,9 +389,9 @@ export default function WeightTrackerModal({
           ) : (
             <div className="h-full flex flex-col items-center justify-center glass-effect bg-background/50 backdrop-blur-sm rounded-xl border border-border/70 text-secondary-600 p-4">
               <LineChart className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mb-3 sm:mb-4" />
-              <p className="text-base sm:text-lg font-medium text-center">Brak historii wagi</p>
+              <p className="text-base sm:text-lg font-medium text-center">{t("emptyTitle")}</p>
               <p className="text-xs sm:text-sm text-secondary-500 mt-2 text-center px-2">
-                Dodaj pierwszy pomiar, aby rozpocząć śledzenie
+                {t("emptyDescription")}
               </p>
             </div>
           )}
@@ -396,7 +403,7 @@ export default function WeightTrackerModal({
             onClick={onClose}
             className="btn-secondary px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 text-sm sm:text-base"
           >
-            Zamknij
+            {t("close")}
           </button>
         </div>
       </div>

@@ -1,10 +1,13 @@
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface AddPetButtonProps {
   onClick: () => void;
 }
 
 const AddPetButton = ({ onClick }: AddPetButtonProps) => {
+  const t = useTranslations("AddPetButton");
+
   return (
     <button
       className="
@@ -29,7 +32,7 @@ const AddPetButton = ({ onClick }: AddPetButtonProps) => {
           <Plus className="w-8 h-8 transition-transform duration-300 group-hover:rotate-90" />
         </div>
         <span className="text-lg font-medium transition-all duration-300 group-hover:scale-105">
-          Dodaj zwierzaka
+          {t("addPet")}
         </span>
       </div>
     </button>

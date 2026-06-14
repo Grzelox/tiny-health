@@ -7,6 +7,7 @@ import { usePets } from "@/hooks/useQueries";
 import { PetWithShared, Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
 import { DownloadIcon, SearchIcon, ShareIcon, UploadIcon, XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React, { useMemo, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
@@ -137,6 +138,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   firstName,
   hasNoPets,
 }) => {
+  const t = useTranslations("Dashboard");
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -225,7 +227,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      setExportError("Nie udało się pobrać danych. Spróbuj ponownie.");
+      setExportError(t("exportError"));
     } finally {
       setIsExporting(false);
     }
@@ -241,7 +243,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             className="btn-secondary flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm sm:text-base"
           >
             <UploadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-            Importuj z CSV
+            {t("import")}
           </button>
         </div>
         <ImportPetsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
@@ -255,18 +257,18 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     <>
       <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gradient">Moje stadko</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gradient">{t("title")}</h1>
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-secondary-700">Sortowanie:</span>
+              <span className="text-sm font-medium text-secondary-700">{t("sortLabel")}</span>
               <SelectField
                 value={sortOption}
                 onChange={(value) => setSortOption(value as PetSortOption)}
-                ariaLabel="Sortowanie"
+                ariaLabel={t("sortLabel")}
                 options={[
-                  { value: "createdAt", label: "Data dodania" },
-                  { value: "name", label: "Alfabetycznie" },
-                  { value: "updatedAt", label: "Ostatnia edycja" },
+                  { value: "createdAt", label: t("sortByCreatedAt") },
+                  { value: "name", label: t("sortByName") },
+                  { value: "updatedAt", label: t("sortByUpdatedAt") },
                 ]}
               />
             </div>
@@ -284,25 +286,25 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                   )}
                 </span>
                 <span className="hidden sm:inline">
-                  {isExporting ? "Przygotowywanie" : "Pobierz dane"}
+                  {isExporting ? t("exporting") : t("export")}
                 </span>
-                <span className="sm:hidden">{isExporting ? "Pobierz..." : "Dane"}</span>
+                <span className="sm:hidden">{isExporting ? t("exportingShort") : t("exportShort")}</span>
               </button>
               <button
                 onClick={() => setIsImportModalOpen(true)}
                 className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base"
               >
                 <UploadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Importuj z CSV</span>
-                <span className="sm:hidden">Import</span>
+                <span className="hidden sm:inline">{t("import")}</span>
+                <span className="sm:hidden">{t("importShort")}</span>
               </button>
               <button
                 onClick={() => setIsShareModalOpen(true)}
                 className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base"
               >
                 <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Udostępnij stado</span>
-                <span className="sm:hidden">Udostępnij</span>
+                <span className="hidden sm:inline">{t("share")}</span>
+                <span className="sm:hidden">{t("shareShort")}</span>
               </button>
             </div>
           </div>
@@ -317,15 +319,15 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               type="text"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Szukaj po imieniu, rasie lub kolorze..."
-              aria-label="Szukaj zwierzaka"
+              placeholder={t("searchPlaceholder")}
+              aria-label={t("searchAriaLabel")}
               className="w-full bg-white/80 border border-secondary-200 text-secondary-700 text-sm sm:text-base pl-9 pr-9 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                aria-label="Wyczyść wyszukiwanie"
+                aria-label={t("clearSearch")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
               >
                 <XIcon className="w-4 h-4" />
@@ -336,9 +338,9 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <SelectField
             value={animalTypeFilter}
             onChange={setAnimalTypeFilter}
-            ariaLabel="Filtruj po gatunku"
+            ariaLabel={t("filterByAnimalType")}
             options={[
-              { value: "all", label: "Wszystkie gatunki" },
+              { value: "all", label: t("filterAllAnimalTypes") },
               ...availableAnimalTypes.map((type) => ({ value: type, label: type })),
             ]}
           />
@@ -346,11 +348,11 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <SelectField
             value={statusFilter}
             onChange={(value) => setStatusFilter(value as StatusFilter)}
-            ariaLabel="Filtruj po statusie"
+            ariaLabel={t("filterByStatus")}
             options={[
-              { value: "all", label: "Wszystkie statusy" },
-              { value: "alive", label: "Żywe" },
-              { value: "dead", label: "Zmarłe" },
+              { value: "all", label: t("filterAllStatuses") },
+              { value: "alive", label: t("statusAlive") },
+              { value: "dead", label: t("statusDead") },
             ]}
           />
 
@@ -358,11 +360,11 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             <SelectField
               value={ownershipFilter}
               onChange={(value) => setOwnershipFilter(value as OwnershipFilter)}
-              ariaLabel="Filtruj po właścicielu"
+              ariaLabel={t("filterByOwnership")}
               options={[
-                { value: "all", label: "Moje i udostępnione" },
-                { value: "owned", label: "Tylko moje" },
-                { value: "shared", label: "Tylko udostępnione" },
+                { value: "all", label: t("ownershipAll") },
+                { value: "owned", label: t("ownershipOwned") },
+                { value: "shared", label: t("ownershipShared") },
               ]}
             />
           )}
@@ -373,7 +375,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               onClick={clearFilters}
               className="btn-secondary px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base"
             >
-              Wyczyść filtry
+              {t("clearFilters")}
             </button>
           )}
         </div>
@@ -382,15 +384,15 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       {hasActiveFilters && hasNoFilteredResults ? (
         <div className="flex flex-col items-center justify-center text-center py-16 px-6 rounded-2xl bg-white/60 border border-secondary-100 shadow-sm">
           <p className="text-lg font-medium text-secondary-700 mb-2">
-            Brak zwierzaków spełniających kryteria
+            {t("noResultsTitle")}
           </p>
-          <p className="text-sm text-secondary-500 mb-4">Spróbuj zmienić wyszukiwanie lub filtry.</p>
+          <p className="text-sm text-secondary-500 mb-4">{t("noResultsDescription")}</p>
           <button
             type="button"
             onClick={clearFilters}
             className="btn-secondary px-4 py-2 rounded-lg text-sm"
           >
-            Wyczyść filtry
+            {t("clearFilters")}
           </button>
         </div>
       ) : (
@@ -407,7 +409,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 {ownedRodents.length > 0 && (
                   <div>
                     {showOwnedSubheadings && (
-                      <h2 className="text-xl font-semibold text-gradient mb-6">Gryzonie</h2>
+                      <h2 className="text-xl font-semibold text-gradient mb-6">{t("categoryRodents")}</h2>
                     )}
                     <div className={gridClassName}>
                       {ownedRodents.map((pet) => (
@@ -421,7 +423,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 {ownedOthers.length > 0 && (
                   <div>
                     {showOwnedSubheadings && (
-                      <h2 className="text-xl font-semibold text-gradient mb-6">Inne</h2>
+                      <h2 className="text-xl font-semibold text-gradient mb-6">{t("categoryOthers")}</h2>
                     )}
                     <div className={gridClassName}>
                       {ownedOthers.map((pet) => (
@@ -439,14 +441,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             <div>
               <h2 className="text-2xl font-semibold text-gradient mb-8 flex items-center gap-3">
                 <div className="w-1 h-8 bg-secondary-gradient rounded-full"></div>
-                Udostępnione
+                {t("sharedHeading")}
               </h2>
 
               {showSharedSubheadings ? (
                 <div className="space-y-10">
                   {sharedRodents.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-secondary-700 mb-4">Gryzonie</h3>
+                      <h3 className="text-lg font-semibold text-secondary-700 mb-4">{t("categoryRodents")}</h3>
                       <div className={gridClassName}>
                         {sharedRodents.map((pet) => (
                           <PetCard key={pet.uuid} pet={pet} />
@@ -457,7 +459,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
                   {sharedOthers.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-secondary-700 mb-4">Inne</h3>
+                      <h3 className="text-lg font-semibold text-secondary-700 mb-4">{t("categoryOthers")}</h3>
                       <div className={gridClassName}>
                         {sharedOthers.map((pet) => (
                           <PetCard key={pet.uuid} pet={pet} />
@@ -485,6 +487,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 };
 
 export default function Dashboard() {
+  const t = useTranslations("Dashboard");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUser();
   const userId = user?.id;
@@ -506,7 +509,7 @@ export default function Dashboard() {
             <span className="text-danger-600 text-2xl">!</span>
           </div>
           <p className="text-danger-600 text-lg font-medium mb-4">
-            Nie udało się wczytać zwierzaków
+            {t("loadError")}
           </p>
           <button
             onClick={() => refetch()}
@@ -514,7 +517,7 @@ export default function Dashboard() {
             className="btn-secondary px-4 py-2 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
           >
             {isFetching && <ClipLoader size={14} color="#3F6F5E" />}
-            {isFetching ? "Ponawianie..." : "Spróbuj ponownie"}
+            {isFetching ? t("retrying") : t("retry")}
           </button>
         </div>
       </div>

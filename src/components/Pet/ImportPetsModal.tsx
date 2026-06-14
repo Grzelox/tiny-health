@@ -3,6 +3,7 @@
 import { useImportPets } from "@/hooks/useQueries";
 import { ImportPetsResult } from "@/types/pet";
 import { FileUpIcon, XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React, { useRef, useState } from "react";
 
 interface ImportPetsModalProps {
@@ -29,6 +30,7 @@ const downloadTemplate = () => {
 };
 
 const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) => {
+  const t = useTranslations("ImportPets");
   const importMutation = useImportPets();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -45,7 +47,7 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
 
   const handleImport = async () => {
     if (!selectedFile) {
-      setError("Wybierz plik CSV do zaimportowania");
+      setError(t("errorNoFile"));
       return;
     }
 
@@ -60,7 +62,7 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
         fileInputRef.current.value = "";
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Nie udało się zaimportować zwierzaków");
+      setError(err instanceof Error ? err.message : t("errorImportFailed"));
     }
   };
 
@@ -78,7 +80,7 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-surface/95 backdrop-blur-lg border border-border/80 shadow-2xl rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-primary-800">Importuj zwierzaki z CSV</h2>
+          <h2 className="text-xl font-semibold text-primary-800">{t("title")}</h2>
           <button
             onClick={handleClose}
             className="btn-secondary p-2 rounded-xl hover:scale-110 transition-all duration-300"
@@ -88,21 +90,18 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
         </div>
 
         <div className="space-y-3 text-sm text-secondary-600 mb-6">
-          <p>
-            Wczytaj plik CSV, aby dodać wiele zwierzaków na raz. Każdy wiersz to jeden zwierzak,
-            który zostanie dodany do Twojego stadka.
-          </p>
+          <p>{t("intro")}</p>
           <div className="bg-background/60 border border-border/70 rounded-xl p-4 space-y-2">
-            <p className="font-semibold text-secondary-700">Format pliku CSV</p>
+            <p className="font-semibold text-secondary-700">{t("formatHeading")}</p>
             <p>
-              Pierwszy wiersz musi zawierać nazwy kolumn. Wymagane kolumny:{" "}
+              {t("requiredColumnsPrefix")}{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">name</code>{" "}
-              (imię) i{" "}
+              {t("requiredColumnsName")}{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">bornAt</code>{" "}
-              (data urodzenia, format RRRR-MM-DD).
+              {t("requiredColumnsBornAt")}
             </p>
             <p>
-              Opcjonalne kolumny:{" "}
+              {t("optionalColumnsPrefix")}{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">
                 animalType
               </code>
@@ -110,31 +109,31 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">breed</code>,{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">color</code>,{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">weight</code>{" "}
-              (waga w gramach),{" "}
+              {t("optionalColumnsWeight")}{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">notes</code>{" "}
-              oraz{" "}
+              {t("optionalColumnsAnd")}{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">isDead</code>{" "}
-              (true/false).
+              {t("optionalColumnsIsDead")}
             </p>
             <p>
-              Jeśli pole zawiera przecinek lub cudzysłów, ujmij je w cudzysłowy (np.{" "}
+              {t("quotingHintPrefix")}{" "}
               <code className="px-1 py-0.5 rounded bg-secondary-100 text-secondary-800">
                 &quot;Brązowo-biały&quot;
               </code>
-              ).
+              {t("quotingHintSuffix")}
             </p>
             <button
               type="button"
               onClick={downloadTemplate}
               className="btn-secondary px-3 py-1.5 rounded-lg text-xs mt-2"
             >
-              Pobierz przykładowy szablon CSV
+              {t("downloadTemplate")}
             </button>
           </div>
         </div>
 
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-secondary-700">Plik CSV</label>
+          <label className="text-sm font-semibold text-secondary-700">{t("fileLabel")}</label>
           <input
             ref={fileInputRef}
             type="file"
@@ -149,8 +148,8 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
         {result && (
           <div className="mt-4 space-y-2">
             <p className="text-sm font-semibold text-secondary-700">
-              Zaimportowano {result.imported} {result.imported === 1 ? "zwierzaka" : "zwierzaków"}
-              {result.failed > 0 && `, ${result.failed} wierszy z błędami`}.
+              {t("importedSummary", { imported: result.imported })}
+              {result.failed > 0 && t("failedSummary", { failed: result.failed })}.
             </p>
             {result.failed > 0 && (
               <ul className="max-h-48 overflow-y-auto space-y-1 text-xs">
@@ -161,7 +160,7 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
                       key={row.row}
                       className="bg-danger-50 text-danger-700 rounded-lg px-3 py-2 border border-danger-100"
                     >
-                      Wiersz {row.row} ({row.name}): {row.message}
+                      {t("rowError", { row: row.row, name: row.name, message: row.message })}
                     </li>
                   ))}
               </ul>
@@ -176,7 +175,7 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
             className="btn-secondary px-4 py-2 rounded-xl"
             disabled={importMutation.isPending}
           >
-            Zamknij
+            {t("close")}
           </button>
           <button
             type="button"
@@ -185,7 +184,7 @@ const ImportPetsModal: React.FC<ImportPetsModalProps> = ({ isOpen, onClose }) =>
             className="btn-primary px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             <FileUpIcon className="w-4 h-4" />
-            {importMutation.isPending ? "Importowanie..." : "Importuj"}
+            {importMutation.isPending ? t("importing") : t("import")}
           </button>
         </div>
       </div>

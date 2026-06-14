@@ -1,6 +1,7 @@
 import { SignUpButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { BarChart3, Camera, Download, Heart, RatIcon, Shield, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 const FeatureCard = ({
@@ -84,37 +85,38 @@ const ImageShowcase = ({
 );
 
 export default function Welcome() {
+  const t = useTranslations("Welcome");
+
   const features = [
     {
       icon: Heart,
-      title: "Historia wizyt u weterynarza",
-      description: "Śledź historię wizyt u weterynarza swoich gryzoni z łatwością i precyzją",
+      title: t("featureVetTitle"),
+      description: t("featureVetDescription"),
     },
     {
       icon: BarChart3,
-      title: "Analiza wagi",
-      description: "Wizualizuj zmiany wagi w czasie za pomocą historii wagi i wykresu",
+      title: t("featureWeightTitle"),
+      description: t("featureWeightDescription"),
     },
     {
       icon: Camera,
-      title: "Galeria zdjęć",
-      description: "Dodawaj najfajniejsze zdjęcia swojego pupila i wracaj do wspomnień.",
+      title: t("featureGalleryTitle"),
+      description: t("featureGalleryDescription"),
     },
     {
       icon: Users,
-      title: "Udostępnianie",
-      description: "Podziel się danymi z swoimi najbliższymi osobami",
+      title: t("featureSharingTitle"),
+      description: t("featureSharingDescription"),
     },
     {
       icon: Download,
-      title: "Eksport danych",
-      description: "W dowolnej chwili wyeksportuj wszystkie zgromadzone dane",
+      title: t("featureExportTitle"),
+      description: t("featureExportDescription"),
     },
     {
       icon: Shield,
-      title: "Darmowy i bezpieczny",
-      description:
-        "Serwis jest całkowicie darmowy, wolny od reklam i stworzony zgodnie z panującymi standardami bezpieczeństwa",
+      title: t("featureFreeTitle"),
+      description: t("featureFreeDescription"),
     },
   ];
 
@@ -151,29 +153,27 @@ export default function Welcome() {
               <span className="text-gradient">tiny health</span>
               <br />
               <span className="text-2xl md:text-4xl lg:text-5xl font-medium text-secondary-700">
-                dbaj o zdrowie swoich małych bohaterów
+                {t("heroSubtitle")}
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-secondary-700 max-w-4xl mx-auto mb-12 leading-relaxed font-medium">
-              Dzięki naszemu narzędziu możesz łatwo rejestrować wizyty u weterynarza, monitorować
-              zmiany w wadze i przechowywać wszystkie istotne informacje w jednym miejscu.
-              Uwieczniaj wyjątkowe chwile, dodając zdjęcia swoich podopiecznych.
+              {t("heroDescription")}
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <SignUpButton mode="modal">
                 <button className="btn-primary px-8 py-4 text-lg font-semibold rounded-xl hover:scale-105 transition-transform duration-300">
-                  Rozpocznij teraz
+                  {t("ctaStart")}
                 </button>
               </SignUpButton>
               <button
                 onClick={scrollToFeatures}
                 className="btn-secondary px-8 py-4 text-lg font-semibold rounded-xl hover:scale-105 transition-transform duration-300"
               >
-                Zobacz funkcje
+                {t("ctaSeeFeatures")}
               </button>
             </div>
           </motion.div>
@@ -188,7 +188,7 @@ export default function Welcome() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-6">
-              Wszystko czego potrzebujesz
+              {t("featuresHeading")}
             </h2>
           </motion.div>
 
@@ -209,26 +209,26 @@ export default function Welcome() {
         <div className="container mx-auto px-4 space-y-32 mb-32">
           <ImageShowcase
             src="/example1.webp"
-            alt="Historia medyczna - przykład"
-            title="Prosty interfejs"
-            description="Śledź historię zdrowotną swoich myszek – od wizyt u weterynarza, przez zmiany w wadze, aż po notatki. Wszystko, czego potrzebujesz, dostępne w jednym miejscu."
+            alt={t("showcaseSimpleAlt")}
+            title={t("showcaseSimpleTitle")}
+            description={t("showcaseSimpleDescription")}
             delay={0.2}
           />
 
           <ImageShowcase
             src="/example2.webp"
-            alt="Galeria zdjęć - przykład"
-            title="Galeria wspomnień"
-            description="Zachowaj najpiękniejsze chwile ze swoimi pupilami. Dodawaj zdjęcia i buduj cyfrowy album wspomnień."
+            alt={t("showcaseMemoriesAlt")}
+            title={t("showcaseMemoriesTitle")}
+            description={t("showcaseMemoriesDescription")}
             reverse={true}
             delay={0.4}
           />
 
           <ImageShowcase
             src="/example3.webp"
-            alt="Wykres wagi - przykład"
-            title="Prywatny i bezpieczny"
-            description="Nasz serwis jest całkowicie darmowy, wolny od reklam, a eksport danych daje Ci pełną kontrolę nad informacjami o Twoich zwierzakach."
+            alt={t("showcaseSecureAlt")}
+            title={t("showcaseSecureTitle")}
+            description={t("showcaseSecureDescription")}
             delay={0.6}
           />
         </div>
@@ -245,11 +245,11 @@ export default function Welcome() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary-100/60 to-secondary-100/60" />
             <div className="relative">
               <p className="text-xl text-secondary-800 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
-                Dołącz do naszej społeczności i zadbaj o zdrowie swoich małych bohaterów już dziś!
+                {t("finalCtaText")}
               </p>
               <SignUpButton mode="modal">
                 <button className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-intense-glow">
-                  Rozpocznij przygodę z serwisem
+                  {t("finalCtaButton")}
                 </button>
               </SignUpButton>
             </div>
