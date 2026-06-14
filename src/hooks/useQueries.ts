@@ -1,4 +1,4 @@
-import { Pet, PetWithShared, VetVisit } from "@/types/pet";
+import { ImportPetsResult, Pet, PetWithShared, VetVisit } from "@/types/pet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const usePets = (userId: string) => {
@@ -43,6 +43,33 @@ export const useAddPet = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pets"] });
+    },
+  });
+};
+
+export const useImportPets = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File): Promise<ImportPetsResult> => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/pets/import", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Nie udało się zaimportować zwierzaków");
+      }
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.imported > 0) {
+        queryClient.invalidateQueries({ queryKey: ["pets"] });
+      }
     },
   });
 };

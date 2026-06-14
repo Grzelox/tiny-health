@@ -4,6 +4,7 @@
 import {
   useAddPet,
   useDeletePet,
+  useImportPets,
   usePets,
   useRemoveShare,
   useSharedUsers,
@@ -24,6 +25,7 @@ jest.mock("@/hooks/useQueries", () => ({
   useSharePets: jest.fn(),
   useSharedUsers: jest.fn(),
   useRemoveShare: jest.fn(),
+  useImportPets: jest.fn(),
 }));
 
 jest.mock("@clerk/nextjs", () => ({
@@ -103,6 +105,7 @@ describe("Dashboard filtering", () => {
     (useSharePets as jest.Mock).mockReturnValue({ mutate: jest.fn(), isPending: false });
     (useSharedUsers as jest.Mock).mockReturnValue({ data: [], isLoading: false });
     (useRemoveShare as jest.Mock).mockReturnValue({ mutate: jest.fn(), isPending: false });
+    (useImportPets as jest.Mock).mockReturnValue({ mutateAsync: jest.fn(), isPending: false });
     (usePets as jest.Mock).mockReturnValue({
       data: buildPets(),
       isLoading: false,

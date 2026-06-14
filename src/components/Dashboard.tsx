@@ -6,13 +6,14 @@ import { ANIMAL_TYPE_RODENT_OPTIONS } from "@/constants/animalTypes";
 import { usePets } from "@/hooks/useQueries";
 import { PetWithShared, Pets } from "@/types/pet";
 import { useUser } from "@clerk/nextjs";
-import { DownloadIcon, SearchIcon, ShareIcon, XIcon } from "lucide-react";
+import { DownloadIcon, SearchIcon, ShareIcon, UploadIcon, XIcon } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 import LoadingSpinner from "./Animations/LoadingSpinner";
 import OnboardingEmptyState from "./Onboarding/OnboardingEmptyState";
 import AddPetModal from "./Pet/AddPetModal";
+import ImportPetsModal from "./Pet/ImportPetsModal";
 import SharePetsModal from "./SharePetsModal";
 
 interface DashboardContentProps {
@@ -137,6 +138,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   hasNoPets,
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<PetSortOption>("createdAt");
@@ -230,7 +232,21 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   };
 
   if (hasNoPets) {
-    return <OnboardingEmptyState onAddPet={onOpenModal} firstName={firstName} />;
+    return (
+      <>
+        <OnboardingEmptyState onAddPet={onOpenModal} firstName={firstName} />
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setIsImportModalOpen(true)}
+            className="btn-secondary flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm sm:text-base"
+          >
+            <UploadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            Importuj z CSV
+          </button>
+        </div>
+        <ImportPetsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
+      </>
+    );
   }
 
   const hasNoFilteredResults = filteredOwnedPets.length === 0 && filteredSharedPets.length === 0;
@@ -271,6 +287,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                   {isExporting ? "Przygotowywanie" : "Pobierz dane"}
                 </span>
                 <span className="sm:hidden">{isExporting ? "Pobierz..." : "Dane"}</span>
+              </button>
+              <button
+                onClick={() => setIsImportModalOpen(true)}
+                className="btn-secondary flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base"
+              >
+                <UploadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Importuj z CSV</span>
+                <span className="sm:hidden">Import</span>
               </button>
               <button
                 onClick={() => setIsShareModalOpen(true)}
@@ -455,6 +479,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       )}
 
       <SharePetsModal isOpen={isShareModalOpen} onClose={() => setIsShareModalOpen(false)} />
+      <ImportPetsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
     </>
   );
 };

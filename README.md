@@ -35,6 +35,7 @@ warm, not clinical.
 - 📷 **Photos** — upload and browse a gallery of pet pictures.
 - 🤝 **Sharing** — share all your pets with another user by email (great for family or a partner).
 - 📦 **Data export** — download a pet's profile, visits, and weight history as a ZIP of CSV files.
+- 📥 **Bulk CSV import** — add many pets at once from a CSV file.
 - 🪦 **Lifecycle aware** — gently keeps the pets you've lost in their own place, after the living ones.
 
 ## Tech Stack
@@ -137,6 +138,24 @@ Set these in `.env` (see `.env.example` as a starting point):
 
 `Pet.uuid` is the public identifier used in URLs (`/pet/[id]`); internal relations
 still use numeric `id`.
+
+## Bulk importing pets from CSV
+
+You can add many pets at once from the dashboard using the **"Importuj z CSV"**
+button (also shown on the empty dashboard for new accounts).
+
+1. Click **"Pobierz przykładowy szablon CSV"** in the import dialog to download a
+   template with the expected columns and an example row.
+2. Fill in one row per pet. The first row must be the header row.
+   - Required columns: `name` (pet's name) and `bornAt` (birth date, `YYYY-MM-DD`).
+   - Optional columns: `animalType`, `breed`, `color`, `weight` (grams), `notes`,
+     `isDead` (`true`/`false`), `deathDate` (`YYYY-MM-DD`, used when `isDead` is true).
+   - Wrap any field containing a comma or quote in double quotes (standard CSV
+     quoting), e.g. `"Brązowo-biały"`.
+3. Upload the CSV in the import dialog and click **"Importuj"**.
+4. Each row is validated and imported independently — valid rows are created as
+   new pets owned by your account, and any invalid rows are listed with an error
+   message so you can fix and re-upload just those.
 
 ## Deployment
 

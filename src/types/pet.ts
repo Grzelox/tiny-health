@@ -72,3 +72,16 @@ export interface WeightRecord {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ImportRowResult {
+  row: number;
+  name: string;
+  status: "created" | "error";
+  message?: string;
+}
+
+export interface ImportPetsResult {
+  imported: number;
+  failed: number;
+  results: ImportRowResult[];
+}
