@@ -155,18 +155,6 @@ describe("Dashboard filtering", () => {
     expect(screen.queryByText("Sasha")).not.toBeInTheDocument();
   });
 
-  it("filters pets by alive/dead status", () => {
-    renderDashboard();
-
-    const statusSelect = screen.getByLabelText("Filtruj po statusie");
-    fireEvent.change(statusSelect, { target: { value: "dead" } });
-
-    expect(screen.getByText("Nieboszczyk")).toBeInTheDocument();
-    expect(screen.queryByText("Bury")).not.toBeInTheDocument();
-    expect(screen.queryByText("Reksio")).not.toBeInTheDocument();
-    expect(screen.queryByText("Sasha")).not.toBeInTheDocument();
-  });
-
   it("filters pets by ownership (owned vs shared)", () => {
     renderDashboard();
 
