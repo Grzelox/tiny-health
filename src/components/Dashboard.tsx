@@ -28,7 +28,6 @@ interface DashboardContentProps {
 const RODENT_TYPE_SET = new Set<string>(ANIMAL_TYPE_RODENT_OPTIONS as readonly string[]);
 
 type PetSortOption = "createdAt" | "name" | "updatedAt";
-type StatusFilter = "all" | "alive" | "dead";
 type OwnershipFilter = "all" | "owned" | "shared";
 
 const sortPets = (pets: PetWithShared[], sortOption: PetSortOption): PetWithShared[] => {
@@ -84,12 +83,9 @@ const matchesPetFilters = (
   {
     normalizedSearchQuery,
     animalTypeFilter,
-    statusFilter,
-  }: { normalizedSearchQuery: string; animalTypeFilter: string; statusFilter: StatusFilter },
+  }: { normalizedSearchQuery: string; animalTypeFilter: string },
 ) => {
   if (animalTypeFilter !== "all" && pet.animalType !== animalTypeFilter) return false;
-  if (statusFilter === "alive" && pet.isDead) return false;
-  if (statusFilter === "dead" && !pet.isDead) return false;
 
   if (normalizedSearchQuery) {
     const haystack = `${pet.name} ${pet.breed} ${pet.color}`.toLowerCase();
@@ -146,7 +142,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const [sortOption, setSortOption] = useState<PetSortOption>("createdAt");
   const [searchQuery, setSearchQuery] = useState("");
   const [animalTypeFilter, setAnimalTypeFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [ownershipFilter, setOwnershipFilter] = useState<OwnershipFilter>("all");
   const gridClassName = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
 
@@ -160,22 +155,21 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const hasActiveFilters =
     normalizedSearchQuery !== "" ||
     animalTypeFilter !== "all" ||
-    statusFilter !== "all" ||
     ownershipFilter !== "all";
 
   const filteredOwnedPets = useMemo(() => {
     if (ownershipFilter === "shared") return [];
     return ownedPets.filter((pet) =>
-      matchesPetFilters(pet, { normalizedSearchQuery, animalTypeFilter, statusFilter }),
+      matchesPetFilters(pet, { normalizedSearchQuery, animalTypeFilter }),
     );
-  }, [ownedPets, ownershipFilter, normalizedSearchQuery, animalTypeFilter, statusFilter]);
+  }, [ownedPets, ownershipFilter, normalizedSearchQuery, animalTypeFilter]);
 
   const filteredSharedPets = useMemo(() => {
     if (ownershipFilter === "owned") return [];
     return sharedPets.filter((pet) =>
-      matchesPetFilters(pet, { normalizedSearchQuery, animalTypeFilter, statusFilter }),
+      matchesPetFilters(pet, { normalizedSearchQuery, animalTypeFilter }),
     );
-  }, [sharedPets, ownershipFilter, normalizedSearchQuery, animalTypeFilter, statusFilter]);
+  }, [sharedPets, ownershipFilter, normalizedSearchQuery, animalTypeFilter]);
 
   const { rodents: ownedRodents, others: ownedOthers } = useMemo(
     () => splitPetsByCategory(filteredOwnedPets, sortOption),
@@ -192,7 +186,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const clearFilters = () => {
     setSearchQuery("");
     setAnimalTypeFilter("all");
-    setStatusFilter("all");
     setOwnershipFilter("all");
   };
 
@@ -342,17 +335,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             options={[
               { value: "all", label: t("filterAllAnimalTypes") },
               ...availableAnimalTypes.map((type) => ({ value: type, label: type })),
-            ]}
-          />
-
-          <SelectField
-            value={statusFilter}
-            onChange={(value) => setStatusFilter(value as StatusFilter)}
-            ariaLabel={t("filterByStatus")}
-            options={[
-              { value: "all", label: t("filterAllStatuses") },
-              { value: "alive", label: t("statusAlive") },
-              { value: "dead", label: t("statusDead") },
             ]}
           />
 
