@@ -1,8 +1,13 @@
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 
+import LanguageSwitcher from "./LanguageSwitcher";
+
 export default function Header() {
+  const t = useTranslations("Header");
+
   return (
     <header className="glass-effect border-b border-border/70 sticky top-0 z-50">
       <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center">
@@ -22,6 +27,7 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          <LanguageSwitcher />
           <SignedIn>
             <div className="p-1 rounded-full bg-gradient-to-r from-primary-100 to-secondary-100">
               <UserButton
@@ -39,14 +45,14 @@ export default function Header() {
             <div className="flex items-center gap-2 sm:gap-2">
               <SignInButton mode="modal">
                 <button className="btn-secondary px-4 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-sm font-medium rounded-lg min-h-[44px] sm:min-h-[40px]">
-                  <span className="hidden sm:inline">Login</span>
-                  <span className="sm:hidden">Login</span>
+                  <span className="hidden sm:inline">{t("signIn")}</span>
+                  <span className="sm:hidden">{t("signIn")}</span>
                 </button>
               </SignInButton>
               <SignUpButton mode="modal">
                 <button className="btn-primary px-4 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-sm font-medium rounded-lg min-h-[44px] sm:min-h-[40px]">
-                  <span className="hidden sm:inline">Rejestracja</span>
-                  <span className="sm:hidden">Rejestracja</span>
+                  <span className="hidden sm:inline">{t("signUp")}</span>
+                  <span className="sm:hidden">{t("signUp")}</span>
                 </button>
               </SignUpButton>
             </div>

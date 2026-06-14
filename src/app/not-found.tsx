@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import { AlertTriangle, Home } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export default function NotFound() {
+  const t = useTranslations("NotFound");
+
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
       <div className="container mx-auto px-4 text-center">
@@ -46,11 +49,10 @@ export default function NotFound() {
             className="mb-8"
           >
             <h2 className="text-2xl md:text-3xl font-semibold text-secondary-700 mb-4">
-              Strona nie została znaleziona
+              {t("heading")}
             </h2>
             <p className="text-lg text-secondary-600 leading-relaxed max-w-lg mx-auto">
-              Przepraszamy, ale strona której szukasz nie istnieje lub została przeniesiona. Sprawdź
-              adres URL lub wróć do strony głównej.
+              {t("description")}
             </p>
           </motion.div>
 
@@ -64,7 +66,7 @@ export default function NotFound() {
             <Link href="/">
               <button className="btn-primary px-6 py-3 text-base font-semibold rounded-xl hover:scale-105 transition-transform duration-300 flex items-center gap-2">
                 <Home className="w-5 h-5" />
-                Strona główna
+                {t("homeButton")}
               </button>
             </Link>
           </motion.div>
@@ -76,20 +78,20 @@ export default function NotFound() {
             transition={{ duration: 0.6, delay: 1.0 }}
             className="mt-12 pt-8 border-t border-secondary-200/50"
           >
-            <p className="text-sm text-secondary-500 mb-4">Może przydają Ci się te linki:</p>
+            <p className="text-sm text-secondary-500 mb-4">{t("helpfulLinks")}</p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <Link
                 href="/sign-in"
                 className="text-primary-600 hover:text-primary-700 transition-colors duration-200 hover:underline"
               >
-                Logowanie
+                {t("signIn")}
               </Link>
               <span className="text-secondary-300">•</span>
               <Link
                 href="/sign-up"
                 className="text-primary-600 hover:text-primary-700 transition-colors duration-200 hover:underline"
               >
-                Rejestracja
+                {t("signUp")}
               </Link>
             </div>
           </motion.div>

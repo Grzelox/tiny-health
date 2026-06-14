@@ -3,6 +3,7 @@
 import { UploadedImage } from "@/types/pet";
 import { useQueryClient } from "@tanstack/react-query";
 import { Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -13,6 +14,7 @@ interface GalleryProps {
 }
 
 export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps) {
+  const t = useTranslations("Gallery");
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -76,12 +78,12 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
         });
       } catch (error) {
         console.error("Error deleting file:", error);
-        setError("Błąd podczas usuwania pliku. Spróbuj ponownie.");
+        setError(t("deleteError"));
       } finally {
         setDeletingFileId(null);
       }
     },
-    [queryClient, petUuid],
+    [queryClient, petUuid, t],
   );
 
   const handleImageClick = useCallback((index: number) => {
@@ -215,7 +217,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-semibold mb-4">Galeria</h2>
+      <h2 className="text-2xl font-semibold mb-4">{t("title")}</h2>
 
       {error && (
         <div className="mb-4 p-3 bg-danger-50 border border-danger-200 rounded-lg">
@@ -229,7 +231,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
         onKeyDown={handleGridKeyDown}
         role="grid"
-        aria-label="Galeria zdjęć zwierzaka"
+        aria-label={t("gridLabel")}
       >
         {uploadedFiles.map((file, index) => (
           <div
@@ -243,7 +245,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
             onFocus={() => setFocusedImageIndex(index)}
             tabIndex={0}
             role="gridcell"
-            aria-label={`Zdjęcie ${index + 1} z ${uploadedFiles.length}`}
+            aria-label={t("imageOfCount", { index: index + 1, total: uploadedFiles.length })}
           >
             {/* Loading Animation */}
             {loadingImages.has(file.id) && (
@@ -254,7 +256,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
 
             <Image
               src={file.url}
-              alt={`Zdjęcie zwierzaka ${index + 1}`}
+              alt={t("imageAlt", { index: index + 1 })}
               fill
               sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover transition-transform duration-200 group-hover:scale-105"
@@ -272,8 +274,8 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                   ? "bg-gray-500 cursor-not-allowed"
                   : "bg-danger-500 hover:bg-danger-600 focus:bg-danger-600"
               } text-white shadow-lg z-20`}
-              title="Usuń zdjęcie"
-              aria-label={`Usuń zdjęcie ${index + 1}`}
+              title={t("deletePhoto")}
+              aria-label={t("deletePhotoNumber", { index: index + 1 })}
             >
               {deletingFileId === file.id ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -297,7 +299,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
           onClick={handleCloseModal}
           role="dialog"
           aria-modal="true"
-          aria-label="Podgląd zdjęcia"
+          aria-label={t("previewLabel")}
         >
           <div className="relative w-full h-full flex items-center justify-center p-4">
             {/* Previous Button */}
@@ -307,7 +309,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                 e.stopPropagation();
                 handleNavigate("prev");
               }}
-              aria-label="Poprzednie zdjęcie"
+              aria-label={t("prevImage")}
             >
               ←
             </button>
@@ -322,14 +324,14 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
                   <div className="flex flex-col items-center">
                     <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-white mt-4 text-sm">Ładowanie zdjęcia...</p>
+                    <p className="text-white mt-4 text-sm">{t("loadingImage")}</p>
                   </div>
                 </div>
               )}
 
               <Image
                 src={uploadedFiles[selectedImageIndex].url}
-                alt={`Zdjęcie zwierzaka ${selectedImageIndex + 1}`}
+                alt={t("imageAlt", { index: selectedImageIndex + 1 })}
                 fill
                 sizes="90vw"
                 className="object-contain"
@@ -348,7 +350,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                 e.stopPropagation();
                 handleNavigate("next");
               }}
-              aria-label="Następne zdjęcie"
+              aria-label={t("nextImage")}
             >
               →
             </button>
@@ -367,8 +369,8 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                     ? "bg-gray-500 cursor-not-allowed"
                     : "bg-danger-500 hover:bg-danger-600"
                 } text-white shadow-lg`}
-                title="Usuń zdjęcie"
-                aria-label="Usuń aktualne zdjęcie"
+                title={t("deletePhoto")}
+                aria-label={t("deleteCurrentPhoto")}
               >
                 {deletingFileId === uploadedFiles[selectedImageIndex].id ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -383,7 +385,7 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
                   e.stopPropagation();
                   handleCloseModal();
                 }}
-                aria-label="Zamknij podgląd"
+                aria-label={t("closePreview")}
               >
                 <X size={24} />
               </button>
@@ -392,19 +394,22 @@ export default function Gallery({ uploadedFiles, petId, petUuid }: GalleryProps)
             {/* Image Info */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg">
               <p className="text-sm">
-                {selectedImageIndex + 1} z {uploadedFiles.length}
+                {t("counter", { index: selectedImageIndex + 1, total: uploadedFiles.length })}
               </p>
               <p className="text-xs text-gray-300">
-                Dodano:{" "}
-                {new Date(uploadedFiles[selectedImageIndex].createdAt).toLocaleDateString("pl-PL")}
+                {t("addedOn", {
+                  date: new Date(
+                    uploadedFiles[selectedImageIndex].createdAt,
+                  ).toLocaleDateString("pl-PL"),
+                })}
               </p>
             </div>
 
             {/* Keyboard Instructions */}
             <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg text-xs">
-              <p>← → Nawigacja</p>
-              <p>ESC Zamknij</p>
-              <p>DEL Usuń</p>
+              <p>{t("kbdNavigate")}</p>
+              <p>{t("kbdClose")}</p>
+              <p>{t("kbdDelete")}</p>
             </div>
           </div>
         </div>

@@ -1,3 +1,7 @@
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin();
+
 /** @type {import('next').NextConfig} */
 const spacesPublicBaseUrl = process.env.SPACES_PUBLIC_BASE_URL;
 const spacesHostname = spacesPublicBaseUrl ? new URL(spacesPublicBaseUrl).hostname : null;
@@ -32,4 +36,4 @@ const config = {
   },
 };
 
-export default config;
+export default withNextIntl(config);

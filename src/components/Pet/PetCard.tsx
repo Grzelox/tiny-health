@@ -2,6 +2,7 @@ import { useDeletePet } from "@/hooks/useQueries";
 import { PetWithShared } from "@/types/pet";
 import { format } from "date-fns";
 import { Trash2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 interface PetCardProps {
@@ -9,6 +10,7 @@ interface PetCardProps {
 }
 
 export default function PetCard({ pet }: PetCardProps) {
+  const t = useTranslations("PetCard");
   const deletePetMutation = useDeletePet();
   const isDead = pet.isDead;
 
@@ -58,7 +60,7 @@ export default function PetCard({ pet }: PetCardProps) {
               <Trash2Icon className="w-5 h-5" />
             </button>
           ) : (
-            <span className="text-xs text-secondary-600 font-medium">Tylko właściciel może usunąć zwierzaka</span>
+            <span className="text-xs text-secondary-600 font-medium">{t("ownerOnlyDelete")}</span>
           )}
         </div>
 
@@ -98,7 +100,7 @@ export default function PetCard({ pet }: PetCardProps) {
                 }
               `}
             >
-              Szczegóły
+              {t("details")}
               <svg
                 className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1"
                 fill="none"

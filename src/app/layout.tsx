@@ -1,8 +1,12 @@
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { plPL } from "@clerk/localizations";
+import { Locale } from "@/i18n/config";
+import { getUserLocale } from "@/i18n/locale";
+import { enUS, plPL } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 import { Roboto } from "next/font/google";
 
 import "./globals.css";
@@ -25,18 +29,28 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const clerkLocalizations = {
+  pl: plPL,
+  en: enUS,
+} satisfies Record<Locale, unknown>;
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getUserLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="pl">
+    <html lang={locale}>
       <body className={roboto.className}>
-        <ClerkProvider localization={plPL}>
-          <Providers>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          </Providers>
+        <ClerkProvider localization={clerkLocalizations[locale]}>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Providers>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+            </Providers>
+          </NextIntlClientProvider>
         </ClerkProvider>
       </body>
     </html>

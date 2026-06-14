@@ -1,5 +1,6 @@
 import { FullPetData } from "@/types/pet";
 import { Calendar, EditIcon, LineChart, PaintRoller, RefreshCcw, Stethoscope } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
 import EditPetModal from "./EditPetModal";
@@ -12,6 +13,7 @@ interface PetInfoProps {
 }
 
 export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
+  const t = useTranslations("PetInfo");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isWeightModalOpen, setIsWeightModalOpen] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
@@ -62,7 +64,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
                   .join(" • ")}
                 {petData.isDead && (
                   <span className="ml-2 px-3 py-1 bg-danger-100 text-danger-700 rounded-full text-sm font-medium">
-                    Zmarła
+                    {t("deceased")}
                   </span>
                 )}
               </p>
@@ -95,7 +97,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
               <div className="flex items-center justify-between mb-3">
                 <Calendar className="w-6 h-6 text-primary-400" />
               </div>
-              <p className="text-sm text-secondary-600 mb-1 font-medium">Data urodzenia</p>
+              <p className="text-sm text-secondary-600 mb-1 font-medium">{t("birthDate")}</p>
               <p className="font-semibold text-primary-600">
                 {new Date(petData.bornAt).toLocaleDateString("pl-PL")}
               </p>
@@ -107,7 +109,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
                 <div className="flex items-center justify-between mb-3">
                   <Calendar className="w-6 h-6 text-gray-600" />
                 </div>
-                <p className="text-sm text-gray-600 mb-1 font-medium">Data śmierci</p>
+                <p className="text-sm text-gray-600 mb-1 font-medium">{t("deathDate")}</p>
                 <p className="font-semibold text-gray-800">
                   {new Date(petData.deathDate!).toLocaleDateString("pl-PL")}
                 </p>
@@ -129,10 +131,10 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
                 </div>
               </div>
               <p className="text-sm text-secondary-600 mb-1 font-medium group-hover:text-secondary-700 transition-colors duration-300">
-                Waga [g]
+                {t("weight")}
               </p>
               <p className="font-semibold text-secondary-800 group-hover:text-secondary-900 transition-colors duration-300">
-                {petData.weight != null ? `${petData.weight} g` : "Nie podano"}
+                {petData.weight != null ? `${petData.weight} g` : t("notProvided")}
               </p>
               <div className="absolute inset-0 bg-linear-to-r from-secondary-100/0 via-secondary-100/20 to-secondary-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
             </div>
@@ -143,7 +145,7 @@ export default function PetInfo({ petData, onRefresh }: PetInfoProps) {
                 <div className="flex items-center justify-between mb-3">
                   <PaintRoller className="w-6 h-6 text-primary-400" />
                 </div>
-                <p className="text-sm text-secondary-600 mb-1 font-medium">Kolor</p>
+                <p className="text-sm text-secondary-600 mb-1 font-medium">{t("color")}</p>
                 <p className="font-semibold text-primary-600">{petData.color}</p>
               </div>
             )}

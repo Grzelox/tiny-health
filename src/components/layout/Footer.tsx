@@ -1,8 +1,11 @@
 import { Github, Heart } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Footer() {
+  const t = useTranslations("Footer");
+
   return (
     <footer className="relative bg-footer-gradient text-white overflow-hidden">
       {/* Background decoration */}
@@ -26,7 +29,7 @@ export default function Footer() {
               <div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white">tiny health</h3>
                 <p className="text-primary-100/80 text-xs sm:text-sm font-medium">
-                  keeping your tiny friends healthy
+                  {t("tagline")}
                 </p>
               </div>
             </div>
@@ -39,7 +42,7 @@ export default function Footer() {
               <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 text-primary-100">
                   <Heart className="w-4 h-4 text-danger-300" />
-                  <span className="text-xs sm:text-sm font-medium">Created with love by</span>
+                  <span className="text-xs sm:text-sm font-medium">{t("createdWithLove")}</span>
                 </div>
                 <Link
                   href="https://github.com/Grzelox"
@@ -65,9 +68,9 @@ export default function Footer() {
         {/* Bottom Border */}
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/20">
           <div className="flex flex-col md:flex-row justify-center items-center gap-2 sm:gap-4 text-xs sm:text-sm text-primary-100/60">
-            <p className="text-center">Darmowe narzędzie dla miłośników gryzoni</p>
+            <p className="text-center">{t("freeTool")}</p>
             <span className="hidden md:inline">•</span>
-            <p className="text-center">Bez reklam, bez ukrytych kosztów</p>
+            <p className="text-center">{t("noAds")}</p>
           </div>
         </div>
       </div>

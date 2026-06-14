@@ -2,6 +2,7 @@
 
 import { MAX_IMAGES_PER_PET, validateFileSize, validateImageCount } from "@/utils/file-validation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 interface MediaUploaderProps {
@@ -11,6 +12,7 @@ interface MediaUploaderProps {
 }
 
 export default function MediaUploader({ petId, petUuid, currentFileCount }: MediaUploaderProps) {
+  const t = useTranslations("MediaUploader");
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -59,7 +61,7 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
 
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json();
-        throw new Error(errorData.message || "Nie udało się przygotować uploadu");
+        throw new Error(errorData.message || t("errorPrepareUpload"));
       }
 
       const { uploadUrl, publicUrl, key } = (await uploadResponse.json()) as {
@@ -77,7 +79,7 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
       });
 
       if (!uploadToSpaces.ok) {
-        throw new Error("Nie udało się przesłać pliku do Spaces");
+        throw new Error(t("errorUploadToSpaces"));
       }
 
       const finalizeResponse = await fetch("/api/v1/files", {
@@ -94,12 +96,12 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
 
       if (!finalizeResponse.ok) {
         const errorData = await finalizeResponse.json();
-        throw new Error(errorData.message || "Nie udało się zapisać pliku");
+        throw new Error(errorData.message || t("errorSaveFile"));
       }
 
       await handleUploadComplete(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Nieznany błąd";
+      const message = err instanceof Error ? err.message : t("errorUnknown");
       setError(message);
     } finally {
       setIsUploading(false);
@@ -128,10 +130,8 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
   return (
     <div className="card-modern p-6 rounded-2xl">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-primary-600 mb-2">Dodaj zdjęcia</h3>
-        <p className="text-sm text-secondary-600">
-          Maksymalnie {MAX_IMAGES_PER_PET} zdjęć na zwierzaka. Maksymalny rozmiar pliku: 32MB.
-        </p>
+        <h3 className="text-lg font-semibold text-primary-600 mb-2">{t("heading")}</h3>
+        <p className="text-sm text-secondary-600">{t("limits", { max: MAX_IMAGES_PER_PET })}</p>
       </div>
 
       {/* Warning if near or at limit */}
@@ -141,9 +141,7 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
             <div className="text-danger-600 text-2xl">⚠️</div>
             <div>
               <p className="text-danger-700 text-sm font-medium">{validation.message}</p>
-              <p className="text-danger-600 text-xs mt-1">
-                Usuń niektóre zdjęcia z galerii, aby móc dodać nowe.
-              </p>
+              <p className="text-danger-600 text-xs mt-1">{t("removeToAddPeriod")}</p>
             </div>
           </div>
         </div>
@@ -158,8 +156,8 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
         >
           <div className="flex flex-col items-center text-center gap-3">
             <div>
-              <p className="text-primary-600 text-lg font-medium">Przeciągnij zdjęcie tutaj</p>
-              <p className="text-secondary-600 text-sm">lub wybierz plik z dysku</p>
+              <p className="text-primary-600 text-lg font-medium">{t("dragHere")}</p>
+              <p className="text-secondary-600 text-sm">{t("orChooseFile")}</p>
             </div>
             <button
               type="button"
@@ -167,7 +165,7 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
             >
-              {isUploading ? "Wysyłanie..." : "Wybierz plik"}
+              {isUploading ? t("uploading") : t("chooseFile")}
             </button>
             <input
               ref={fileInputRef}
@@ -184,13 +182,11 @@ export default function MediaUploader({ petId, petUuid, currentFileCount }: Medi
         <div className="bg-background/60 border-2 border-dashed border-border rounded-xl p-8 text-center">
           <div className="text-secondary-500">
             <div className="text-4xl mb-3">📸</div>
-            <p className="font-medium text-lg mb-2">Osiągnięto maksymalną liczbę zdjęć</p>
+            <p className="font-medium text-lg mb-2">{t("limitReached")}</p>
             <p className="text-sm text-secondary-600">
-              Masz już {currentFileCount} z {MAX_IMAGES_PER_PET} dozwolonych zdjęć
+              {t("limitReachedCount", { current: currentFileCount, max: MAX_IMAGES_PER_PET })}
             </p>
-            <p className="text-sm text-secondary-600 mt-1">
-              Usuń niektóre zdjęcia z galerii, aby dodać nowe
-            </p>
+            <p className="text-sm text-secondary-600 mt-1">{t("removeToAdd")}</p>
           </div>
         </div>
       )}
