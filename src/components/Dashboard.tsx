@@ -11,6 +11,7 @@ import React, { useMemo, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 import LoadingSpinner from "./Animations/LoadingSpinner";
+import OnboardingEmptyState from "./Onboarding/OnboardingEmptyState";
 import AddPetModal from "./Pet/AddPetModal";
 import SharePetsModal from "./SharePetsModal";
 
@@ -18,6 +19,8 @@ interface DashboardContentProps {
   ownedPets: PetWithShared[];
   sharedPets: PetWithShared[];
   onOpenModal: () => void;
+  firstName?: string | null;
+  hasNoPets: boolean;
 }
 
 const RODENT_TYPE_SET = new Set<string>(ANIMAL_TYPE_RODENT_OPTIONS as readonly string[]);
@@ -130,6 +133,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   ownedPets,
   sharedPets,
   onOpenModal,
+  firstName,
+  hasNoPets,
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -224,12 +229,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     }
   };
 
-  if (ownedPets.length === 0 && sharedPets.length === 0) {
-    return (
-      <div className={gridClassName}>
-        <AddPetButton onClick={onOpenModal} />
-      </div>
-    );
+  if (hasNoPets) {
+    return <OnboardingEmptyState onAddPet={onOpenModal} firstName={firstName} />;
   }
 
   const hasNoFilteredResults = filteredOwnedPets.length === 0 && filteredSharedPets.length === 0;
@@ -497,6 +498,7 @@ export default function Dashboard() {
 
   const ownedPets = pets.filter((pet) => !pet.isShared);
   const sharedPets = pets.filter((pet) => pet.isShared);
+  const hasNoPets = ownedPets.length === 0 && sharedPets.length === 0;
 
   return (
     <div className="min-h-screen p-6">
@@ -505,9 +507,16 @@ export default function Dashboard() {
           ownedPets={ownedPets}
           sharedPets={sharedPets}
           onOpenModal={() => setIsModalOpen(true)}
+          firstName={user?.firstName}
+          hasNoPets={hasNoPets}
         />
       </div>
-      <AddPetModal user={user} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddPetModal
+        user={user}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        isFirstPet={hasNoPets}
+      />
     </div>
   );
 }
