@@ -179,6 +179,33 @@ describe("Dashboard filtering", () => {
     expect(screen.queryByText("Nieboszczyk")).not.toBeInTheDocument();
   });
 
+  it("shows the guided onboarding empty state for a first-time user with no pets", () => {
+    (useUser as jest.Mock).mockReturnValue({ user: { id: "user-1", firstName: "Ola" } });
+    (usePets as jest.Mock).mockReturnValue({ data: [], isLoading: false, error: null });
+
+    renderDashboard();
+
+    expect(screen.getByText("Witaj, Ola!")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Dodaj pierwszego zwierzaka/ }),
+    ).toBeInTheDocument();
+    // Core features are highlighted
+    expect(screen.getByText("Śledź wagę")).toBeInTheDocument();
+    expect(screen.getByText("Wizyty u weterynarza")).toBeInTheDocument();
+    expect(screen.getByText("Zdjęcia")).toBeInTheDocument();
+  });
+
+  it("opens the add-pet modal with first-pet guidance from the onboarding state", () => {
+    (usePets as jest.Mock).mockReturnValue({ data: [], isLoading: false, error: null });
+
+    renderDashboard();
+
+    fireEvent.click(screen.getByRole("button", { name: /Dodaj pierwszego zwierzaka/ }));
+
+    expect(screen.getByText("Dodaj nowego zwierzaka")).toBeInTheDocument();
+    expect(screen.getByText(/To Twój pierwszy zwierzak!/)).toBeInTheDocument();
+  });
+
   it("shows an empty-state message when no pets match the filters", () => {
     renderDashboard();
 

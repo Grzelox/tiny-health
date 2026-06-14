@@ -5,13 +5,14 @@ import {
 } from "@/constants/animalTypes";
 import { useAddPet } from "@/hooks/useQueries";
 import { AnimalType, Pet } from "@/types/pet";
-import { Plus, X } from "lucide-react";
+import { Plus, Sparkles, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface AddPetModalProps {
   user: any | null;
   isOpen: boolean;
   onClose: () => void;
+  isFirstPet?: boolean;
 }
 
 interface ValidationErrors {
@@ -27,7 +28,7 @@ interface ValidationErrors {
 
 const MAX_STRING_LENGTH = 300;
 
-const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
+const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose, isFirstPet = false }) => {
   const addPetMutation = useAddPet();
   const [pet, setPet] = useState<Omit<Pet, "id" | "updatedAt" | "ownerId">>({
     name: "",
@@ -260,6 +261,16 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ user, isOpen, onClose }) => {
 
         {/* Form */}
         <div className="space-y-6 relative">
+          {isFirstPet && (
+            <div className="flex items-start gap-3 rounded-xl border border-primary-400/30 bg-primary-50/70 p-4">
+              <Sparkles className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-500" />
+              <p className="text-sm text-secondary-700">
+                To Twój pierwszy zwierzak! Uzupełnij imię i datę urodzenia, a podając wagę od razu
+                zapiszemy pierwszy pomiar do historii.
+              </p>
+            </div>
+          )}
+
           {/* Animal Type */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-secondary-700">Rodzaj *</label>

@@ -1,5 +1,6 @@
 import { useUpdatePetNotes } from "@/hooks/useQueries";
 import { FullPetData } from "@/types/pet";
+import { renderNotesMarkdown } from "@/utils/markdown";
 import { EditIcon } from "lucide-react";
 import React, { useState } from "react";
 
@@ -10,6 +11,7 @@ interface PetNotesProps {
 
 export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [notes, setNotes] = useState(petData.notes || "");
   const { mutate: updateNotes, isPending } = useUpdatePetNotes();
 
@@ -23,6 +25,7 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
       {
         onSuccess: () => {
           setIsEditing(false);
+          setIsPreviewing(false);
           onUpdate();
         },
       },
@@ -32,6 +35,7 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
   const handleCancel = () => {
     setNotes(petData.notes || "");
     setIsEditing(false);
+    setIsPreviewing(false);
   };
 
   return (
@@ -51,13 +55,58 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
 
       {isEditing ? (
         <div className="space-y-4">
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Dodaj notatki o swoim pupilu..."
-            className="w-full p-3 bg-background/70 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[150px]"
-            disabled={isPending}
-          />
+          <div className="flex space-x-2 text-sm">
+            <button
+              type="button"
+              onClick={() => setIsPreviewing(false)}
+              className={`px-3 py-1 rounded-lg transition-colors duration-200 ${
+                !isPreviewing
+                  ? "bg-primary-500 text-white"
+                  : "bg-surface/80 text-secondary-600 hover:bg-primary-50"
+              }`}
+            >
+              Edycja
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPreviewing(true)}
+              className={`px-3 py-1 rounded-lg transition-colors duration-200 ${
+                isPreviewing
+                  ? "bg-primary-500 text-white"
+                  : "bg-surface/80 text-secondary-600 hover:bg-primary-50"
+              }`}
+            >
+              Podgląd
+            </button>
+          </div>
+
+          {isPreviewing ? (
+            <div className="bg-primary-50 p-4 rounded-lg min-h-[150px]">
+              {notes ? (
+                <div
+                  className="markdown-content"
+                  dangerouslySetInnerHTML={{ __html: renderNotesMarkdown(notes) }}
+                />
+              ) : (
+                <p className="text-secondary-400 italic">Brak treści do podglądu.</p>
+              )}
+            </div>
+          ) : (
+            <>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Dodaj notatki o swoim pupilu..."
+                className="w-full p-3 bg-background/70 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[150px]"
+                disabled={isPending}
+              />
+              <p className="text-xs text-secondary-400">
+                Wspierany Markdown: **pogrubienie**, *kursywa*, # nagłówki, listy (-, 1.) oraz
+                [linki](https://...).
+              </p>
+            </>
+          )}
+
           <div className="flex justify-end space-x-2">
             <button
               onClick={handleCancel}
@@ -78,7 +127,10 @@ export default function PetNotes({ petData, onUpdate }: PetNotesProps) {
       ) : (
         <div className="bg-primary-50 p-4 rounded-lg">
           {petData.notes ? (
-            <p className="whitespace-pre-wrap">{petData.notes}</p>
+            <div
+              className="markdown-content"
+              dangerouslySetInnerHTML={{ __html: renderNotesMarkdown(petData.notes) }}
+            />
           ) : (
             <p className="text-secondary-400 italic">
               Brak notatek. Kliknij ikonę edycji, aby dodać.
