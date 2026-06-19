@@ -1,4 +1,4 @@
-import { ImportPetsResult, Pet, PetWithShared, VetVisit } from "@/types/pet";
+import { ImportPetsResult, Medication, Pet, PetWithShared, Vaccination, VetVisit } from "@/types/pet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const usePets = (userId: string) => {
@@ -174,6 +174,120 @@ export const useDeleteVetVisit = () => {
       queryClient.invalidateQueries({
         queryKey: ["pet", variables.petUuid],
       });
+    },
+  });
+};
+
+export const useAddMedication = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ data }: { data: Omit<Medication, "id"> }) => {
+      const response = await fetch("/api/v1/medication", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error("Failed to add medication");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
+    },
+  });
+};
+
+export const useEditMedication = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ data }: { data: Medication }) => {
+      const response = await fetch("/api/v1/medication", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error("Failed to edit medication");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
+    },
+  });
+};
+
+export const useDeleteMedication = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: number; petUuid: string }) => {
+      const response = await fetch("/api/v1/medication", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error("Failed to delete medication");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
+    },
+  });
+};
+
+export const useAddVaccination = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ data }: { data: Omit<Vaccination, "id"> }) => {
+      const response = await fetch("/api/v1/vaccination", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error("Failed to add vaccination");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
+    },
+  });
+};
+
+export const useEditVaccination = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ data }: { data: Vaccination }) => {
+      const response = await fetch("/api/v1/vaccination", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error("Failed to edit vaccination");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.data.petUuid] });
+    },
+  });
+};
+
+export const useDeleteVaccination = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: number; petUuid: string }) => {
+      const response = await fetch("/api/v1/vaccination", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error("Failed to delete vaccination");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["pet", variables.petUuid] });
     },
   });
 };

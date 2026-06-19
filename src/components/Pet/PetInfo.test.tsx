@@ -26,6 +26,8 @@ const mockPetData: FullPetData = {
   updatedAt: new Date("2023-01-01").toISOString(),
   uploadedFiles: [],
   vetVisits: [],
+  medications: [],
+  vaccinations: [],
 };
 
 describe("PetInfo Component", () => {

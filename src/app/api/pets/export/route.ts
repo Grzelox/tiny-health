@@ -115,6 +115,41 @@ export async function GET(request: Request) {
         },
       });
 
+      const medications = await prisma.medication.findMany({
+        where: {
+          petId: {
+            in: allPetIds,
+          },
+        },
+        select: {
+          id: true,
+          petId: true,
+          name: true,
+          dosage: true,
+          frequency: true,
+          route: true,
+          startDate: true,
+          endDate: true,
+          notes: true,
+        },
+      });
+
+      const vaccinations = await prisma.vaccination.findMany({
+        where: {
+          petId: {
+            in: allPetIds,
+          },
+        },
+        select: {
+          id: true,
+          petId: true,
+          name: true,
+          administeredDate: true,
+          nextDueDate: true,
+          notes: true,
+        },
+      });
+
       return {
         pets: allPets.sort((a, b) => {
           const aDate = new Date(a.updatedAt);
@@ -123,6 +158,8 @@ export async function GET(request: Request) {
         }),
         vetVisits,
         weightRecords,
+        medications,
+        vaccinations,
       };
     });
 
@@ -161,14 +198,43 @@ export async function GET(request: Request) {
       updatedAt: new Date(record.updatedAt).toLocaleString(),
     }));
 
+    const medicationsData = data.medications.map((med) => ({
+      id: med.id,
+      petId: med.petId,
+      petName: petNameById.get(med.petId) || "Unknown Pet",
+      name: med.name,
+      dosage: med.dosage || "",
+      frequency: med.frequency || "",
+      route: med.route || "",
+      startDate: med.startDate ? new Date(med.startDate).toLocaleDateString() : "",
+      endDate: med.endDate ? new Date(med.endDate).toLocaleDateString() : "",
+      notes: med.notes || "",
+    }));
+
+    const vaccinationsData = data.vaccinations.map((vac) => ({
+      id: vac.id,
+      petId: vac.petId,
+      petName: petNameById.get(vac.petId) || "Unknown Pet",
+      name: vac.name,
+      administeredDate: vac.administeredDate
+        ? new Date(vac.administeredDate).toLocaleDateString()
+        : "",
+      nextDueDate: vac.nextDueDate ? new Date(vac.nextDueDate).toLocaleDateString() : "",
+      notes: vac.notes || "",
+    }));
+
     const petsCSV = convertToCSV(petsData);
     const vetVisitsCSV = convertToCSV(vetVisitsData);
     const weightRecordsCSV = convertToCSV(weightRecordsData);
+    const medicationsCSV = convertToCSV(medicationsData);
+    const vaccinationsCSV = convertToCSV(vaccinationsData);
 
     const zip = new JSZip();
     zip.file("pets.csv", petsCSV);
     zip.file("vet_visits.csv", vetVisitsCSV);
     zip.file("weight_records.csv", weightRecordsCSV);
+    zip.file("medications.csv", medicationsCSV);
+    zip.file("vaccinations.csv", vaccinationsCSV);
 
     const zipContent: ArrayBuffer = await zip.generateAsync({ type: "arraybuffer" });
 
