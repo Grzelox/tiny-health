@@ -5,6 +5,7 @@ import { FullPetData, UploadedImage, VetVisit } from "@/types/pet";
 import Gallery from "../Media/Gallery";
 import MediaUploader from "../Media/MediaUploader";
 import VetVisitList from "../VetVisit/VetVisitList";
+import HealthReport from "./HealthReport";
 import PetInfo from "./PetInfo";
 
 interface PetSummaryProps {
@@ -24,6 +25,11 @@ export default function PetSummary({ pet, vetVisits, images, onRefresh }: PetSum
 
       {/* Content Grid */}
       <div className="space-y-12">
+        {/* Health Report Section */}
+        <section className="animate-in">
+          <HealthReport pet={pet} vetVisits={vetVisits} />
+        </section>
+
         {/* Vet Visits Section */}
         <section className="animate-in">
           <VetVisitList petId={pet.id} petUuid={pet.uuid} vetVisits={vetVisits} />
