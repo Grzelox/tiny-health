@@ -299,6 +299,51 @@
     "close": "Zamknij",
     "submit": "Edytuj wizytę"
   },
+  "MedicationList": {
+    "title": "Leki",
+    "addButton": "Dodaj lek",
+    "currentHeading": "Aktualnie przyjmowane",
+    "historyHeading": "Historia",
+    "activeBadge": "W trakcie",
+    "ongoing": "na stałe",
+    "empty": "Brak zapisanych leków",
+    "noActive": "Brak aktualnie przyjmowanych leków",
+    "editAriaLabel": "Edytuj lek",
+    "deleteAriaLabel": "Usuń lek"
+  },
+  "MedicationModal": {
+    "addTitle": "Dodaj lek",
+    "editTitle": "Edytuj lek",
+    "namePlaceholder": "Nazwa leku",
+    "dosagePlaceholder": "Dawka (np. 5 mg)",
+    "frequencyPlaceholder": "Częstotliwość (np. 2x dziennie)",
+    "routePlaceholder": "Droga podania (np. doustnie)",
+    "startDateLabel": "Data rozpoczęcia",
+    "endDateLabel": "Data zakończenia",
+    "notesPlaceholder": "Notatki",
+    "close": "Zamknij",
+    "submit": "Zapisz"
+  },
+  "VaccinationList": {
+    "title": "Szczepienia",
+    "addButton": "Dodaj szczepienie",
+    "empty": "Brak zapisanych szczepień",
+    "dueBadge": "Do podania",
+    "administered": "Podano",
+    "nextDue": "Następne",
+    "editAriaLabel": "Edytuj szczepienie",
+    "deleteAriaLabel": "Usuń szczepienie"
+  },
+  "VaccinationModal": {
+    "addTitle": "Dodaj szczepienie",
+    "editTitle": "Edytuj szczepienie",
+    "namePlaceholder": "Nazwa szczepionki",
+    "administeredDateLabel": "Data podania",
+    "nextDueDateLabel": "Następna dawka",
+    "notesPlaceholder": "Notatki",
+    "close": "Zamknij",
+    "submit": "Zapisz"
+  },
   "HealthReport": {
     "title": "Podsumowanie zdrowia",
     "print": "Drukuj raport",

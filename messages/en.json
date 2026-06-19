@@ -299,6 +299,51 @@
     "close": "Close",
     "submit": "Edit visit"
   },
+  "MedicationList": {
+    "title": "Medications",
+    "addButton": "Add medication",
+    "currentHeading": "Currently on",
+    "historyHeading": "History",
+    "activeBadge": "Active",
+    "ongoing": "ongoing",
+    "empty": "No medications recorded",
+    "noActive": "No active medications",
+    "editAriaLabel": "Edit medication",
+    "deleteAriaLabel": "Delete medication"
+  },
+  "MedicationModal": {
+    "addTitle": "Add medication",
+    "editTitle": "Edit medication",
+    "namePlaceholder": "Medication name",
+    "dosagePlaceholder": "Dosage (e.g. 5 mg)",
+    "frequencyPlaceholder": "Frequency (e.g. twice a day)",
+    "routePlaceholder": "Route (e.g. oral)",
+    "startDateLabel": "Start date",
+    "endDateLabel": "End date",
+    "notesPlaceholder": "Notes",
+    "close": "Close",
+    "submit": "Save"
+  },
+  "VaccinationList": {
+    "title": "Vaccinations",
+    "addButton": "Add vaccination",
+    "empty": "No vaccinations recorded",
+    "dueBadge": "Due",
+    "administered": "Administered",
+    "nextDue": "Next due",
+    "editAriaLabel": "Edit vaccination",
+    "deleteAriaLabel": "Delete vaccination"
+  },
+  "VaccinationModal": {
+    "addTitle": "Add vaccination",
+    "editTitle": "Edit vaccination",
+    "namePlaceholder": "Vaccine name",
+    "administeredDateLabel": "Administered date",
+    "nextDueDateLabel": "Next due date",
+    "notesPlaceholder": "Notes",
+    "close": "Close",
+    "submit": "Save"
+  },
   "HealthReport": {
     "title": "Health Summary",
     "print": "Print report",

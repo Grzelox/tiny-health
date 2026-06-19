@@ -27,6 +27,8 @@ const basePetData: FullPetData = {
   updatedAt: new Date("2023-01-01").toISOString(),
   uploadedFiles: [],
   vetVisits: [],
+  medications: [],
+  vaccinations: [],
 };
 
 describe("PetNotes Component", () => {

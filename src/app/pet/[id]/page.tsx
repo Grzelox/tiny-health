@@ -45,11 +45,20 @@ export default function PetDetailsPage({ params }: { params: Promise<{ id: strin
 
   const petData = petQueryData as FullPetData;
   const vetVisits = petData?.vetVisits ?? [];
+  const medications = petData?.medications ?? [];
+  const vaccinations = petData?.vaccinations ?? [];
   const images = petData?.uploadedFiles ?? [];
 
   return (
     <div className="min-h-screen bg-background">
-      <PetSummary pet={petData} vetVisits={vetVisits} images={images} onRefresh={handleRefresh} />
+      <PetSummary
+        pet={petData}
+        vetVisits={vetVisits}
+        medications={medications}
+        vaccinations={vaccinations}
+        images={images}
+        onRefresh={handleRefresh}
+      />
     </div>
   );
 }

@@ -53,6 +53,8 @@ export async function GET(request: Request) {
         include: {
           vetVisits: true,
           uploadedFiles: true,
+          medications: { orderBy: { startDate: "desc" } },
+          vaccinations: { orderBy: { administeredDate: "desc" } },
         },
       });
 
